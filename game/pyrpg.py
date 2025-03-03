@@ -6,5 +6,3 @@ class PYRPG:
 	name.input_name()
 	role.input_role()
 	
-	
-PYRPG

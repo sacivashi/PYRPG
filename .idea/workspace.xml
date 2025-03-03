@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="950b71bd-94fb-4dea-a1c1-e2a9c3daa303" name="Changes" comment="E">
-      <change afterPath="$PROJECT_DIR$/game/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/pyrpg.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_data/patch_notes/Alpha I" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/data_inputs/input_name/input_name.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/data_inputs/input_name/input_name.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,23 +53,23 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortKey" value="BY_TIME_DESCENDING" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.enem_stat_extract.executor": "Run",
-    "Python.enemies_extract.executor": "Run",
-    "Python.input_name.executor": "Run",
-    "Python.input_role.executor": "Run",
-    "Python.player_data_extract.executor": "Run",
-    "Python.player_data_save.executor": "Run",
-    "Python.pyrpg.executor": "Run",
-    "Python.roles.executor": "Run",
-    "Python.roles_extract.executor": "Run",
-    "Python.stats_extract.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "settings.editor.selected.configurable": "project.propVCSSupport.Confirmation"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.enem_stat_extract.executor&quot;: &quot;Run&quot;,
+    &quot;Python.enemies_extract.executor&quot;: &quot;Run&quot;,
+    &quot;Python.input_name.executor&quot;: &quot;Run&quot;,
+    &quot;Python.input_role.executor&quot;: &quot;Run&quot;,
+    &quot;Python.player_data_extract.executor&quot;: &quot;Run&quot;,
+    &quot;Python.player_data_save.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pyrpg.executor&quot;: &quot;Run&quot;,
+    &quot;Python.roles.executor&quot;: &quot;Run&quot;,
+    &quot;Python.roles_extract.executor&quot;: &quot;Run&quot;,
+    &quot;Python.stats_extract.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Confirmation&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PYRPG\game_data" />
@@ -208,7 +204,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741007345849</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="E">
+      <option name="closed" value="true" />
+      <created>1741009184616</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1741009184616</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

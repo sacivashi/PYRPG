@@ -3,21 +3,14 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\players_data\players.csv">
+        <entry key="\game_data\stats\enemies_x_stats\enemies.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\stats\enemies_x_stats\enemies.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\stats\roles_x_stats\classes.csv">
+        <entry key="\game_data\stats\roles_x_stats\classes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
