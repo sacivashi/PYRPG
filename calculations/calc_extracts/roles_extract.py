@@ -33,6 +33,7 @@ def extract_stats(desired_role):
         print(f"Role '{desired_role}' was not found")
 
 
+# Enum for roles, more will be added in the future
 class Role:
     WARRIOR = 'warrior'
     MAGE = 'mage'

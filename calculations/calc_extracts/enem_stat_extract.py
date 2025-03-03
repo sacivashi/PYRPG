@@ -4,6 +4,7 @@ import random
 enemies_file = r"D:\PYRPG\stats\enemies_x_stats\enemies.csv"
 
 
+# Base stat loader
 def load_enemies():
 	"""Loads all enemies into a dictionary."""
 	enemies = {}
@@ -21,6 +22,7 @@ def load_enemies():
 	return enemies
 
 
+# enemy scale based on player's level (calculations might change)
 def scale_enemy(enemy_name, player_level):
 	"""Scales enemy stats based on player level."""
 	enemies = load_enemies()
@@ -47,9 +49,5 @@ def spawn_random_enemy(player_level):
 	"""Spawns a random enemy and scales it based on player level."""
 	enemies = load_enemies()
 	random_enemy_name = random.choice(list(enemies.keys()))
-	return random_enemy_name, scale_enemy(random_enemy_name, player_level)
+	print(random_enemy_name, scale_enemy(random_enemy_name, player_level))
 
-
-# Example Usage
-player_level = 6
-print(spawn_random_enemy(player_level))  # Random enemy with scaling
