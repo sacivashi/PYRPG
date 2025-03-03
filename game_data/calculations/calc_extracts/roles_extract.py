@@ -1,6 +1,23 @@
 import csv
+import os
 
-classes_file = r"D:\PYRPG\stats\roles_x_stats\classes.csv"
+classes_file = r"/stats/roles_x_stats/classes.csv"
+
+
+def get_all_roles():
+    if not os.path.exists(classes_file):
+        print("No data file found.")
+        return []
+
+    roles = set()  # Use a set to avoid duplicates
+
+    with open(classes_file, newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            if row["Class"]:  # Avoid empty values
+                roles.add(row["Class"])
+
+    return list(roles)
 
 
 def load_role(role):
@@ -28,12 +45,12 @@ def extract_stats(desired_role):
     """Extracts stats using both load functions."""
     role_name = load_role(desired_role)
     if role_name:
-        print(f"{role_name} stats: {load_stats(role_name)}")
+        return (f"{role_name} stats: {load_stats(role_name)}")
     else:
-        print(f"Role '{desired_role}' was not found")
+        return (f"Role '{desired_role}' was not found")
 
 
-# Enum for roles, more will be added in the future
+# Enum for e, more will be added in the future
 class Role:
     WARRIOR = 'warrior'
     MAGE = 'mage'

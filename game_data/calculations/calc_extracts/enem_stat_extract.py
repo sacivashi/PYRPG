@@ -1,7 +1,7 @@
 import csv
 import random
 
-enemies_file = r"D:\PYRPG\stats\enemies_x_stats\enemies.csv"
+enemies_file = r"/stats/enemies_x_stats/enemies.csv"
 
 
 # Base stat loader
