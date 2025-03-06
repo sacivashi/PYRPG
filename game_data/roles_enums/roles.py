@@ -1,5 +1,5 @@
 from game_data.roles_enums.role_descs import Descriptions
-import game_data.calculations.calc_extracts.roles_extract as stats
+from game_data.calculations.calc_extracts.roles_extract import Roles_Extract as stats
 from game_data.calculations.calc_extracts.roles_extract import Role
 
 # enums for later use

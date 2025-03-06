@@ -1,7 +1,7 @@
 import csv
 import os
 
-data_file = r"/players_data/players.csv"
+data_file = r"D:\PYRPG\players_data\players.csv"
 
 
 def save_player_data(Name, Role, Level, HP, Stats):

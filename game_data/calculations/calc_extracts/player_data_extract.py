@@ -1,7 +1,7 @@
 import csv
 import os
 
-data_file = r"D:\PYRPG\game_data\players_data\players.csv"
+data_file = r"D:\PYRPG\players_data\players.csv"
 
 
 def get_player_data(Name):

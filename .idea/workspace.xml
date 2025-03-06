@@ -5,8 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="950b71bd-94fb-4dea-a1c1-e2a9c3daa303" name="Changes" comment="E">
+      <change afterPath="$PROJECT_DIR$/game_data/data_inputs/save_input/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_inputs/save_input/save_state.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/new_character_calc/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/new_character_calc/new_character.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/pyrpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/pyrpg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/data_inputs/input_name/input_name.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/data_inputs/input_name/input_name.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/data_inputs/input_role/input_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/data_inputs/input_role/input_role.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/roles_enums/roles.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/roles_enums/roles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/stats/roles_x_stats/classes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/stats/roles_x_stats/classes.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/players_data/players.csv" beforeDir="false" afterPath="$PROJECT_DIR$/players_data/players.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +71,8 @@
     &quot;Python.enem_stat_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.enemies_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.input_name.executor&quot;: &quot;Run&quot;,
-    &quot;Python.input_role.executor&quot;: &quot;Run&quot;,
+    &quot;Python.input_role.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.new_character.executor&quot;: &quot;Run&quot;,
     &quot;Python.player_data_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.player_data_save.executor&quot;: &quot;Run&quot;,
     &quot;Python.pyrpg.executor&quot;: &quot;Run&quot;,
@@ -66,47 +80,19 @@
     &quot;Python.roles_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.stats_extract.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Confirmation&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\PYRPG\game_data" />
+      <recent name="D:\PYRPG\game_data\new_character_calc" />
       <recent name="D:\PYRPG" />
+      <recent name="D:\PYRPG\game_data" />
       <recent name="D:\PYRPG\data_inputs" />
       <recent name="D:\PYRPG\mobs" />
-      <recent name="D:\PYRPG\enemy" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="roles_extract" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="PYRPG" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/calculations/calc_extracts" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="D:\PYRPG\calculations\calc_extracts\roles_extract.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.roles_extract" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -212,7 +198,23 @@
       <option name="project" value="LOCAL" />
       <updated>1741009184616</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="E">
+      <option name="closed" value="true" />
+      <created>1741031234107</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1741031234107</updated>
+    </task>
+    <task id="LOCAL-00013" summary="E">
+      <option name="closed" value="true" />
+      <created>1741032751149</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1741032751149</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
