@@ -1,0 +1,11 @@
+PYRPG - Alpha I:
+Welcome to PYRPG! hope you enjoy the content added for now c:.
+
+Current Features:
+- 6 unique roles/classes each has it's own strengths and weaknesses (see #roles_x_stats's csv file)
+- 19 enemy~mobs with unique traits (see #enemies_x_stats csv file)
+- The game file itself is for now only a basic name & role inputting
+
+Next features:
+- Initial character saving
+- Enemy spawns
