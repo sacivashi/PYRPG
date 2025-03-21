@@ -8,4 +8,3 @@ Current Features:
 
 Next features:
 - Initial character saving
-- Enemy spawns
