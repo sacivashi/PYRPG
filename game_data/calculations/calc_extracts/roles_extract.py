@@ -1,7 +1,7 @@
 import csv
 import os
 
-classes_file = r"D:\PYRPG\game_data\stats\roles_x_stats\classes.csv"
+classes_file = r"C:\PYRPG\game_data\stats\roles_x_stats\classes.csv"
 
 
 def get_all_roles():

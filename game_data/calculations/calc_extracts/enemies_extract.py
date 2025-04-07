@@ -1,7 +1,7 @@
 import csv
 import random
 
-enemies_file = r'/stats/enemies_x_stats/enemies.csv'
+enemies_file = r'C:\PYRPG\game_data\stats\enemies_x_stats\enemies.csv'
 
 
 def load_enemy_names(file_path):
