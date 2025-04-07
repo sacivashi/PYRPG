@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="950b71bd-94fb-4dea-a1c1-e2a9c3daa303" name="Changes" comment="E">
-      <change beforePath="$PROJECT_DIR$/.idea/PYRPG.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PYRPG.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/pyrpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/pyrpg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/enem_stat_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/enem_stat_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/enemies_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/enemies_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/roles_enums/role_descs.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/roles_enums/role_descs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/stats/roles_x_stats/classes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/stats/roles_x_stats/classes.csv" afterDir="false" />
-    </list>
+    <list default="true" id="950b71bd-94fb-4dea-a1c1-e2a9c3daa303" name="Changes" comment="preparations for alpha II" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,6 +22,11 @@
       <list>
         <option value="sacivashi &lt;razgabay123@gmail.com&gt;" />
       </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -62,24 +55,24 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortKey" value="BY_TIME_DESCENDING" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.enem_stat_extract.executor&quot;: &quot;Run&quot;,
-    &quot;Python.enemies_extract.executor&quot;: &quot;Run&quot;,
-    &quot;Python.input_name.executor&quot;: &quot;Run&quot;,
-    &quot;Python.input_role.executor&quot;: &quot;Run&quot;,
-    &quot;Python.player_data_extract.executor&quot;: &quot;Run&quot;,
-    &quot;Python.player_data_save.executor&quot;: &quot;Run&quot;,
-    &quot;Python.pyrpg.executor&quot;: &quot;Run&quot;,
-    &quot;Python.roles.executor&quot;: &quot;Run&quot;,
-    &quot;Python.roles_extract.executor&quot;: &quot;Run&quot;,
-    &quot;Python.stats_extract.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Confirmation&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.enem_stat_extract.executor": "Run",
+    "Python.enemies_extract.executor": "Run",
+    "Python.input_name.executor": "Run",
+    "Python.input_role.executor": "Run",
+    "Python.player_data_extract.executor": "Run",
+    "Python.player_data_save.executor": "Run",
+    "Python.pyrpg.executor": "Run",
+    "Python.roles.executor": "Run",
+    "Python.roles_extract.executor": "Run",
+    "Python.stats_extract.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "add__ups",
+    "settings.editor.selected.configurable": "project.propVCSSupport.Confirmation"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PYRPG\game_data" />
@@ -214,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741007345849</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="preparations for alpha II">
+      <option name="closed" value="true" />
+      <created>1744042635578</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744042635578</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -222,7 +223,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="add_ups" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -230,6 +243,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="E" />
-    <option name="LAST_COMMIT_MESSAGE" value="E" />
+    <MESSAGE value="preparations for alpha II" />
+    <option name="LAST_COMMIT_MESSAGE" value="preparations for alpha II" />
   </component>
 </project>
