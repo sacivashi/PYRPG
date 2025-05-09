@@ -1,0 +1,56 @@
+PYRPG - Alpha II:
+Everything is remade! stuff didn't flow with one another so I scratched allot from everything.
+
+New features:
+- Saving data should work appropriately now, hopefully.
+
+
+enemy stats info;
+Introducing -x stats;
+Enemies with -x stat(s) get unique effects.
+-HP: The enemy is takes ((-X) + n++) damage at the end on it's turn, receiving damage from the player will add up to it's #-HP
+-Attack: The enemy deals 0 damage, but will heal itself based on the -X amount when hit
+-Defense: The enemy takes extra damage from attacks, but will return a fraction of the damage taken back
+-Speed: The player will always strike -speed enemies first, the enemy's hits are unavoidable
+-Luck: The enemy has a higher missing% on attacks, the enemy's successful hits *curse* a player's stat lowering them by (n + (-X))
+ (can include HP)
+
+ * curse sample: -2 luck ~ strength curse: successfully hitting the player will reduce their strength stat by 2.
+
+Enemy adjustments:
+Jester: 20,6,15,17,20 > -20,4,10,15,22
+Orc: 55,25,8,1,0 > 52,20,10,-5,0
+Spider: 25,5,2,10,6 > 15,3,0,6,8
+Witch: 6,14,3,4,8 > 5,15,1,2,-8
+Giant: 100,22,45,4,8 > 120,20,45,-20,8
+Bat: 5,5,2,15,5 > 10,-5,3,15,5
+Zombie: 11,3,-8,-5,0 > -8,3,-10,-2,-2
+
+New enemy;
+Cursed Human: -15,2,-5,3,-5
+
+role stats info;
+I have decided the player roles can have -x stats;
+roles with -x stat(s) get unique effects.
+-Strength: Debuff: Missing attacks makes you hit yourself for (HP -(-x) * 2) damage, Benefit: hitting enemies heals you by (max HP / (X + n))
+-Agility: Debuff: Always act last (-speed enemies not included). Benefit: Incoming attacks are easier to read — +X% dodge or counter chance.
+-Intelligence: Debuff: (100 / X + RNG)% to attack a different enemy, Benefit: you hit harder (N * X - (INT of: highest stat / 10))
+-Defence: Debuff: Getting hit makes you take (-X) damage bonus, Benefit: you damage the attacker by (damage / 75 + X) back
+-Magic Debuff: using cursed magika makes you suffer (X + n) self damage,  Benefit: you have a chance to lower the enemy stats (read enemies -luck)
+{stat lowering won't get to less than 0 on enemies with no -x stat, lowering -x stat enemy will be like a buff to them}
+- Luck: Debuff: higher chance to miss attacks, lower loot rolls, Benefit: Successful attacks are unavoidable
+
+role adjustments:
+
+ranger base stats felt way too strong for a role that focuses on their agility, I chose to nerf ranger's strength to add up to their agility.
+with the new stats in line, ranger role is now the fastest initiative yet.
+Ranger: 6,8,5,5,3,7 > 3,11,6,2,2,9
+
+Necromancer just felt like a second mage, considering how their base stats were very comparable to one another.
+Although they should feel different play wise, I felt like they should have unique stats, so now necromancer magic can apply curses.
+Necromancer: 3,4,9,4,10,5 > 1,2,6,4,-8,5
+
+New roles:
+Since -x stats introduce new variety, I added 2 more roles to choose from:
+forsaken: -2,3,2,10,-2,2
+monk: 5,5,8,-9,3,1

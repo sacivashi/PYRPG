@@ -1,16 +1,23 @@
-from game_data.calculations.calc_extracts.roles_extract import Roles_Extract as roles
-from game_data.roles_enums.roles import choose_role
+from game_data.data_actions.extracts.rolesextract import RolesExtract
+from game_data.roles_enums.roles import Roles
 
 
-class Input_Role:
-	@staticmethod
-	def input_role():
-		print(f"Available roles: {roles.get_all_roles()}")
-		role_chosen = input("choose one (input the role's name): ".lower())
-		print(choose_role(role_chosen))
-		commit = input("Are you sure you want this role? (yes/no) ".lower())
-		if commit == 'yes':
-			return role_chosen
-		elif commit == 'no':
-			Input_Role.input_role()
-	
+class InputRole:
+    @staticmethod
+    def choose_role():
+        roles = RolesExtract.get_role_stats_by_name()
+
+        while True:
+            player_input = input(f"Choose a role {RolesExtract.get_role_names()}: ").strip().lower()
+
+            if player_input in roles:
+                confirm = input(f"You chose {player_input.title()}. {Roles.choose_role(player_input)}\n"
+                                f"Are you sure you want this role? (yes/no): ").strip().lower()
+                if confirm in ("yes", "y"):
+                    print(f"{player_input.title()} locked in!")
+                    return player_input
+                else:
+                    print("Okay, let's choose again.\n")
+            else:
+                print("Invalid role. Please choose a valid role.\n")
+

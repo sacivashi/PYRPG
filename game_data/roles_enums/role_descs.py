@@ -8,3 +8,7 @@ class Descriptions:
 	         "direct combat, they thrive with allies and adaptability.").capitalize()
 	ranger = "Masters of the wild, skilled with bows and tracking. Deadly from a distance but fragile in melee.".capitalize()
 	necromancer = "Manipulators of death, summon minions to fight for them. Powerful but physically frail.".capitalize()
+	forsaken = ("Forsaken, cursed souls shunned by both life and death. They possess strange resilience and chaotic power, "
+				"thriving on afflictions that would cripple others.").capitalize()
+	monk = ("Monks, disciplined warriors who combine martial arts with spiritual focus. They strike fast, counter swiftly, "
+			"and endure through sheer willpower rather than brute force.").capitalize()

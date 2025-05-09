@@ -1,20 +1,21 @@
 Name,HP,Attack,Defense,Speed,Luck
 Bandit,20,10,10,13,10
-Bat,5,5,2,15,5
+Bat,10,-5,3,15,5
 Bear,30,22,9,6,5
+Cursed Human,-15,2,-5,3,-5
 Demon,25,30,15,8,-40
 Dragon,250,65,150,2,9
 Giant Ant,16,8,21,4,3
-Giant,100,22,45,4,8
+Giant,120,20,45,-20,8
 Goblin,10,3,1,60,50
 Golem,120,15,35,-5,0
 Gremlin,8,5,6,18,23
 Imp,3,2,0,40,16
-Jester,20,6,15,17,20
-Orc,55,25,8,1,0
+Jester,-20,6,15,17,20
+Orc,52,20,10,-5,0
 Slime,22,7,10,4,0
-Spider,25,5,2,10,6
+Spider,15,3,0,6,8
 Thief,12,7,5,12,7
-Witch,6,14,3,4,8
+Witch,5,15,1,2,-8
 Wolf,17,20,6,20,17
-Zombie,11,3,-8,-5,0
+Zombie,-8,3,-10,-2,-2

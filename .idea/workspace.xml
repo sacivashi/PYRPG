@@ -5,19 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="950b71bd-94fb-4dea-a1c1-e2a9c3daa303" name="Changes" comment="E">
-      <change afterPath="$PROJECT_DIR$/game_data/data_inputs/save_input/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_data/data_inputs/save_input/save_state.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_data/new_character_calc/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_data/new_character_calc/new_character.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/extracts/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/extracts/enem_stat_extract.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/extracts/enemies_extract.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/extracts/player_data_extract.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/extracts/rolesextract.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/saves/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/data_actions/saves/player_data_save.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/xml_db/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/game_data/xml_db/data.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/patch_notes/Alpha II" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/PYRPG.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PYRPG.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/pyrpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/pyrpg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_ops/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/common_ops/common_ops.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/enem_stat_extract.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/enemies_extract.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/player_data_extract.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_extracts/roles_extract.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_saves/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/NPCs/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/calculations/calc_saves/player_data_save.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/game_data/data_inputs/input_name/input_name.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/data_inputs/input_name/input_name.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_data/data_inputs/input_role/input_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/data_inputs/input_role/input_role.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/data_inputs/save_input/save_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/data_inputs/save_input/save_state.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/mobs/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/NPCs/enemies/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/mobs/enemies/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/combat/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/new_character_calc/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/combat/combat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/new_character_calc/new_character.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/roles_enums/role_descs.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/roles_enums/role_descs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_data/roles_enums/roles.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/roles_enums/roles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data/stats/enemies_x_stats/enemies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/stats/enemies_x_stats/enemies.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_data/stats/roles_x_stats/classes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/game_data/stats/roles_x_stats/classes.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/players_data/players.csv" beforeDir="false" afterPath="$PROJECT_DIR$/players_data/players.csv" afterDir="false" />
     </list>
@@ -50,7 +70,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/sacivashi/PYRPG.git&quot;,
-    &quot;accountId&quot;: &quot;244b96dc-1b35-4c90-886e-2954a906d4a6&quot;
+    &quot;accountId&quot;: &quot;071c9564-17e6-41de-b446-37bc76f98257&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -68,21 +88,25 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Python.combat.executor&quot;: &quot;Run&quot;,
+    &quot;Python.common_ops.executor&quot;: &quot;Run&quot;,
     &quot;Python.enem_stat_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.enemies_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.input_name.executor&quot;: &quot;Run&quot;,
-    &quot;Python.input_role.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.input_role.executor&quot;: &quot;Run&quot;,
     &quot;Python.new_character.executor&quot;: &quot;Run&quot;,
     &quot;Python.player_data_extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.player_data_save.executor&quot;: &quot;Run&quot;,
     &quot;Python.pyrpg.executor&quot;: &quot;Run&quot;,
     &quot;Python.roles.executor&quot;: &quot;Run&quot;,
     &quot;Python.roles_extract.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_online.executor&quot;: &quot;Run&quot;,
     &quot;Python.stats_extract.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Confirmation&quot;
+    &quot;last_opened_file_path&quot;: &quot;D:/PYRPG&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -214,7 +238,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741032751149</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="E">
+      <option name="closed" value="true" />
+      <created>1741296415260</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1741296415260</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

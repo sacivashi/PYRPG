@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<DATA>
+
+    <!--roles & enemy stats-->
+    <roles_csv>D:\PYRPG\game_data\stats\roles_x_stats\classes.csv</roles_csv>
+    <enemies_csv>D:\PYRPG\game_data\stats\enemies_x_stats\enemies.csv</enemies_csv>
+
+    <!--players data-->
+    <players_csv>D:\PYRPG\players_data\players.csv</players_csv>
+
+
+
+
+
+
+
+</DATA>
