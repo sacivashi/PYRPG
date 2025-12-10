@@ -1,13 +1,17 @@
 import time
 
 from common_ops.common_ops import check_existing_player
-from game_data.data_actions.extracts.player_data_extract import NewPlayer
+from game_data.data_actions.extracts.player_data_extract import Player, NewPlayer
 from game_data.data_actions.saves.player_data_save import save_new_player
+
+player = None
 
 
 class InputName:
 	@staticmethod
 	def input_name():
+		global player
+
 		while True:
 			your_name = input(
 				"""Welcome to PyRPG.
@@ -38,3 +42,4 @@ class InputName:
 				else:
 					print("Understood, continuing the game without saving, save prompts will be brought up again")
 					return player.player_data()
+

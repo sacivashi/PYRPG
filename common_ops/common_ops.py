@@ -2,6 +2,8 @@ import xml.etree.ElementTree as ET
 import csv
 
 
+print(abs(-1))
+
 def get_data(node_name):
     root = ET.parse(r"D:\PYRPG\game_data\xml_db\data.xml").getroot()
     return root.find('.//' + node_name).text
