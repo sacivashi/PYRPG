@@ -18,17 +18,17 @@ _____________________________
 **`Enemies with -stat(s) get unique effects:`**
 
 - `-HP: The enemy takes (abs(-hp)++) damage at the end on it's turn, receiving damage from the player will heal it`
-- `-Attack: The enemy deals 0 damage, but will heal itself based on the -X amount when hit`
-- `-Defense: The enemy takes extra damage from attacks, but will return a fraction of the damage taken back`
-- `-Speed: The player will always strike -speed enemies first, the enemy's hits are unavoidable`
-- `-Luck: The enemy has a higher missing% on attacks, the enemy's successful hits *curse* a player's stat lowering them by (abs(-X))`
+- `-Attack: The enemy deals 0 damage, but will heal itself based on the ```min(1%, abs(-atk) / 100)%``` amount when hitting an attack`
+- `-Defense: The enemy takes ```+min(20, abs(-def))%``` damage from attacks, but will return ```(damage / 100 + abs(-def))``` of the damage taken back`
+- `-Speed: The player will *always* strike -speed enemies first, the enemy's attacks are unavoidable`
+- `-Luck: The enemy has a ```min(45, abs(-lck) * 1.5)``` on attacks, the enemy's successful hits *curse* a player's stat lowering them by (abs(-X))`
 
-`*Curse mechanics: Enemies with -Luck curse player stats on hit.
+```*Curse mechanics: Enemies with -Luck curse player stats on hit.
   Example: Enemy with -2 Luck reduces/increases player Strength by 2.
  - Positive stats (>0): Reduced by curse amount (minimum 0)
  - Negative stats (<0): Increased by curse amount (maximum 0) 
  - Zero stats (=0): Remain at 0
-`
+```
 
 #### Enemy adjustments:
 - ```Jester: 20,6,15,17,20 > -20,4,10,15,22```
