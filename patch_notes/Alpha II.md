@@ -17,11 +17,11 @@ _____________________________
 ### Introducing -stats:
 **`Enemies with -stat(s) get unique effects:`**
 
-- `-HP: The enemy takes` ```(abs(-hp)++)``` `damage at the end on it's turn, receiving damage from the player will heal it`
-- `-Attack: The enemy deals 0 damage, but will heal itself based on the` ```min(1%, abs(-atk) / 100)%``` `amount when hitting an attack`
-- `-Defense: The enemy takes` ```+min(20, abs(-def))%``` `damage from attacks, but will return` ```(damage / 100 + abs(-def))``` `of the damage taken back`
+- `-HP: The enemy takes (abs(-hp)++) damage at the end on it's turn, receiving damage from the player will heal it`
+- `-Attack: The enemy deals 0 damage, but will heal itself based on the min(1%, abs(-atk) / 100)% amount when hitting an attack`
+- ```-Defense: The enemy takes +min(20, abs(-def))% damage from attacks, but will return (damage / 100 + abs(-def)) of the damage taken back```
 - `-Speed: The player will *always* strike -speed enemies first, the enemy's attacks are unavoidable`
-- `-Luck: The enemy has a` ```min(45, abs(-lck) * 1.5)``` `on attacks, the enemy's successful hits *curse* a player's stat lowering them by (abs(-X))`
+- `-Luck: The enemy has a min(45, abs(-lck) * 1.5) on attacks, the enemy's successful hits *curse* a player's stat lowering them by (abs(-X))`
 
 ```*Curse mechanics: Enemies with -Luck curse player stats on hit.
   Example: Enemy with -2 Luck reduces/increases player Strength by 2.
@@ -31,7 +31,7 @@ _____________________________
 ```
 
 #### Enemy adjustments:
-- ```Jester: 20,6,15,17,20``` `>` ```-20,4,10,15,22```
+- ```Jester: 20,6,15,17,20 > -20,4,10,15,22```
 - ```Orc: 55,25,8,1,0 > 52,20,10,-5,0```
 - ```Spider: 25,5,2,10,6 > 15,3,0,6,8```
 - ```Witch: 6,14,3,4,8 > 5,15,1,2,-8```
