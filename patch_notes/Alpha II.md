@@ -39,13 +39,13 @@ _____________________________
 
 | Enemy | HP | Corruption | Attack | Defense | Speed | Luck |
 |-------|----|-----------|--------|---------|-------|------|
-| **Jester** | ~~20~~ -> 35 | ~~0~~ -> 20 | ~~6~~ -> 4 | ~~15~~ -> 10 | ~~17~~ -> 15 | ~~20~~ -> 22 |
-| **Orc** | ~~55~~ -> 52 | 0 | ~~25~~ -> 20 | ~~8~~ -> 10 | ~~1~~ -> -5 | 0 |
-| **Spider** | ~~25~~ -> 15 | 0 | ~~5~~ -> 3 | ~~2~~ -> 0 | ~~10~~ -> 6 | ~~6~~ -> 8 |
-| **Witch** | ~~6~~ -> 5 | 0 | ~~14~~ -> 15 |~~3~~ -> 1 |~~4~~ -> 2 |~~8~~ -> -8 |
-| **Giant** | ~~100~~ -> 120 | 0 | ~~22~~ -> 20 |45 |~~4~~ -> -20 |8|
-| **Bat** | ~~5~~ -> 10 | 0 | ~~5~~ -> -5 |~~2~~ -> 3 |15 | 5 |
-| **Zombie** | ~~0~~ -> 20 | ~~0~~ -> 8 | 3 |~~-8~~ -> -10 |~~-5~~ -> -2 |~~0~~ -> -2 |
+| **Jester** | ~~20~~ → 35 | ~~0~~ → 20 | ~~6~~ → 4 | ~~15~~ → 10 | ~~17~~ → 15 | ~~20~~ → 22 |
+| **Orc** | ~~55~~ → 52 | 0 | ~~25~~ → 20 | ~~8~~ → 10 | ~~1~~ → -5 | 0 |
+| **Spider** | ~~25~~ → 15 | 0 | ~~5~~ → 3 | ~~2~~ → 0 | ~~10~~ → 6 | ~~6~~ → 8 |
+| **Witch** | ~~6~~ → 5 | 0 | ~~14~~ → 15 |~~3~~ → 1 |~~4~~ → 2 |~~8~~ → -8 |
+| **Giant** | ~~100~~ → 120 | 0 | ~~22~~ → 20 |45 |~~4~~ → -20 |8|
+| **Bat** | ~~5~~ → 10 | 0 | ~~5~~ → -5 |~~2~~ → 3 |15 | 5 |
+| **Zombie** | ~~0~~ → 20 | ~~0~~ → 8 | 3 |~~-8~~ → -10 |~~-5~~ → -2 |~~0~~ → -2 |
 | ** New: Cursed Human** | 42 | 15 | 2 | -5 | 3 | -5 |
 
 
@@ -68,15 +68,15 @@ roles with -x stat(s) get unique effects:
 
 ## role adjustments:
 
-#### ranger base stats felt way too strong for a role that focuses on their agility, I chose to nerf ranger's strength to add up to their agility.
-with the new stats in line, ranger role is now the fastest initiative yet.
-> **Ranger: ~~`6,8,5,5,3,7`~~ -> `3,11,6,2,2,9`**
+### Ranger adjustments:
+Ranger's base stats were too strong for an agility-focused role. Reduced Strength to balance with Agility, making Ranger the fastest initiative role.
+> **Ranger**: ~~`6,8,5,5,3,7`~~ → `3,11,6,2,2,9`
 
-#### Necromancers just felt like mages, considering how their base stats were very comparable to one another.
-Although they should feel different play wise, I felt like they should have unique stats, so now necromancer magic can debuff enemies.
-> **Necromancer: ~~`3,4,9,4,10,5`~~ -> `1,2,6,4,-8,5`**
+### Necromancer adjustments:
+Necromancer felt too similar to Mage with comparable base stats. Added negative Magic stat to differentiate gameplay, allowing Necromancer magic to debuff enemies.
+> **Necromancer**: ~~`3,4,9,4,10,5`~~ → `1,2,6,4,-8,5`
 
-### New roles:
+## New roles:
 Since -x stats introduce new variety, I added 2 more roles to choose from:
 > **forsaken: `-2,3,2,10,-2,2`**
 
