@@ -13,7 +13,6 @@ from game_data.data_actions.extracts.enemies_extract import get_enemy_names
 
 class PYRPG:
     def __init__(self):
-        print(abs(-1))
         # Initialize player
         self.player_data = InputName.input_name()
         

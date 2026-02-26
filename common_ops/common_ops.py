@@ -1,12 +1,16 @@
 import xml.etree.ElementTree as ET
 import csv
+import os
 
+# Navigate from common_ops/common_ops.py up to the project root
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_xml_path = os.path.join(_project_root, "game_data", "xml_db", "data.xml")
 
-print(abs(-1))
 
 def get_data(node_name):
-    root = ET.parse(r"D:\PYRPG\game_data\xml_db\data.xml").getroot()
-    return root.find('.//' + node_name).text
+    root = ET.parse(_xml_path).getroot()
+    relative_path = root.find('.//' + node_name).text
+    return os.path.join(_project_root, relative_path)
 
 
 def read_csv(file_name):

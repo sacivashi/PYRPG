@@ -1,9 +1,9 @@
 import random
 from game_data.combat.damage_calculator import DamageCalculator
-from game_data.data_actions.extracts.player_data_extract import Player
+from game_data.combat.combat_player import Player
 from game_data.data_actions.extracts.enemies_extract import get_enemy_stats
 
-print(abs(-1))
+
 
 class Combat:
     def __init__(self, player_data, enemy_name):

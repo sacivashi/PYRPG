@@ -7,14 +7,14 @@ from game_data.data_actions.extracts.rolesextract import ByRole
 
 class Roles:
 	_stats = stats.get_role_stats_by_name()
-	warrior = _stats[ByRole.WARRIOR], Descriptions.warrior
-	mage = _stats[ByRole.MAGE], Descriptions.mage
-	thief = _stats[ByRole.THIEF], Descriptions.thief
-	druid = _stats[ByRole.DRUID], Descriptions.druid
-	ranger = _stats[ByRole.RANGER], Descriptions.ranger
-	necromancer = _stats[ByRole.NECROMANCER], Descriptions.necromancer
-	forsaken = _stats[ByRole.FORSAKEN], Descriptions.forsaken
-	monk = _stats[ByRole.MONK], Descriptions.monk
+	warrior = _stats[ByRole.WARRIOR], Descriptions.WARRIOR_DESC
+	mage = _stats[ByRole.MAGE], Descriptions.MAGE_DESC
+	thief = _stats[ByRole.THIEF], Descriptions.THIEF_DESC
+	druid = _stats[ByRole.DRUID], Descriptions.DRUID_DESC
+	ranger = _stats[ByRole.RANGER], Descriptions.RANGER_DESC
+	necromancer = _stats[ByRole.NECROMANCER], Descriptions.NECROMANCER_DESC
+	forsaken = _stats[ByRole.FORSAKEN], Descriptions.FORSAKEN_DESC
+	monk = _stats[ByRole.MONK], Descriptions.MONK_DESC
 	data = {
 		ByRole.WARRIOR: warrior,
 		ByRole.MAGE: mage,
