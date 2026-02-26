@@ -13,26 +13,25 @@
 # future features info:
 _____________________________
 ## enemy stats info:
-
 ### Introducing -stats:
-**`Enemies with -stat(s) get unique effects:`**
+**__Enemies with -stat(s) get unique effects:__**
 
-> Corruption: The enemy recives **`(corr ++)`** damage at the end on it's turn, damage from the player will heal it by ***`min(hp, damage_taken * (corr) * 1.2) / 100)`***
+> Corruption: The enemy recieves **`(corr ++)`** damage at the end on it's turn, damage from the player will heal it by ***`min(hp, damage_taken * (corr) * 1.2) / 100)`***
 
 > -Attack: The enemy deals 0 damage, but will heal itself based on the ***`min(10, abs(-atk) / 100)%`*** amount when hitting an attack
 
 > -Defense: The enemy takes ***`+min(20, abs(-def))%`*** damage from attacks, but will return ***`(damage / 100 + abs(-def))`*** of the damage taken back
 
-> -Speed: The player will *always* strike -speed enemies first, the enemy's attacks are unavoidable
+> -Speed: The player will **always** strike -speed enemies first, the enemy's attacks are unavoidable
 
-> -Luck: The enemy has a ***`min(45, abs(-lck) * 1.5)`*** on attacks, the enemy's successful hits *curse* a player's stat lowering them by ***`(abs(-lck))`***
+> -Luck: The enemy has a **`min(45, abs(-lck) * 1.5)%`** to hit, successful hits curse* the player's random stat lowering lowering it by **`(abs(-lck) // 100)%`**, 
 
-```*Curse mechanics: Enemies with -Luck curse player stats on hit.
+* ```Curse mechanics: Enemies with -Luck curse player stats on hit.
   Example: Enemy with -2 Luck reduces/increases player Strength by 2.
  - Positive stats (>0): Reduced by curse amount (minimum 0)
  - Negative stats (<0): Increased by curse amount (maximum 0) 
  - Zero stats (=0): Remain at 0
-```
+ ```
 
 
 #### Enemy adjustments:
@@ -46,7 +45,7 @@ _____________________________
 | **Giant** | ~~100~~ → 120 | 0 | ~~22~~ → 20 |45 |~~4~~ → -20 |8|
 | **Bat** | ~~5~~ → 10 | 0 | ~~5~~ → -5 |~~2~~ → 3 |15 | 5 |
 | **Zombie** | ~~0~~ → 20 | ~~0~~ → 8 | 3 |~~-8~~ → -10 |~~-5~~ → -2 |~~0~~ → -2 |
-| ** New: Cursed Human** | 42 | 15 | 2 | -5 | 3 | -5 |
+| **New: Cursed Human** | 42 | 15 | 2 | -5 | 3 | -5 |
 
 
 ## role stats info:
@@ -61,7 +60,7 @@ roles with -x stat(s) get unique effects:
 
 > -Defence: Debuff: Getting hit makes you take ***`(abs(-def))`*** damage bonus, Benefit: you deflect damage by ***`int((damage taken * 1.5 + (abs(-def))) / 2.5)`***
   
-> -Magic: Debuff: Using cursed magic drains ***`(abs(-mag))%`*** from your MAX HP (temporary, restores after combat) Benefit: Your spells have ***`min(65, int(sqrt(abs(-mag)) * 10))%`*** chance to debuff enemy stats *``enemies with 0 stat can't get lower, enemies that get -stat debuffed will be trated as + stat*``*
+> -Magic: Debuff: Using cursed magic drains ***`(abs(-mag))%`*** from your MAX HP (temporary, restores after combat) Benefit: Your spells have ***`min(65, int(sqrt(abs(-mag)) * 10))%`*** chance to debuff enemy stats *``same logic as enemies' -lck*``*
   
 - -Luck: Debuff: ***`-(min(35, abs(-lck)))%`*** accuracy, lower loot rolls, Benefit: Successful attacks are unavoidable
 
