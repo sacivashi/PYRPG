@@ -1,3 +1,6 @@
+from common_ops.player_data import PlayerData
+
+
 class NewPlayer:
     # NewPlayer class for creating new players, gathering input and calculating HP
     def __init__(self, name):
@@ -11,4 +14,4 @@ class NewPlayer:
         self.hp = abs((int(self.stats['Strength']) + int(self.stats['Defence'])) / 0.2)
 
     def player_data(self):
-        return (self.name, self.role, self.level, self.hp, self.stats)
+        return PlayerData(name=self.name, role=self.role, level=self.level, hp=self.hp, stats=self.stats)

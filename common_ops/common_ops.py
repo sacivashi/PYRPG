@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import csv
 import os
+from common_ops.player_data import PlayerData
 
 # Navigate from common_ops/common_ops.py up to the project root
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,18 +34,8 @@ def check_existing_player(player_name):
         if row and row[0].strip().lower() == player_name.strip().lower():
             role = row[1]
             level = int(row[2])
-
+            hp = float(row[3])
             stats = {stat_keys[i]: int(row[i + 4]) for i in range(len(stat_keys))}
+            return PlayerData(name=player_name, role=role, level=level, hp=hp, stats=stats)
 
-            return {
-                "exists": True,
-                "name": player_name,
-                "role": role,
-                "level": level,
-                "stats": stats
-            }
-
-    return {
-        "exists": False,
-        "name": player_name
-    }
+    return None
