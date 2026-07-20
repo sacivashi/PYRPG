@@ -24,7 +24,7 @@ class PYRPG:
         """Main game menu with options"""
         while True:
             print(f"\n=== PYRPG - Main Menu ===")
-            print(f"Welcome, {self.player_data[0] if isinstance(self.player_data, tuple) else self.player_data['name']}!")
+            print(f"Welcome, {self.player_data.name}!")
             print("[1] Enter Combat")
             print("[2] View Stats") 
             print("[3] Save Game")
@@ -66,28 +66,19 @@ class PYRPG:
     def view_stats(self):
         """Display player stats"""
         print(f"\n=== Player Stats ===")
-        if isinstance(self.player_data, tuple):
-            name, role, level, hp, stats = self.player_data
-            print(f"Name: {name}")
-            print(f"Role: {role.capitalize()}")
-            print(f"Level: {level}")
-            print(f"HP: {hp}")
-            print("Stats:")
-            for stat, value in stats.items():
-                print(f"  {stat}: {value}")
-        else:
-            print(f"Name: {self.player_data['name']}")
-            print(f"Role: {self.player_data['role'].capitalize()}")
-            print(f"Level: {self.player_data['level']}")
-            print("Stats:")
-            for stat, value in self.player_data['stats'].items():
-                print(f"  {stat}: {value}")
+        print(f"Name: {self.player_data.name}")
+        print(f"Role: {self.player_data.role.capitalize()}")
+        print(f"Level: {self.player_data.level}")
+        print(f"HP: {self.player_data.hp}")
+        print("Stats:")
+        for stat, value in self.player_data.stats.items():
+            print(f"  {stat}: {value}")
         
         input("\nPress Enter to continue...")
 
     def _do_save(self):
         """Shared save logic used by save_game and auto_save"""
-        player = Player.extract_player(self.player_data)
+        player = Player(self.player_data)
         save_new_player(player)
 
     def save_game(self):

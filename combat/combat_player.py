@@ -1,28 +1,26 @@
 import random
 
+from players.player_data import PlayerData
+
 
 class Player:
     # Player class for combat — handles live HP, damage, healing during a fight
-    def __init__(self, name, role, level, stats):
-        self.name = name
-        self.role = role
-        self.level = level
-        self.stats = stats
-        self.current_hp = self.calculate_hp()
-        self.max_hp = self.current_hp
+    def __init__(self, player_data):
+        self.name = player_data.name
+        self.role = player_data.role
+        self.level = player_data.level
+        self.stats = player_data.stats
+        # max_hp always derives from current stats; current_hp is capped to it so a
+        # player saved mid-fight (injured) can't have their max HP permanently reduced.
+        self.max_hp = self.calculate_hp(self.stats)
+        self.current_hp = min(player_data.hp, self.max_hp)
 
-    @classmethod
-    def extract_player(cls, player_data):
-        if isinstance(player_data, dict):  # Existing player from CSV
-            return cls(player_data["name"], player_data["role"], player_data["level"], player_data["stats"])
-        name, role, level, hp, stats = player_data  # New player tuple — hp recalculated from stats
-        return cls(name, role, level, stats)
-
-    def calculate_hp(self):
-        return abs((int(self.stats['Strength']) + int(self.stats['Defence'])) / 0.2)
+    @staticmethod
+    def calculate_hp(stats):
+        return abs((int(stats['Strength']) + int(stats['Defence'])) / 0.2)
 
     def player_data(self):
-        return (self.name, self.role, self.level, self.current_hp, self.stats)
+        return PlayerData(self.name, self.role, self.level, self.current_hp, self.stats)
 
     def get_live_stats(self):
         return {

@@ -20,12 +20,12 @@ class InputName:
 	To start you off, please input your name: """).strip()
 
 			player_info = check_existing_player(your_name)
-			if player_info["exists"]:
+			if player_info is not None:
 				existence = input("this player already exists, would you like to load your save file? (yes/no) ")
 				if existence in ("y", "yes"):
-					print(f"Welcome back, {player_info['name'].capitalize()}!")
-					print(f"Role: {player_info['role'].capitalize()}, Level: {player_info['level']}")
-					print("Stats:", player_info["stats"])
+					print(f"Welcome back, {player_info.name.capitalize()}!")
+					print(f"Role: {player_info.role.capitalize()}, Level: {player_info.level}")
+					print("Stats:", player_info.stats)
 					return player_info
 				# Skip role choosing
 				else:
