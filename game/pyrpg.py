@@ -1,15 +1,15 @@
 import sys
 import os
 
-# Add the project root to Python path so we can import game_data modules
+# Add the project root to Python path so we can import top-level modules
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from game_data.data_inputs.input_name.input_name import InputName
-from game_data.combat.combat import start_combat
-from game_data.data_actions.extracts.enemies_extract import get_enemy_names
-from game_data.data_actions.saves.player_data_save import save_new_player
-from game_data.data_actions.extracts.player_data_extract import NewPlayer
+from players.input_name import InputName
+from combat.combat import start_combat
+from enemies.enemies_data import get_enemy_names
+from players.save import save_new_player
+from combat.combat_player import Player
 
 
 class PYRPG:
@@ -87,20 +87,7 @@ class PYRPG:
 
     def _do_save(self):
         """Shared save logic used by save_game and auto_save"""
-        player = NewPlayer.__new__(NewPlayer)
-        if isinstance(self.player_data, tuple):
-            name, role, level, hp, stats = self.player_data
-        else:
-            name = self.player_data['name']
-            role = self.player_data['role']
-            level = self.player_data['level']
-            hp = self.player_data.get('HP', 0)
-            stats = self.player_data['stats']
-        player.name = name
-        player.role = role
-        player.level = level
-        player.hp = hp
-        player.stats = stats
+        player = Player.extract_player(self.player_data)
         save_new_player(player)
 
     def save_game(self):
