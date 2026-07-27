@@ -6,5 +6,5 @@ class PlayerData:
     name: str
     role: str
     level: int
-    hp: float
+    hp: int
     stats: dict

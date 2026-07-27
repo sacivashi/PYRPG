@@ -73,7 +73,7 @@ def check_existing_player(player_name):
         if row and row[0].strip().lower() == player_name.strip().lower():
             role = row[1]
             level = int(row[2])
-            hp = float(row[3])
+            hp = int(float(row[3]))
             stats = {stat_keys[i]: int(row[i + 4]) for i in range(len(stat_keys))}
             return PlayerData(name=player_name, role=role, level=level, hp=hp, stats=stats)
 

@@ -39,7 +39,7 @@ class Player:
 
     @staticmethod
     def calculate_hp(stats):
-        return abs((int(stats['Strength']) + int(stats['Defence'])) / 0.2)
+        return int(abs((int(stats['Strength']) + int(stats['Defence'])) / 0.2))
 
     def player_data(self):
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.stats)
