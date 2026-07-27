@@ -16,7 +16,7 @@ _____________________________
 ### Introducing -stats:
 **__Enemies with -stat(s) get unique effects:__**
 
-> Corruption: The enemy recieves **`(corr ++)`** damage at the end on it's turn, damage from the player will heal it by ***`min(hp, damage_taken * (corr) * 1.2) / 100)`***
+> Corruption: The enemy recieves **`(corr ++)`** damage at the end of it's turn, damage from the player will heal it by ***`min(hp, damage_taken * (corr) * 1.2) / 100)`***
 
 > -Attack: The enemy deals 0 damage, but will heal itself based on the ***`min(10, abs(-atk) / 100)%`*** amount when hitting an attack
 
@@ -26,12 +26,12 @@ _____________________________
 
 > -Luck: The enemy has a **`min(45, abs(-lck) * 1.5)%`** to hit, successful hits curse* the player's random stat lowering lowering it by **`(abs(-lck) // 100)%`**, 
 
-* ```Curse mechanics: Enemies with -Luck curse player stats on hit.
+
+  > Curse mechanics: Enemies with -Luck curse player stats on hit.
   Example: Enemy with -2 Luck reduces/increases player Strength by 2.
- - Positive stats (>0): Reduced by curse amount (minimum 0)
- - Negative stats (<0): Increased by curse amount (maximum 0) 
- - Zero stats (=0): Remain at 0
- ```
+  > - Positive stats (>0): Reduced by curse amount (minimum 0)
+ > - Negative stats (<0): Increased by curse amount (maximum 0) 
+ > - Zero stats (=0): Remain at 0 
 
 
 #### Enemy adjustments:
@@ -49,20 +49,21 @@ _____________________________
 
 
 ## role stats info:
-I have decided the player roles can have -x stats:
-roles with -x stat(s) get unique effects:
+I have decided the player can have -x stats:
+
+players with -x stat(s) get unique effects:
 
 > -Strength: Debuff: After attacking you take ***`(abs(-str))`*** damage, Benefit: hitting enemies heals you by ***`int(sqrt(missing HP + damage done) + abs(-str * 1.5))`***
 
-> -Agility: Debuff: Always act last (-speed enemies not included). Benefit: Incoming attacks are easier to read ***`+min(35, (abs(-agi)))%`*** dodge rate.
+> -Agility: Debuff: Always act last (-speed enemies depends on number). Benefit: Incoming attacks are easier to read ***`+min(35, (abs(-agi)))%`*** dodge rate.
 
 > -Intelligence: Debuff: ***`min(50, abs(-int) + 5)%`*** chance to attack a different enemy, Benefit: you hit harder ***`(2 * (abs(-int)) - ( highest stat / 10))`*** `
 
-> -Defence: Debuff: Getting hit makes you take ***`(abs(-def))`*** damage bonus, Benefit: you deflect damage by ***`int((damage taken * 1.5 + (abs(-def))) / 2.5)`***
+> -Defence: Debuff: Getting hit makes you take ***`(abs(-def))`*** bonus damage, Benefit: you deflect damage by ***`int((damage taken * 1.5 + (abs(-def))) / 2.5)`***
   
-> -Magic: Debuff: Using cursed magic drains ***`(abs(-mag))%`*** from your MAX HP (temporary, restores after combat) Benefit: Your spells have ***`min(65, int(sqrt(abs(-mag)) * 10))%`*** chance to debuff enemy stats *``same logic as enemies' -lck*``*
+> -Magic: Debuff: Magic attacks drain ***`(abs(-mag))%`*** from your MAX HP (temporary, restores after combat) Benefit: Your spells have ***`min(65, int(sqrt(abs(-mag)) * 10))%`*** chance to debuff enemy stats *``same logic as enemies' -lck*``*
   
-- -Luck: Debuff: ***`-(min(35, abs(-lck)))%`*** accuracy, lower loot rolls, Benefit: Successful attacks are unavoidable
+> -Luck: Debuff: ***`-(min(35, abs(-lck)))%`*** accuracy, lower loot rolls, Benefit: Successful attacks are unavoidable
 
 
 ## role adjustments:

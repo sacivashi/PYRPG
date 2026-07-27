@@ -7,9 +7,12 @@ def save_new_player(new_player_obj):
     players_csv_path = get_data("players_csv")
     csv_data = read_csv(players_csv_path)
 
-    # Unpack player data
-    name, role, level, hp, stats = new_player_obj.player_data()
-    name = name.title()  # Normalize name case
+    player_data = new_player_obj.player_data()
+    name = player_data.name.title()  # Normalize name case
+    role = player_data.role
+    level = player_data.level
+    hp = player_data.hp
+    stats = player_data.stats
 
     # Build headers if missing
     if not csv_data:
