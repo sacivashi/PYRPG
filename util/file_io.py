@@ -1,24 +1,48 @@
-import xml.etree.ElementTree as ET
 import csv
 import os
-from common_ops.player_data import PlayerData
+
+from players.player_data import PlayerData
 
 # Navigate from util/file_io.py up to the project root
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-_xml_path = os.path.join(_project_root, "data", "config.xml")
+_env_path = os.path.join(_project_root, ".env")
+
+
+def _load_env_file():
+    if not os.path.exists(_env_path):
+        return
+
+    with open(_env_path, encoding="utf-8") as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            os.environ.setdefault(key, value)
+
+
+_load_env_file()
 
 
 def get_data(node_name):
-    root = ET.parse(_xml_path).getroot()
-    node = root.find('.//' + node_name)
-    if node is None or node.text is None:
-        raise ValueError(f"No '{node_name}' entry found in {_xml_path}")
-    return os.path.join(_project_root, node.text)
+    env_key = node_name.upper()
+    value = os.environ.get(env_key)
+
+    if value is None:
+        raise ValueError(f"No '{env_key}' entry found in {_env_path}")
+
+    if os.path.isabs(value):
+        return value
+
+    return os.path.join(_project_root, value)
 
 
 def read_csv(file_name):
     data = []
-    with open(file_name, newline='') as file:
+    with open(file_name, newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
         for row in reader:
             data.insert(len(data), row)
