@@ -1,7 +1,7 @@
 import csv
 import os
-
 from players.player_data import PlayerData
+
 
 # Navigate from util/file_io.py up to the project root
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,12 +27,25 @@ def _load_env_file():
 _load_env_file()
 
 
+def _get_config_value(node_name):
+    candidates = [node_name, node_name.upper(), node_name.lower()]
+    for key in candidates:
+        if os.environ.get(key):
+            return os.environ.get(key)
+
+    defaults = {
+        "roles_csv": "data/roles.csv",
+        "enemies_csv": "data/enemies.csv",
+        "players_csv": "data/players.csv",
+    }
+    return defaults.get(node_name.lower())
+
+
 def get_data(node_name):
-    env_key = node_name.upper()
-    value = os.environ.get(env_key)
+    value = _get_config_value(node_name)
 
     if value is None:
-        raise ValueError(f"No '{env_key}' entry found in {_env_path}")
+        raise ValueError(f"No '{node_name}' entry found in {_env_path}")
 
     if os.path.isabs(value):
         return value
