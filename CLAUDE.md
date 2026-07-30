@@ -12,12 +12,7 @@ Must be run from the project root — imports are root-relative.
 
 ## Running Tests
 
-There is no test framework. Test files are standalone scripts run directly:
-
-```bash
-python -m game_data.combat.patch_notes_test    # tests all negative-stat formulas
-python -m game_data.combat.combat_example       # interactive combat walkthrough
-```
+There is currently no test suite. Testing is manual (`python main.py` and play through it).
 
 ## Architecture
 
@@ -26,37 +21,37 @@ python -m game_data.combat.combat_example       # interactive combat walkthrough
 ```
 main.py
   └── game/pyrpg.py (PYRPG class)
-        ├── game_data/data_inputs/input_name/input_name.py  (player creation / load)
-        ├── game_data/combat/combat.py (Combat class, start_combat())
-        └── game_data/data_actions/saves/player_data_save.py
+        ├── players/input_name.py (InputName.input_name() — player creation / load)
+        ├── combat/combat.py (Combat class, start_combat())
+        └── players/save.py (save_new_player())
 ```
 
 ### Path Registry Pattern
 
-All CSV file paths are registered in `game_data/xml_db/data.xml`. Code never hard-codes paths — it calls `common_ops.get_data("node_name")` which resolves the path from the XML. Adding a new data file requires adding its path to `data.xml` first.
+CSV file paths resolve through `util/file_io.py`'s `get_data(node_name)`. Code never hard-codes paths. Resolution order:
+1. An environment variable matching `node_name` (tried as-is, upper, and lower case)
+2. A hardcoded default in `file_io.py`'s `_get_config_value()` (`roles_csv`, `enemies_csv`, `players_csv` → `data/*.csv`)
+
+`get_data()` reads env vars via `os.environ`, which `_load_env_file()` populates from a `.env` file at the **project root** (`PYRPG/.env`), if one exists. Note: `data/.env` also exists in the repo but is *not* the file that gets loaded — it currently has no effect and the code runs on the hardcoded defaults instead, which happen to match its values.
 
 ```python
-# common_ops/common_ops.py
-def get_data(node_name):   # parses data.xml, returns absolute path
+# util/file_io.py
+def get_data(node_name):   # resolves path from env var or default, returns absolute path
 def read_csv(file_name):   # returns list of rows (list of lists)
-def check_existing_player(player_name):  # checks players_data/players.csv
+def check_existing_player(player_name):  # checks data/players.csv, returns PlayerData or None
 ```
 
-### Dual Player Data Format
+### Player Data
 
-Player data exists in two shapes throughout the code — both must be handled with `isinstance` checks:
-- **New player** (tuple): `(name, role, level, hp, stats_dict)` — returned by `NewPlayer.player_data()`
-- **Existing player** (dict): `{"name", "role", "level", "stats"}` — returned by `check_existing_player()`
-
-`PYRPG`, `Player` (combat), and `_do_save()` all contain explicit `isinstance(player_data, tuple)` branches for this reason.
+Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats`) everywhere in the active game flow — both `NewPlayer.player_data()` and `check_existing_player()` return one. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
 
 ### Combat System
 
-`game_data/combat/combat.py` — `Combat` class manages one encounter. `start_combat(player_data, enemy_name)` is the public entry point.
+`combat/combat.py` — `Combat` class manages one encounter. `start_combat(player_data, enemy_name)` is the public entry point.
 
-`game_data/combat/damage_calculator.py` — `DamageCalculator` contains all stat-based formulas as static methods. Every formula maps directly to the Alpha II patch notes spec in `patch_notes/Alpha II.md`.
+`combat/damage_calculator.py` — `DamageCalculator` contains all stat-based formulas as static methods. Every formula maps directly to the Alpha II patch notes spec in `patch_notes/Alpha II.md`.
 
-`game_data/combat/combat_player.py` — `Player` wraps player data for live HP tracking during combat. Stats and max HP are snapshotted at combat start and restored after (combat mutations don't persist).
+`combat/combat_player.py` — `Player` wraps player data for live HP tracking during combat. Stats and max HP are snapshotted at combat start and restored after (combat mutations don't persist).
 
 ### Negative Stat System
 
@@ -75,16 +70,12 @@ Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II
 
 ### Role and Enemy Stats
 
-- Roles: `game_data/stats/roles_x_stats/classes.csv` — columns: `Class, Strength, Agility, Intelligence, Defence, Magic, Luck`
-- Enemies: `game_data/stats/enemies_x_stats/enemies.csv` — columns: `Name, HP, Attack, Defense, Speed, Luck`
-- Save data: `players_data/players.csv` (gitignored)
+- Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defence, Magic, Luck`
+- Enemies: `data/enemies.csv` — columns: `Name, Corruption, HP, Attack, Defense, Speed, Luck`
+- Save data: `data/players.csv` (gitignored)
 
-Stats are read via `RolesExtract` and `get_enemy_stats()` which use `get_data()` + `read_csv()`.
+Stats are read via `RolesExtract` (`roles/roles_data.py`) and `get_enemy_stats()` (`enemies/enemies_data.py`), both built on `get_data()` + `read_csv()`.
 
 ### HP Formula
 
-Player HP = `abs((Strength + Defence) / 0.2)` — used in both `NewPlayer` and `Player.calculate_hp()`.
-
-### Known Broken Code
-
-`enums/roles_enums/roles.py` and `enums/combat_enums/combat_enums.py` have import errors and reference non-existent methods. These files are not used by the active game flow and can be ignored or deleted.
+Player HP = `abs((Strength + Defence) / 0.2)` — `Player.calculate_hp()` in `combat/combat_player.py`, used for both new and loaded players.
