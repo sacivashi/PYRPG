@@ -1,4 +1,5 @@
 from combat.combat_player import Player
+from players.player_data import PlayerData
 
 
 class NewPlayer(Player):
@@ -9,4 +10,5 @@ class NewPlayer(Player):
 
         role = InputRole.choose_role()
         stats = RolesExtract.get_role_stats_by_name()[role]
-        super().__init__(name.title(), role, 1, stats)
+        hp = Player.calculate_hp(stats)
+        super().__init__(PlayerData(name.title(), role, 1, hp, stats))

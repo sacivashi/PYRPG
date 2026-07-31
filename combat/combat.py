@@ -8,7 +8,7 @@ from enemies.enemies_data import get_enemy_stats
 
 class Combat:
     def __init__(self, player_data, enemy_name):
-        self.player = Player.extract_player(player_data)
+        self.player = Player(player_data)
         self.enemy_name = enemy_name
         self.enemy_stats = get_enemy_stats(enemy_name)
         self.enemy_hp = self.calculate_enemy_hp()

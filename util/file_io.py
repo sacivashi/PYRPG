@@ -2,7 +2,6 @@ import csv
 import os
 from players.player_data import PlayerData
 
-
 # Navigate from util/file_io.py up to the project root
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _env_path = os.path.join(_project_root, ".env")
