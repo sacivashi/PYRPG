@@ -13,9 +13,7 @@ class Combat:
         self.enemy_stats = get_enemy_stats(enemy_name)
         self.enemy_hp = self.calculate_enemy_hp()
         self.enemy_max_hp = self.enemy_hp
-        # Pre-compute passive enemy flags (e.g. -Attack heals when hit)
-        _, self.enemy_effects = DamageCalculator.calculate_enemy_damage(self.enemy_stats, enemy_name)
-        
+
         # Calculate initiative for turn order
         self.player_initiative, self.player_dodge_bonus = self.calculate_initiative(self.player.get_live_stats()['stats'])
         self.enemy_initiative, self.enemy_dodge_bonus = self.calculate_initiative(self.enemy_stats)
@@ -145,13 +143,6 @@ class Combat:
             self.enemy_hp = max(0, round(self.enemy_hp - final_damage))
             print(f"You deal {final_damage} damage to the {self.enemy_name}!")
 
-        # -Attack enemies heal when hit: min(10, abs(-atk))% of max HP
-        for effect_type, heal_percent in self.enemy_effects:
-            if effect_type == "enemy_heals_when_hit":
-                heal_amount = round(self.enemy_max_hp * heal_percent, 1)
-                self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + heal_amount))
-                print(f"The {self.enemy_name} heals {heal_amount} HP from your attack!")
-
         # Post-hit effects
         missing_hp = player_max_hp - player_current_hp
         self_damage = next((v for t, v in effects if t == "self_damage_after_hit"), 0)
@@ -221,10 +212,10 @@ class Combat:
 
         # Handle enemy special effects
         enemy_unavoidable = False
+        leech_amount = 0
         for effect_type, value in effects:
-            if effect_type == "enemy_heals_when_hit":
-                # This effect happens when enemy gets hit, not when it attacks
-                pass
+            if effect_type == "leech_on_hit":
+                leech_amount = value
             elif effect_type == "curse_player_stat":
                 # Enemy with negative luck curses player stats
                 self.apply_curse_to_player(value)
@@ -276,7 +267,13 @@ class Combat:
         if final_damage > 0:
             self.player.take_damage(final_damage)
             print(f"The {self.enemy_name} deals {final_damage} damage to you!")
-            
+
+            # -Attack: leeches HP from the player and heals itself by the same amount
+            if leech_amount > 0:
+                self.player.take_damage(leech_amount)
+                self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + leech_amount))
+                print(f"The {self.enemy_name} leeches {leech_amount} HP from you!")
+
             # Check if player is defeated
             if not self.player.is_alive():
                 print("You have been defeated!")
