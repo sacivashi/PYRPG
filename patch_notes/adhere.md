@@ -9,3 +9,4 @@ Panda: 0, 43, 25, 13, 20, 7
 
 potential roles:
 Name,Strength,Agility,Intelligence,Defence,Magic,Luck
+Thornback, 2, 0, 1, -12, 1, 1
