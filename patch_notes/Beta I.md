@@ -60,9 +60,10 @@ On tests, -strength users healing felt too strong for their self damage. Adjuste
 
 ### -Agility stats:
 
--agi initiation being last on every case felt a little weird, so now if you have -agi and face a lower-speed enemy (example, player == -5, enemy == -9), you start before them. I wrote about this last patch and it's finally implemented. Adjusted the benefit to match evasion changes and clamped it to a max value. Edited the wording. Added a new debuff to balance with the adjusments.
+-agi initiation being last on every case felt a little weird, so now if you have -agi and face a lower-speed enemy (example, player == -5, enemy == -9), you start before them.
+Reworked -agi as a whole adding another debuff:
 
-> -Agility: Debuff: **Always act last, `*new:* unless  enemy speed is lower than you` `*new*: max(20, 60 - abs(-agi))% odds to flee battles.` Benefit: Increased awareness; ~~`min(35, (abs(-agi)))%`~~ → `+min(15, max(5, abs(-agi)))%` evasion.** 
+> -Agility: Debuff: **Act last, `*new:* unless  enemy speed is lower than you` `*new*: max(20, 60 - abs(-agi))% odds to flee battles.` Benefit: your slowness confuses enemies ~~`min(35, (abs(-agi)))%`~~ → `-min(15, max(5, abs(-agi)))%` enemy accuracy** 
 
 
 ### -Intelligence stats:
@@ -137,7 +138,7 @@ Also: same as -magic, -luck enemies stat lowering curse applies to random player
 
  Moving on, the following enemies stats will change this time in ascending alphabetical order:
 
-| Enemy | Corruption | HP | Attack | Defense | Speed | Luck |
+| Name | Corruption | HP | Attack | Defense | Speed | Luck |
 |-------|----|-----------|--------|---------|-------|------|
 |Bear|0|22|~~9~~ → 11|~~6~~ → 9|~~5~~ → 6|~~5~~ → 2|
 |Cursed human|15|~~42~~ → 40|~~2~~ → 9|-5|~~3~~ → 10|-5|
@@ -146,7 +147,7 @@ Also: same as -magic, -luck enemies stat lowering curse applies to random player
 |Imp|0|~~3~~ → 14|~~2~~ → 6|0|40|~~16~~ → -7|
 
  ## new enemies:
-|Enemy|Corruption|HP| Attack | Defense | Speed | Luck |
+|Name|Corruption|HP| Attack | Defense | Speed | Luck |
 |-----|----|------|------|------|-------|------|
 |Cursed Priest|0|25|10|-8|8|-15|
 |Feral Cultist|0|20|-6|10|10|5|
