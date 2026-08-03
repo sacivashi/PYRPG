@@ -36,9 +36,9 @@ class Combat:
         print(f"{'You' if self.current_turn == 'player' else 'Enemy'} go first!")
     
     def calculate_initiative(self, stats):
-        """Calculate turn order based on Agility using patch notes specs"""
-        agility = stats.get('Agility', 0)
-        initiative, dodge_counter_bonus = DamageCalculator.apply_agility_modifier(0, agility)
+        """Calculate turn order based on Agility/Speed using patch notes specs"""
+        agility = stats.get('Agility', stats.get('Speed', 0))
+        initiative, dodge_counter_bonus = DamageCalculator.apply_agility_modifier(agility)
         
         # Store dodge/counter bonus for negative agility characters
         if agility < 0:
@@ -125,40 +125,43 @@ class Combat:
             print("Your attack completely misses!")
             return False
 
-        # Apply enemy's defensive calculations
+        # Apply enemy's defensive calculations (dodge roll skipped entirely if unavoidable)
         final_damage, counter_effects = DamageCalculator.calculate_damage_taken(
-            damage, self.enemy_stats, self.enemy_dodge_bonus, is_enemy=True
+            damage, self.enemy_stats, self.enemy_dodge_bonus, is_enemy=True, unavoidable=unavoidable
         )
 
-        # Check if enemy dodged (unless unavoidable)
         for effect_type, value in counter_effects:
-            if effect_type == "dodged" and not unavoidable:
+            if effect_type == "dodged":
                 print("The enemy dodges your attack!")
                 return False
 
         # Apply damage to enemy — corruption enemies heal from player hits
         if self.enemy_corruption > 0:
-            heal = min(self.enemy_hp, final_damage * self.enemy_corruption * 1.2) / 100
-            self.enemy_hp = min(self.enemy_max_hp, self.enemy_hp + heal)
+            # min(max_hp * 0.01, (damage_taken + corr) * 0.03)
+            heal = min(self.enemy_max_hp * 0.01, (final_damage + self.enemy_corruption) * 0.03)
+            self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + heal))
             print(f"Your attack heals the {self.enemy_name} for {round(heal, 1)} HP (Corruption)!")
         else:
-            self.enemy_hp = max(0, self.enemy_hp - final_damage)
+            self.enemy_hp = max(0, round(self.enemy_hp - final_damage))
             print(f"You deal {final_damage} damage to the {self.enemy_name}!")
 
-        # -Attack enemies heal when hit: min(10, abs(-atk) / 100)% of max HP
-        for effect_type, value in self.enemy_effects:
+        # -Attack enemies heal when hit: min(10, abs(-atk))% of max HP
+        for effect_type, heal_percent in self.enemy_effects:
             if effect_type == "enemy_heals_when_hit":
-                heal_percent = min(10, value / 100) / 100
                 heal_amount = round(self.enemy_max_hp * heal_percent, 1)
-                self.enemy_hp = min(self.enemy_max_hp, self.enemy_hp + heal_amount)
+                self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + heal_amount))
                 print(f"The {self.enemy_name} heals {heal_amount} HP from your attack!")
 
         # Post-hit effects
         missing_hp = player_max_hp - player_current_hp
+        self_damage = next((v for t, v in effects if t == "self_damage_after_hit"), 0)
         for effect_type, value in effects:
             if effect_type == "heal_on_hit":
-                # int(sqrt(missing_hp + damage_done) + abs(-str * 1.5))
-                heal_amount = int(math.sqrt(missing_hp + final_damage) + abs(value * 1.5))
+                # min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))
+                heal_amount = min(
+                    int(math.sqrt(missing_hp + final_damage) * 0.5),
+                    int(self_damage * 0.75)
+                )
                 self.player.heal(heal_amount)
                 print(f"You heal {heal_amount} HP from your attack!")
             elif effect_type == "enemy_stat_debuff":
@@ -198,11 +201,12 @@ class Combat:
 
         self.enemy_attack()
 
-        # Corruption: enemy takes (corr++) damage at end of its turn
+        # Corruption: enemy takes max(current_hp * 0.08, max(++corr, 5)) damage at end of its turn
         if self.enemy_corruption > 0 and self.enemy_hp > 0:
-            self.corruption_counter += self.enemy_corruption
-            self.enemy_hp = max(0, self.enemy_hp - self.corruption_counter)
-            print(f"Corruption burns the {self.enemy_name} for {self.corruption_counter} damage!")
+            self.corruption_counter += self.enemy_corruption  # ++corr: increment before use
+            corruption_damage = max(self.enemy_hp * 0.08, max(self.corruption_counter, 5))
+            self.enemy_hp = max(0, round(self.enemy_hp - corruption_damage))
+            print(f"Corruption burns the {self.enemy_name} for {round(corruption_damage, 1)} damage!")
             if self.enemy_hp <= 0:
                 print(f"The {self.enemy_name} is consumed by corruption!")
                 self.combat_ongoing = False
@@ -214,8 +218,9 @@ class Combat:
         """Handle enemy attacking player using patch notes system"""
         # Calculate enemy damage using patch notes system
         damage, effects = DamageCalculator.calculate_enemy_damage(self.enemy_stats, self.enemy_name)
-        
+
         # Handle enemy special effects
+        enemy_unavoidable = False
         for effect_type, value in effects:
             if effect_type == "enemy_heals_when_hit":
                 # This effect happens when enemy gets hit, not when it attacks
@@ -224,20 +229,24 @@ class Combat:
                 # Enemy with negative luck curses player stats
                 self.apply_curse_to_player(value)
                 print(f"The {self.enemy_name}'s attack curses you, reducing a random stat by {value}!")
-        
+            elif effect_type == "unavoidable":
+                # -Speed: enemy attacks cannot be dodged
+                enemy_unavoidable = True
+
         if damage <= 0:
             print(f"The {self.enemy_name} fails to attack effectively!")
             return
-        
+
         # Apply temporary defence bonus if player defended
         if hasattr(self, 'temp_defence_bonus'):
             damage = max(1, damage - self.temp_defence_bonus)
             print(f"Your defence reduces the damage by {self.temp_defence_bonus}!")
             delattr(self, 'temp_defence_bonus')
-        
+
         # Apply damage to player using their defensive stats
         final_damage, counter_effects = DamageCalculator.calculate_damage_taken(
-            damage, self.player.get_live_stats()['stats'], self.player_dodge_bonus
+            damage, self.player.get_live_stats()['stats'], self.player_dodge_bonus,
+            unavoidable=enemy_unavoidable, max_hp=self.player.max_hp
         )
         
         # Check if player dodged/countered
@@ -248,7 +257,7 @@ class Combat:
             elif effect_type == "counter_attack":
                 print("You counter-attack!")
                 counter_damage = random.randint(2, 6)
-                self.enemy_hp = max(0, self.enemy_hp - counter_damage)
+                self.enemy_hp = max(0, round(self.enemy_hp - counter_damage))
                 print(f"Your counter deals {counter_damage} damage!")
                 if self.enemy_hp <= 0:
                     print(f"The {self.enemy_name} is defeated by your counter!")
@@ -256,7 +265,7 @@ class Combat:
                     return
             elif effect_type == "reflect_damage":
                 # Player reflects damage back (from negative defence)
-                self.enemy_hp = max(0, self.enemy_hp - value)
+                self.enemy_hp = max(0, round(self.enemy_hp - value))
                 print(f"You reflect {value} damage back to the {self.enemy_name}!")
                 if self.enemy_hp <= 0:
                     print(f"The {self.enemy_name} is defeated by reflected damage!")
@@ -275,7 +284,7 @@ class Combat:
     
     def apply_debuff_to_enemy(self, debuff_amount):
         """Apply stat debuff to enemy from player's -Magic benefit"""
-        curseable_stats = ['Strength', 'Agility', 'Defence', 'Luck']
+        curseable_stats = ['Attack', 'Speed', 'Defense', 'Luck']
         available_stats = [s for s in curseable_stats if self.enemy_stats.get(s, 0) > 0]
         if available_stats:
             stat = random.choice(available_stats)

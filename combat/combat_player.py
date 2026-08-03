@@ -55,11 +55,11 @@ class Player:
         }
 
     def take_damage(self, damage):
-        self.current_hp = max(0, self.current_hp - damage)
+        self.current_hp = max(0, round(self.current_hp - damage))
         return self.current_hp <= 0  # Returns True if player is defeated
 
     def heal(self, amount):
-        self.current_hp = min(self.max_hp, self.current_hp + amount)
+        self.current_hp = min(self.max_hp, round(self.current_hp + amount))
 
     def is_alive(self):
         return self.current_hp > 0
