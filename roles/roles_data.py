@@ -32,14 +32,3 @@ class RolesExtract:
 
         # Find and return the highest stat value
         return max(stats_without_defence.values())
-
-
-class ByRole:
-    WARRIOR = "warrior"
-    MAGE = "mage"
-    THIEF = "thief"
-    DRUID = "druid"
-    RANGER = "ranger"
-    NECROMANCER = "necromancer"
-    FORSAKEN = "forsaken"
-    MONK = "monk"
