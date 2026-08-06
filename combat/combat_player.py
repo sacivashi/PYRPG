@@ -10,7 +10,7 @@ class Player:
             self.name = player_data.name
             self.role = player_data.role
             self.level = player_data.level
-            self.stats = player_data.stats
+            self.stats = dict(player_data.stats)  # copy — combat mutations must not leak into the caller's PlayerData
             self.max_hp = self.calculate_hp(self.stats)
             self.current_hp = min(player_data.hp, self.max_hp)
             return
@@ -21,7 +21,7 @@ class Player:
             self.name = player_data.name
             self.role = player_data.role
             self.level = player_data.level
-            self.stats = player_data.stats
+            self.stats = dict(player_data.stats)
             self.max_hp = self.calculate_hp(self.stats)
             self.current_hp = min(player_data.hp, self.max_hp)
             return
@@ -29,7 +29,7 @@ class Player:
         self.name = player_data
         self.role = role
         self.level = level if level is not None else 1
-        self.stats = stats or {}
+        self.stats = dict(stats) if stats else {}
         self.max_hp = self.calculate_hp(self.stats)
         self.current_hp = min(hp if hp is not None else self.max_hp, self.max_hp)
 
