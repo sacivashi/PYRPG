@@ -47,6 +47,16 @@ __________________
 
 > Evasion: I will cap evasion to 35% to all things stacking +evasion loot (whenever loot comes) shouldn't peak 35% either
 
+## Systematic updates:
+
+Going forward with the planned updates, player saves have been converted into json system, since working with json and mass data is better.
+Do note that each user gets their own json player(s) save file, it will be distributed once user asks the game to save their data.
+
+> **saving and bulk data system:** ~~`players.csv`~~ → `players.json`.
+
+
+
+
 # **Balance Adjustments:**
 ## -stats
 
