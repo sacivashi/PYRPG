@@ -1,5 +1,5 @@
 Potential more enemies:
-Nmae,corr,hp,att,def,spd,lck
+Name,corr,hp,att,def,spd,lck
 Anaconda: 0, 14, 12, 3, 32, 9
 Bee swarm: 0, 10, 5, 0, 22, 4
 Cathulu: 0, 255, 40, -100, -340, 0
