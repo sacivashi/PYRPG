@@ -8,3 +8,4 @@ class PlayerData:
     level: int
     hp: int
     stats: dict
+    max_hp: int = None

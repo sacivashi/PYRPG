@@ -87,6 +87,7 @@ def get_player(player_name):
                 level=player["level"],
                 hp=player["hp"],
                 stats=player["stats"],
+                max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
             )
 
     return None

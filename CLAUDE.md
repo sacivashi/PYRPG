@@ -45,7 +45,7 @@ def delete_player(player_name):  # removes a player entry, returns True/False
 
 ### Player Data
 
-Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
+Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats, max_hp`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
 
 ### Combat System
 
@@ -74,7 +74,7 @@ Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II
 
 - Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defence, Magic, Luck`
 - Enemies: `data/enemies.csv` — columns: `Name, Corruption, HP, Attack, Defense, Speed, Luck`
-- Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "stats"}, ...]}`
+- Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "max_hp", "stats"}, ...]}`. `max_hp` is optional for backward compatibility with older saves (`None` if absent); when present, it lets `Player` detect max_hp increases (formula tweaks, stat changes) on load and heal the character by the difference instead of leaving them stranded below the new cap.
 
 Roles/enemies stats are read via `RolesExtract` (`roles/roles_data.py`) and `get_enemy_stats()` (`enemies/enemies_data.py`), both built on `get_data()` + `read_csv()`. Player saves use `get_data()` + `read_json()`/`write_json()` instead (`util/file_io.py`).
 

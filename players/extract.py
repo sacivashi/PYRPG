@@ -11,4 +11,4 @@ class NewPlayer(Player):
         role = InputRole.choose_role()
         stats = RolesExtract.get_role_stats_by_name()[role]
         hp = Player.calculate_hp(stats)
-        super().__init__(PlayerData(name.title(), role, 1, hp, stats))
+        super().__init__(PlayerData(name.title(), role, 1, hp, stats, max_hp=hp))

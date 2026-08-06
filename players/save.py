@@ -13,6 +13,7 @@ def put_new_player(new_player_obj):
         "role": player_data.role,
         "level": player_data.level,
         "hp": int(player_data.hp),
+        "max_hp": int(player_data.max_hp),
         "stats": player_data.stats,
     }
 

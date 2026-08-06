@@ -12,7 +12,7 @@ class Player:
             self.level = player_data.level
             self.stats = dict(player_data.stats)  # copy — combat mutations must not leak into the caller's PlayerData
             self.max_hp = self.calculate_hp(self.stats)
-            self.current_hp = min(player_data.hp, self.max_hp)
+            self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
             return
 
         if isinstance(player_data, tuple):
@@ -23,7 +23,7 @@ class Player:
             self.level = player_data.level
             self.stats = dict(player_data.stats)
             self.max_hp = self.calculate_hp(self.stats)
-            self.current_hp = min(player_data.hp, self.max_hp)
+            self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
             return
 
         self.name = player_data
@@ -42,8 +42,15 @@ class Player:
         # max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)
         return int(max(22, abs(int(stats['Strength'])) * 0.95 + abs(int(stats['Defence'])) * 2.3))
 
+    @staticmethod
+    def _resolve_current_hp(saved_hp, saved_max_hp, new_max_hp):
+        """Preserve damage taken across max_hp changes (formula tweaks, stat changes) by
+        healing the difference when max_hp increases, instead of leaving HP stranded below the new cap."""
+        hp_gain = max(0, new_max_hp - (saved_max_hp if saved_max_hp is not None else new_max_hp))
+        return min(new_max_hp, saved_hp + hp_gain)
+
     def player_data(self):
-        return PlayerData(self.name, self.role, self.level, self.current_hp, self.stats)
+        return PlayerData(self.name, self.role, self.level, self.current_hp, self.stats, max_hp=self.max_hp)
 
     def get_live_stats(self):
         return {
