@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 from players.player_data import PlayerData
 
@@ -35,7 +36,7 @@ def _get_config_value(node_name):
     defaults = {
         "roles_csv": "data/roles.csv",
         "enemies_csv": "data/enemies.csv",
-        "players_csv": "data/players.csv",
+        "players_json": "data/players.json",
     }
     return defaults.get(node_name.lower())
 
@@ -61,19 +62,44 @@ def read_csv(file_name):
         return data
 
 
-def check_existing_player(player_name):
-    players_csv_path = get_data("players_csv")
-    csv_data = read_csv(players_csv_path)
+def read_json(file_name):
+    if not os.path.exists(file_name):
+        return {"players": []}
 
-    headers = csv_data[0]  # ['name', 'role', 'level', 'HP', 'strength', ...]
-    stat_keys = headers[4:]
+    with open(file_name, encoding="utf-8") as file:
+        return json.load(file)
 
-    for row in csv_data[1:]:
-        if row and row[0].strip().lower() == player_name.strip().lower():
-            role = row[1]
-            level = int(row[2])
-            hp = int(float(row[3]))
-            stats = {stat_keys[i]: int(row[i + 4]) for i in range(len(stat_keys))}
-            return PlayerData(name=player_name, role=role, level=level, hp=hp, stats=stats)
+
+def write_json(file_name, data):
+    with open(file_name, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4)
+
+
+def get_player(player_name):
+    players_json_path = get_data("players_json")
+    data = read_json(players_json_path)
+
+    for player in data["players"]:
+        if player["name"].strip().lower() == player_name.strip().lower():
+            return PlayerData(
+                name=player["name"],
+                role=player["role"],
+                level=player["level"],
+                hp=player["hp"],
+                stats=player["stats"],
+            )
 
     return None
+
+
+def delete_player(player_name):
+    players_json_path = get_data("players_json")
+    data = read_json(players_json_path)
+
+    for i, player in enumerate(data["players"]):
+        if player["name"].strip().lower() == player_name.strip().lower():
+            del data["players"][i]
+            write_json(players_json_path, data)
+            return True
+
+    return False

@@ -23,7 +23,7 @@ main.py
   └── game/pyrpg.py (PYRPG class)
         ├── players/input_name.py (InputName.input_name() — player creation / load)
         ├── combat/combat.py (Combat class, start_combat())
-        └── players/save.py (save_new_player())
+        └── players/save.py (put_new_player())
 ```
 
 ### Path Registry Pattern
@@ -37,13 +37,15 @@ CSV file paths resolve through `util/file_io.py`'s `get_data(node_name)`. Code n
 ```python
 # util/file_io.py
 def get_data(node_name):   # resolves path from env var or default, returns absolute path
-def read_csv(file_name):   # returns list of rows (list of lists)
-def check_existing_player(player_name):  # checks data/players.csv, returns PlayerData or None
+def read_csv(file_name):   # returns list of rows (list of lists) — roles/enemies data
+def read_json(file_name) / write_json(file_name, data)  # player save data
+def get_player(player_name):  # checks data/players.json, returns PlayerData or None
+def delete_player(player_name):  # removes a player entry, returns True/False
 ```
 
 ### Player Data
 
-Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats`) everywhere in the active game flow — both `NewPlayer.player_data()` and `check_existing_player()` return one. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
+Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
 
 ### Combat System
 
@@ -72,9 +74,9 @@ Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II
 
 - Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defence, Magic, Luck`
 - Enemies: `data/enemies.csv` — columns: `Name, Corruption, HP, Attack, Defense, Speed, Luck`
-- Save data: `data/players.csv` (gitignored)
+- Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "stats"}, ...]}`
 
-Stats are read via `RolesExtract` (`roles/roles_data.py`) and `get_enemy_stats()` (`enemies/enemies_data.py`), both built on `get_data()` + `read_csv()`.
+Roles/enemies stats are read via `RolesExtract` (`roles/roles_data.py`) and `get_enemy_stats()` (`enemies/enemies_data.py`), both built on `get_data()` + `read_csv()`. Player saves use `get_data()` + `read_json()`/`write_json()` instead (`util/file_io.py`).
 
 ### HP Formula
 

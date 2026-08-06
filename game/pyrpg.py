@@ -8,7 +8,7 @@ sys.path.insert(0, project_root)
 from players.input_name import InputName
 from combat.combat import start_combat
 from enemies.enemies_data import get_enemy_names
-from players.save import save_new_player
+from players.save import put_new_player
 from combat.combat_player import Player
 
 
@@ -79,7 +79,7 @@ class PYRPG:
     def _do_save(self):
         """Shared save logic used by save_game and auto_save"""
         player = Player(self.player_data)
-        save_new_player(player)
+        put_new_player(player)
 
     def save_game(self):
         """Save the current game state"""
