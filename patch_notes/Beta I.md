@@ -60,7 +60,7 @@ On tests, -strength users healing felt too strong for their self damage. Adjuste
 
 ### -Agility stats:
 
--agi initiation being last on every case felt a little weird, so now if you have -agi and face a lower-speed enemy (example, player == -5, enemy == -9), you start before them.
+-agi initiation being last on every case felt a little weird, so now if you have -agi and face a lower speed enemy (example, player == -5, enemy == -9), you start before them.
 Reworked -agi as a whole adding another debuff:
 
 > -Agility: Debuff: **Act last, `*new:* unless  enemy speed is lower than you` `*new*: max(20, 60 - abs(-agi))% odds to flee battles.` Benefit: your slowness confuses enemies ~~`min(35, (abs(-agi)))%`~~ → `-min(15, max(5, abs(-agi)))%` enemy accuracy** 
@@ -89,7 +89,12 @@ Also: -magic stat lowering curse now applies to a random enemy stat each success
 
 As you might of read -luck players will have a worse time to get rest chances, that will be an added feature added to -luck as well.
 
-> -Luck: Debuff: `-(min(35, abs(-lck)))%` accuracy, lower loot ~~rolls~~  → **odds** and `*new:* resting odds are max(20, 45 - abs(-lck) * 0.48)%` Benefit: Successful attacks are unavoidable
+> -Luck: Debuff: `-(min(35, abs(-lck)))%` accuracy, lower loot ~~rolls~~  → **odds** and `*new:* resting odds are max(20, 35 - abs(-lck) * 0.48)%` Benefit: Successful attacks are unavoidable
+
+### HP calculation:
+Health is a little problematic in its current state, depending only on Def + Str stats. While relying on those two is intended, I'd like roles with fewer points in these stats to also have a fighting chance, and be able to design more roles going forward without worrying about breaking HP balance.
+
+> hp calculation: ~~`abs((strength + defence) / 0.2)`~~ → `max(22, abs((Strength + Defence) * 3.5)))`
 
 ## enemy -stats & corruption
 
@@ -102,9 +107,9 @@ enemy hp and corruption split was a smart move, but enemies stacking infinetly w
 
 ### enemy -attack:
 
-Interestingly enemy -attack formula had capping, but it didn't look like enough.
+Interestingly enemy -attack formula had capping, but it didn't look like enough. Also made it so things are read more understandably:
 
-> -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will heal itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `min(10, abs(-atk))%` amount when hitting an attack
+> -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will leech player HP and heal itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `min(15, abs(-atk) * 0.46)%` of the attack value
 
 
 ### enemy -defence:

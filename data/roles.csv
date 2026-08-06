@@ -1,7 +1,7 @@
 Class,Strength,Agility,Intelligence,Defence,Magic,Luck
 warrior,9,5,3,8,2,4
 mage,3,4,10,3,9,5
-thief,5,9,5,4,2,9
+rogue,5,9,5,4,2,9
 druid,4,5,7,5,8,6
 ranger,3,11,6,2,2,9
 necromancer,1,2,6,4,-8,5
