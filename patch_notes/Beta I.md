@@ -50,7 +50,7 @@ __________________
 ## Systematic updates:
 
 Going forward with the planned updates, player saves have been converted into json system, since working with json and mass data is better.
-Do note that each user gets their own json player(s) save file, it will be distributed once user asks the game to save their data.
+Do note that each user gets their own json player(s) save file, it will be created once the user asks the game to save their data.
 
 > **saving and bulk data system:** ~~`players.csv`~~ → `players.json`.
 
@@ -104,7 +104,7 @@ As you might of read -luck players will have a worse time to get rest chances, t
 ### HP calculation:
 Health is a little problematic in its current state, depending only on Def + Str stats. While relying on those two is intended, I'd like roles with fewer points in these stats to also have a fighting chance, and be able to design more roles going forward without worrying about breaking HP balance.
 
-> hp calculation: ~~`abs((strength + defence) / 0.2)`~~ → `max(22, abs((Strength + Defence) * 3.5)))`
+> hp calculation: ~~`abs((strength + defence) / 0.2)`~~ → `max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)`
 
 ## enemy -stats & corruption
 

@@ -39,8 +39,8 @@ class Player:
 
     @staticmethod
     def calculate_hp(stats):
-        # max(22, abs((Strength + Defence) * 3.5))
-        return int(max(22, abs((int(stats['Strength']) + int(stats['Defence'])) * 3.5)))
+        # max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)
+        return int(max(22, abs(int(stats['Strength'])) * 0.95 + abs(int(stats['Defence'])) * 2.3))
 
     def player_data(self):
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.stats)

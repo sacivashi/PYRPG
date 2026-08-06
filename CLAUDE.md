@@ -80,4 +80,4 @@ Roles/enemies stats are read via `RolesExtract` (`roles/roles_data.py`) and `get
 
 ### HP Formula
 
-Player HP = `max(22, abs((Strength + Defence) * 3.5))` — `Player.calculate_hp()` in `combat/combat_player.py`, used for both new and loaded players.
+Player HP = `max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)` — `Player.calculate_hp()` in `combat/combat_player.py`, used for both new and loaded players.
