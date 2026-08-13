@@ -187,15 +187,13 @@ class DamageCalculator:
         unavoidable = speed < 0  # -Speed: attacks cannot be avoided
 
         if attack < 0:
-            # -Attack: max(0, 15 + (-att)) damage; on a landed hit, leeches
-            # min(15, abs(-atk) * 0.46)% of the attack value from the player and heals itself by the same amount
+            # -Attack: max(0, 15 + (-att)) damage; always siphons max(5, abs(-atk) * 0.46) flat HP
             base_damage = max(0, 15 + attack)
             if luck < 0:
                 miss_chance = min(45, abs(luck) * 1.5) / 100
                 if random.random() < miss_chance:
                     return 0, []
-            leech_rate = min(15, abs(attack) * 0.46) / 100
-            leech_amount = round(leech_rate * abs(attack), 1)
+            leech_amount = round(max(5, abs(attack) * 0.46), 1)
             effects = [("leech_on_hit", leech_amount)]
             if luck < 0:
                 effects.append(("curse_player_stat", min(4, abs(luck))))

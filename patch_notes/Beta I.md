@@ -119,7 +119,7 @@ enemy hp and corruption split was a smart move, but enemies stacking infinetly w
 
 Interestingly enemy -attack formula had capping, but it didn't look like enough. Also made it so things are read more understandably:
 
-> -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will leech player HP and heal itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `min(15, abs(-atk) * 0.46)%` of the attack value
+> -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will siphon the player's HP, healing itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `max(5, abs(-atk) * 0.46)` HP value
 
 
 ### enemy -defence:

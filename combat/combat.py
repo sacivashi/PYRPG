@@ -225,7 +225,15 @@ class Combat:
                 enemy_unavoidable = True
 
         if damage <= 0:
-            print(f"The {self.enemy_name} fails to attack effectively!")
+            if leech_amount > 0:
+                self.player.take_damage(leech_amount)
+                self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + leech_amount))
+                print(f"The {self.enemy_name} siphons {leech_amount} HP from you!")
+                if not self.player.is_alive():
+                    print("You have been defeated!")
+                    self.combat_ongoing = False
+            else:
+                print(f"The {self.enemy_name} fails to attack effectively!")
             return
 
         # Apply temporary defence bonus if player defended
