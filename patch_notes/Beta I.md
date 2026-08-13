@@ -164,10 +164,15 @@ Also: same as -magic, -luck enemies stat lowering curse applies to random player
  ## new enemies:
 |Name|Corruption|HP| Attack | Defense | Speed | Luck |
 |-----|----|------|------|------|-------|------|
+|Anaconda|0|14|12|3|32|9|
+|Bee swarm|0|10|5|0|22|4|
+|Cathulu|0|255|40|-100|-340|0|
 |Cursed Priest|0|25|10|-8|8|-15|
 |Feral Cultist|0|20|-6|10|10|5|
 |Harpy|0|14|9|2|25|12|
-|Plague Rat Swarm|12|10|5|2|15|-6|
+|Leech|0|30|-22|13|9|0|
+|Panda|0|43|25|13|20|7|
+|Plague Rat|12|10|5|2|15|-6|
 |Rustbound Automaton|0|40|12|-10|5|2|
 |Skeleton|0|18|8|14|3|4|
 |Troll|0|150|35|40|1|3|

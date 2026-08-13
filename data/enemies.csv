@@ -1,7 +1,10 @@
 Name,Corruption,HP,Attack,Defense,Speed,Luck
+Anaconda,0,14,12,3,32,9
 Bandit,0,20,10,13,10,7
 Bat,0,10,-5,3,15,0
 Bear,0,22,11,9,6,2
+Bee swarm,0,10,5,0,22,4
+Cathulu,0,255,40,-100,-340,0
 Cursed Human,15,40,9,-5,10,-5
 Cursed Priest,0,25,10,-8,8,-15
 Demon,0,30,14,15,12,-25
@@ -15,7 +18,9 @@ Gremlin,0,8,5,6,18,23
 Harpy,0,14,9,2,25,12
 Imp,0,14,6,0,40,-7
 Jester,20,35,4,10,15,22
+Leech,0,30,-22,13,9,0
 Orc,0,52,20,10,-5,0
+Panda,0,43,25,13,20,7
 Plague Rat,12,10,5,2,15,-6
 Rustbound Automaton,0,40,12,-10,5,2
 Skeleton,0,18,8,14,3,4
