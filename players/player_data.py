@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -9,3 +9,6 @@ class PlayerData:
     hp: int
     stats: dict
     max_hp: int = None
+    gold: int = 0
+    loot: list = field(default_factory=list)
+    equipped: str = None

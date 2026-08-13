@@ -45,7 +45,15 @@ def delete_player(player_name):  # removes a player entry, returns True/False
 
 ### Player Data
 
-Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats, max_hp`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
+Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats, max_hp, gold, loot, equipped`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `gold` (int, default 0) and `loot` (list of owned item names, default empty) are awarded outside of combat, in `pyrpg.py`, after a "victory" result — `Combat`/`Player` don't compute rewards themselves. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
+
+### Equipment
+
+`data/items.csv` — columns: `Name, Strength, Agility, Intelligence, Defence, Magic, Luck`, where each stat is a *delta* (can be negative) applied on top of the player's base stats, not an absolute value. Read via `get_item_stats()`/`get_item_names()` (`items/items_data.py`), same `get_data()` + `read_csv()` pattern as roles/enemies.
+
+`PlayerData.equipped` holds at most one item name (single-slot, no weapon/armor split yet) or `None`. `Player` keeps two stat dicts: `base_stats` (pure copy of `player_data.stats`, what actually gets saved — never mutated by gear) and `stats` (the equipped-adjusted copy used for HP and all combat calculations, built by `Player.apply_equipment(base_stats, equipped_name)`). This split matters because gear can push a stat across zero in either direction — the existing negative-stat combat formulas already handle that fine (same as the curse mechanic crossing a stat through 0), so equipment needed no new combat logic, just the stat-layering.
+
+Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not something that happens mid-combat. Since max HP derives from Strength+Defence, changing gear changes max HP — `PYRPG._apply_equipment_hp_change()` recomputes it and clamps current HP to the new cap (`min(hp, new_max_hp)`) with no free heal on the way up, deliberately different from `Player._resolve_current_hp()`'s heal-the-gap behavior (which is for formula/stat changes between sessions, not player-chosen gear swaps).
 
 ### Combat System
 
@@ -74,7 +82,7 @@ Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II
 
 - Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defence, Magic, Luck`
 - Enemies: `data/enemies.csv` — columns: `Name, Corruption, HP, Attack, Defense, Speed, Luck`
-- Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "max_hp", "stats"}, ...]}`. `max_hp` is optional for backward compatibility with older saves (`None` if absent); when present, it lets `Player` detect max_hp increases (formula tweaks, stat changes) on load and heal the character by the difference instead of leaving them stranded below the new cap.
+- Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "max_hp", "stats", "gold", "loot"}, ...]}`. `max_hp` is optional for backward compatibility with older saves (`None` if absent); when present, it lets `Player` detect max_hp increases (formula tweaks, stat changes) on load and heal the character by the difference instead of leaving them stranded below the new cap. `gold`/`loot` are similarly optional, defaulting to `0`/`[]` for saves that predate them.
 
 Roles/enemies stats are read via `RolesExtract` (`roles/roles_data.py`) and `get_enemy_stats()` (`enemies/enemies_data.py`), both built on `get_data()` + `read_csv()`. Player saves use `get_data()` + `read_json()`/`write_json()` instead (`util/file_io.py`).
 

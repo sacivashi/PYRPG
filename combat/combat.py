@@ -248,12 +248,32 @@ class Combat:
             unavoidable=enemy_unavoidable, max_hp=self.player.max_hp
         )
         
-        # Check if player dodged/countered
+        # Dodge means no damage occurs at all — it's mutually exclusive with counter/reflect
+        # (calculate_damage_taken returns early on dodge, so it's never combined with them)
         for effect_type, value in counter_effects:
             if effect_type == "dodged":
                 print("You dodge the enemy's attack!")
                 return
-            elif effect_type == "counter_attack":
+
+        # Apply the hit first — damage lands before any reaction to it
+        if final_damage > 0:
+            self.player.take_damage(final_damage)
+            print(f"The {self.enemy_name} deals {final_damage} damage to you!")
+
+            # -Attack: leeches HP from the player and heals itself by the same amount
+            if leech_amount > 0:
+                self.player.take_damage(leech_amount)
+                self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + leech_amount))
+                print(f"The {self.enemy_name} leeches {leech_amount} HP from you!")
+
+            # Check if player is defeated
+            if not self.player.is_alive():
+                print("You have been defeated!")
+                self.combat_ongoing = False
+
+        # Reactions to being hit — counter-attack and reflect — happen after
+        for effect_type, value in counter_effects:
+            if effect_type == "counter_attack":
                 print("You counter-attack!")
                 counter_damage = random.randint(2, 6)
                 self.enemy_hp = max(0, round(self.enemy_hp - counter_damage))
@@ -270,22 +290,6 @@ class Combat:
                     print(f"The {self.enemy_name} is defeated by reflected damage!")
                     self.combat_ongoing = False
                     return
-        
-        # Apply final damage to player
-        if final_damage > 0:
-            self.player.take_damage(final_damage)
-            print(f"The {self.enemy_name} deals {final_damage} damage to you!")
-
-            # -Attack: leeches HP from the player and heals itself by the same amount
-            if leech_amount > 0:
-                self.player.take_damage(leech_amount)
-                self.enemy_hp = min(self.enemy_max_hp, round(self.enemy_hp + leech_amount))
-                print(f"The {self.enemy_name} leeches {leech_amount} HP from you!")
-
-            # Check if player is defeated
-            if not self.player.is_alive():
-                print("You have been defeated!")
-                self.combat_ongoing = False
     
     def apply_debuff_to_enemy(self, debuff_amount):
         """Apply stat debuff to enemy from player's -Magic benefit"""

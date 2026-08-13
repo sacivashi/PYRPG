@@ -36,6 +36,7 @@ def _get_config_value(node_name):
     defaults = {
         "roles_csv": "data/roles.csv",
         "enemies_csv": "data/enemies.csv",
+        "items_csv": "data/items.csv",
         "players_json": "data/players.json",
     }
     return defaults.get(node_name.lower())
@@ -67,7 +68,12 @@ def read_json(file_name):
         return {"players": []}
 
     with open(file_name, encoding="utf-8") as file:
-        return json.load(file)
+        content = file.read().strip()
+
+    if not content:
+        return {"players": []}
+
+    return json.loads(content)
 
 
 def write_json(file_name, data):
@@ -88,6 +94,9 @@ def get_player(player_name):
                 hp=player["hp"],
                 stats=player["stats"],
                 max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
+                gold=player.get("gold", 0),
+                loot=player.get("loot", []),
+                equipped=player.get("equipped"),
             )
 
     return None

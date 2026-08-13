@@ -11,7 +11,9 @@ class InputRole:
             player_input = input(f"Choose a role {RolesExtract.get_role_names()}: ").strip().lower()
 
             if player_input in roles:
+                stats_display = ", ".join(f"{stat}: {value}" for stat, value in roles[player_input].items())
                 confirm = input(f"You chose {player_input.title()}. {Roles.choose_role(player_input).description}\n"
+                                f"Stats: {stats_display}\n"
                                 f"Are you sure you want this role? (yes/no): ").strip().lower()
                 if confirm in ("yes", "y"):
                     print(f"{player_input.title()} locked in!")

@@ -1,0 +1,17 @@
+Name,Strength,Agility,Intelligence,Defence,Magic,Luck,Rarity
+Arcane Ring,0,0,0,0,4,1,35
+Cursed Blade,6,0,0,-3,0,-2,14
+Iron Sword,3,1,0,0,0,4,30
+Lucky Clover,0,0,0,0,0,15,12
+Magic Mushroom,3,3,3,3,3,3,5
+Mind Shocker,10,5,-10,4,0,4,7
+Necronomicon,0,0,10,0,-10,2,10
+Bloody Crown,-6,2,9,-7,4,-1,6
+Power Ring,5,0,0,0,0,0,40
+Smart Ring,0,0,5,0,0,0,40
+Speed Ring,0,5,0,0,0,0,40
+Spiked Gloves,6,-2,0,0,0,2,22
+Steel Shield,0,-1,0,7,0,0,30
+Swift coat,0,7,2,3,0,1,18
+Turtle Shell,0,-7,2,12,0,0,14
+Voodoo Doll,2,0,3,0,-1,-10,10

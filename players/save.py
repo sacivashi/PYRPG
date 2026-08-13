@@ -15,6 +15,9 @@ def put_new_player(new_player_obj):
         "hp": int(player_data.hp),
         "max_hp": int(player_data.max_hp),
         "stats": player_data.stats,
+        "gold": player_data.gold,
+        "loot": player_data.loot,
+        "equipped": player_data.equipped,
     }
 
     # Find existing player entry (if exists), else append

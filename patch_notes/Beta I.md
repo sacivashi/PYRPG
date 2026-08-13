@@ -119,39 +119,39 @@ enemy hp and corruption split was a smart move, but enemies stacking infinetly w
 
 Interestingly enemy -attack formula had capping, but it didn't look like enough. Also made it so things are read more understandably:
 
-> -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will siphon the player's HP, healing itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `max(5, abs(-atk) * 0.46)` HP value
+> -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will siphon the player's HP, healing itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `max(5, abs(-atk) * 0.46)` HP value. **The siphon damage cannot be reflected.**
 
 
 ### enemy -defence:
 enemies -def was almost there, but needed tweaks as well.
 
-> -Defense: The enemy takes ~~`+min(20, abs(-def))%`~~ →  `+max(3, abs(-def) * 0.75)` **bonus** damage from attacks, but will returns ~~`(damage / 100 + abs(-def))`~~ → `min(5, (damage_taken + abs(-def)) * 0.2)%` of the **flat** damage taken back (flat == before bonus)
+> -Defense: The enemy takes ~~`+min(20, abs(-def))%`~~ →  `+max(3, abs(-def) * 0.75)` **bonus** damage from attacks, but will return ~~`(damage / 100 + abs(-def))`~~ → `min(5, (damage_taken + abs(-def)) * 0.2)%` of the **flat** damage taken back (flat == before bonus)
 
 ### enemy -speed
 
 Following players -agi changes, the rerouting is done here too
 
-> -Speed: ~~The player will always strike -speed enemies first, the enemy's attacks are unavoidable~~ → **Act last, unless the player's agi stat is lower than you.** `*new*: min(15, abs(-spd) * 0.3)% higher chance to succesfully flee from -spd enemies`, -spd enemy attacks cannot be avoided.
+> -Speed: ~~The player will always strike -speed enemies first, the enemy's attacks are unavoidable~~ → **Act last, unless the player's agi stat is lower than you.** `*new*: +min(15, abs(-spd) * 0.3)% higher chance to succesfully flee from -spd enemies`, -spd enemy attacks cannot be avoided.
 
 ### enemy -luck:
 
 Enemies -luck formula on stat lowering made no sense logically and could reach 0 at many cases.
 
-Also: same as -magic, -luck enemies stat lowering curse applies to random player stat each successful hit instead of one stat at a time/combat.
+Also: same as -magic, -luck enemies stat lowering curse applies to random player stat each successful hit instead of one stat per combat.
 
-> enemy -luck: The enemy has a `min(45, abs(-lck) * 1.5)%` to hit, **each successful hit curses a randomly sellected player stat** lowering it by **`min(4, abs(-lck))`**
+> enemy -luck: The enemy has a `min(45, abs(-lck) * 1.5)%` to hit, **each successful hit curses a randomly selected player stat** lowering it by **`min(4, abs(-lck))`**
 
 *side note that last patch's curse logic still stands:*
   > - Positive stats (>0): Reduced by curse amount (minimum 0)
  > - Negative stats (<0): Increased by curse amount (maximum 0) 
- > - Zero stats (=0): Remain at 0.
+ > - Zero stats (== 0): Remain at 0.
 
 
  ## enemies balance:
 
  Some enemy stats were garbled, so Alpha II adjustment were rewritten over enemies.csv (look at ALPHA II enemy balance changes).
 
- Moving on, the following enemies stats will change this time in ascending alphabetical order:
+ Moving on, the following enemies stats will change. This time in ascending alphabetical order:
 
 | Name | Corruption | HP | Attack | Defense | Speed | Luck |
 |-------|----|-----------|--------|---------|-------|------|
