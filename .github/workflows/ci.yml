@@ -15,5 +15,5 @@ jobs:
             python-version: "3.11"
       - run: |
          python -c "import game.pyrpg"
-         python -c "import game_data.combat.combat"
-         python -c "import game_data.combat.damage_calculator"   # step 3: run a shell command
+         python -c "import combat.combat"
+         python -c "import combat.damage_calculator"   # step 3: run a shell command
