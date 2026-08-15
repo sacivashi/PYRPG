@@ -9,8 +9,8 @@ jobs:
   test:                          # job id (your choice)
     runs-on: ubuntu-latest        # a fresh Linux VM GitHub spins up for you
     steps:
-      - uses: actions/checkout@v4      # step 1: pull your repo code onto that VM
-      - uses: actions/setup-python@v5  # step 2: install Python
+      - uses: actions/checkout@v5      # step 1: pull your repo code onto that VM
+      - uses: actions/setup-python@v6  # step 2: install Python
         with:
             python-version: "3.11"
       - run: |
