@@ -1,0 +1,19 @@
+name: CI                        # Shows up in the GitHub "Actions" tab
+
+on:                              # WHEN does this run?
+  push:
+    branches: [master, beta-1]   # on pushes to these branches
+  pull_request:                  # on any PR targeting the repo
+
+jobs:
+  test:                          # job id (your choice)
+    runs-on: ubuntu-latest        # a fresh Linux VM GitHub spins up for you
+    steps:
+      - uses: actions/checkout@v4      # step 1: pull your repo code onto that VM
+      - uses: actions/setup-python@v5  # step 2: install Python
+        with:
+            python-version: "3.11"
+      - run: |
+         python -c "import game.pyrpg"
+         python -c "import game_data.combat.combat"
+         python -c "import game_data.combat.damage_calculator"   # step 3: run a shell command
