@@ -1,17 +1,29 @@
-Name,Strength,Agility,Intelligence,Defence,Magic,Luck,Rarity
-Arcane Ring,0,0,0,0,4,1,35
-Cursed Blade,6,0,0,-3,0,-2,14
-Iron Sword,3,1,0,0,0,4,30
-Lucky Clover,0,0,0,0,0,15,12
-Magic Mushroom,3,3,3,3,3,3,5
-Mind Shocker,10,5,-10,4,0,4,7
-Necronomicon,0,0,10,0,-10,2,10
-Bloody Crown,-6,2,9,-7,4,-1,6
-Power Ring,5,0,0,0,0,0,40
-Smart Ring,0,0,5,0,0,0,40
-Speed Ring,0,5,0,0,0,0,40
-Spiked Gloves,6,-2,0,0,0,2,22
-Steel Shield,0,-1,0,7,0,0,30
-Swift coat,0,7,2,3,0,1,18
-Turtle Shell,0,-7,2,12,0,0,14
-Voodoo Doll,2,0,3,0,-1,-10,10
+Name,Consumable,Strength,Agility,Intelligence,Defence,Magic,Luck,Rarity,Buyable
+Arcane Ring,No,0,0,0,0,5,0,35,Yes
+Bloody Crown,No,-6,2,9,-7,4,-1,6,No
+Bomb,Yes,0,0,0,0,0,0,0,Yes
+Cursed Blade,No,6,0,0,-3,0,-2,14,No
+Dagger,No,1,4,0,0,0,1,20,Yes
+Dice machine,No,0,0,0,0,0,0,3,No
+Golden Ring,No,0,0,0,0,0,5,35,No
+Hard Ring,No,0,0,0,5,0,0,35,Yes
+Hexing amulet,No,0,0,0,0,3,-9,10,No
+Iron Sword,No,3,1,0,0,0,4,30,Yes
+Lucky Clover,No,0,0,0,0,0,15,12,Yes
+Magic Mushroom,No,3,3,3,3,3,3,5,No
+Mana rock,No,0,0,2,0,6,1,35,Yes
+Mind Shocker,No,10,5,-10,4,0,4,7,No
+Nullifier,No,8,-4,-3,-2,-1,0,9,No
+Necronomicon,No,0,0,10,0,-10,2,10,No
+Power Ring,No,5,0,0,0,0,0,35,Yes
+Scroll,No,0,0,7,0,3,0,25,Yes
+Smart Ring,No,0,0,5,0,0,0,35,Yes
+Speed Ring,No,0,5,0,0,0,0,35,Yes
+Spiked Gloves,No,6,-2,0,0,0,2,22,Yes
+Starter gear,No,1,1,1,1,1,1,60,Yes
+Steel Shield,No,0,-1,0,7,0,0,30,Yes
+Swift coat,No,0,7,2,3,0,1,18,Yes
+Timer,Yes,0,7,1,0,0,0,25,Yes
+Turtle Shell,No,0,-7,2,12,0,0,14,Yes
+Voodoo Doll,No,2,0,3,0,-1,-10,10,No
+Voucher,Yes,0,0,0,0,0,0,15,No

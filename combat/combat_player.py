@@ -1,7 +1,7 @@
 import random
 
 from players.player_data import PlayerData
-from items.items_data import get_item_stats
+from items.items_data import get_item_stats, STAT_COLUMNS
 
 
 class Player:
@@ -55,11 +55,18 @@ class Player:
         """Merge the equipped item's stat deltas onto a copy of base_stats. Base stats
         (and what gets saved) are never mutated — only this derived copy reflects gear."""
         effective_stats = dict(base_stats)
-        if equipped_name:
+        if not equipped_name:
+            return effective_stats
+
+        if equipped_name.lower() == "dice machine":
+            # Rerolls fresh every equip instead of a fixed stat block from the CSV
+            item_deltas = {stat: random.randint(-5, 5) for stat in STAT_COLUMNS}
+        else:
             item_deltas = get_item_stats(equipped_name)
-            if item_deltas:
-                for stat, delta in item_deltas.items():
-                    effective_stats[stat] = effective_stats.get(stat, 0) + delta
+
+        if item_deltas:
+            for stat, delta in item_deltas.items():
+                effective_stats[stat] = effective_stats.get(stat, 0) + delta
         return effective_stats
 
     @staticmethod
