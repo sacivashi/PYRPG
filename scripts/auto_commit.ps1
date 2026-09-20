@@ -6,7 +6,7 @@
 # There is no test suite in this repo (see CLAUDE.md) -- this import check is
 # the only automated gate, it does NOT verify gameplay correctness.
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $LogFile = Join-Path $PSScriptRoot "auto_commit.log"
