@@ -298,16 +298,21 @@ class PYRPG:
             self._allocate_level_up_points(self.LEVEL_UP_POINTS)
 
     def _allocate_level_up_points(self, points):
-        """Let the player spend ability points one at a time on any of the six stats"""
+        """Let the player spend ability points one at a time, raising or lowering any of the
+        six stats — lowering costs a point too, same as raising, since going negative opts
+        into that stat's debuff/benefit pair rather than being a free do-over."""
         remaining = points
         while remaining > 0:
             print(f"\nAbility points remaining: {remaining}")
             for i, stat in enumerate(STAT_COLUMNS, 1):
                 print(f"  [{i}] {stat}: {self.player_data.stats.get(stat, 0)}")
 
-            choice = input("Choose a stat to raise by 1: ").strip()
+            choice = input("Choose a stat number to raise by 1, or 'l' + number to lower it by 1 (e.g. l3): ").strip()
+
+            lowering = choice.lower().startswith("l")
+            index_str = choice[1:].strip() if lowering else choice
             try:
-                index = int(choice) - 1
+                index = int(index_str) - 1
                 if index < 0 or index >= len(STAT_COLUMNS):
                     raise ValueError
             except ValueError:
@@ -315,7 +320,8 @@ class PYRPG:
                 continue
 
             stat = STAT_COLUMNS[index]
-            self.player_data.stats[stat] = self.player_data.stats.get(stat, 0) + 1
+            delta = -1 if lowering else 1
+            self.player_data.stats[stat] = self.player_data.stats.get(stat, 0) + delta
             remaining -= 1
 
         old_max_hp = self.player_data.max_hp
