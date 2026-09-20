@@ -27,7 +27,8 @@ class InputName:
 						print(f"Welcome back, {player_info.name.capitalize()}!")
 						print(f"Role: {player_info.role.capitalize()}, Level: {player_info.level}")
 						print("Stats:", player_info.stats)
-						return player_info
+						saving_enabled = input("Would you like your progress to be auto-saved this session? (Y/n): ").strip().lower() != "n"
+						return player_info, saving_enabled
 					elif choice == "2":
 						confirm = input(f"Are you sure you want to delete '{player_info.name}'s save? This cannot be undone. (yes/no) ").strip().lower()
 						if confirm in ("y", "yes"):
@@ -48,9 +49,9 @@ class InputName:
 				if playersave in ('yes', 'y'):
 					put_new_player(player)
 					print("Thank you for saving")
-					return player.player_data()
+					return player.player_data(), True
 
 				else:
 					print("Understood, continuing the game without saving, save prompts will be brought up again")
-					return player.player_data()
+					return player.player_data(), False
 
