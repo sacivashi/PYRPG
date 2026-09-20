@@ -9,13 +9,13 @@ class DamageCalculator:
 
     @staticmethod
     def calculate_base_damage(attacker_stats, weapon_bonus=0, is_magic_attack=False):
-        """Physical base damage is the highest of Strength/Agility/Luck (Pokemon-style
-        Physical/Special split). Magic base damage is Intelligence + abs(Magic) instead —
-        a very negative Magic represents just as much magical power/investment as a very
-        positive one, matching how every other -stat in this game stays impactful."""
+        """Physical base damage is the highest of Strength/Agility/Luck. Magic base damage is
+        the highest of abs(Intelligence)/abs(Magic) — same 'pick your best relevant stat' shape
+        as Physical, but magnitude-aware so a very negative Magic/Intelligence stays impactful
+        instead of being crowded out by max() the way a raw negative number always would be."""
         stats = {k: int(v) for k, v in attacker_stats.items()}
         if is_magic_attack:
-            base_damage = stats.get('Intelligence', 0) + abs(stats.get('Magic', 0))
+            base_damage = max(abs(stats.get('Intelligence', 0)), abs(stats.get('Magic', 0)))
         else:
             physical_stats = {k: v for k, v in stats.items() if k in DamageCalculator.PHYSICAL_STATS}
             base_damage = max(physical_stats.values()) if physical_stats else 0
