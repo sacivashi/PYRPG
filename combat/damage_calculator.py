@@ -5,27 +5,37 @@ import math
 class DamageCalculator:
     """Damage calculation system — Beta I patch notes formulas"""
 
+    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck']
+
     @staticmethod
-    def calculate_base_damage(attacker_stats, weapon_bonus=0):
+    def calculate_base_damage(attacker_stats, weapon_bonus=0, is_magic_attack=False):
+        """Physical base damage is the highest of Strength/Agility/Luck (Pokemon-style
+        Physical/Special split). Magic base damage is Intelligence + abs(Magic) instead —
+        a very negative Magic represents just as much magical power/investment as a very
+        positive one, matching how every other -stat in this game stays impactful."""
         stats = {k: int(v) for k, v in attacker_stats.items()}
-        offensive_stats = {k: v for k, v in stats.items() if k not in ['Defence', 'HP']}
-        if not offensive_stats:
-            return 0
-        base_damage = max(offensive_stats.values())
+        if is_magic_attack:
+            base_damage = stats.get('Intelligence', 0) + abs(stats.get('Magic', 0))
+        else:
+            physical_stats = {k: v for k, v in stats.items() if k in DamageCalculator.PHYSICAL_STATS}
+            base_damage = max(physical_stats.values()) if physical_stats else 0
         base_damage += weapon_bonus
         return max(0, base_damage)
 
     @staticmethod
-    def apply_strength_modifier(base_damage, strength, max_hp):
+    def apply_strength_modifier(base_damage, strength, max_hp, is_magic_attack=False):
         if strength < 0:
-            # Debuff: take abs(-str) + int(max_hp * 0.01) after every attack
+            # Debuff: take abs(-str) + int(max_hp * 0.01) after every attack (any type)
             # Benefit: heal on hit — formula computed in combat.py using final_damage
             #   min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))
             self_damage = abs(strength) + int(max_hp * 0.01)
             return base_damage, [("self_damage_after_hit", self_damage), ("heal_on_hit", abs(strength))]
-        else:
+        elif not is_magic_attack:
+            # Positive Strength only boosts Physical attacks
             strength_multiplier = 1 + (strength * 0.15)
             return base_damage * strength_multiplier, []
+        else:
+            return base_damage, []
 
     @staticmethod
     def apply_agility_modifier(agility):
@@ -38,9 +48,9 @@ class DamageCalculator:
             return agility + random.randint(0, 5), 0
 
     @staticmethod
-    def apply_intelligence_modifier(damage, intelligence, attacker_stats):
+    def apply_intelligence_modifier(damage, intelligence, attacker_stats, is_magic_attack=False):
         if intelligence < 0:
-            # Debuff: min(35, abs(-int) + 5)% confusion chance
+            # Debuff: min(35, abs(-int) + 5)% confusion chance (any attack type)
             confusion_chance = min(35, abs(intelligence) + 5) / 100
             if random.random() < confusion_chance:
                 return 0, "confused"
@@ -49,9 +59,12 @@ class DamageCalculator:
                 highest_stat = max([v for k, v in attacker_stats.items() if k not in ['Intelligence', 'Defence', 'HP']])
                 bonus_damage = int(0.08 * damage) + int(min(abs(intelligence) * 0.75, max(highest_stat, 0) // 8))
                 return damage + max(0, bonus_damage), "focused"
-        else:
+        elif is_magic_attack:
+            # Positive Intelligence only boosts Magic attacks
             int_bonus = intelligence * 0.2
             return damage + int_bonus, "normal"
+        else:
+            return damage, "normal"
 
     @staticmethod
     def apply_defence_modifier(incoming_damage, defence, is_enemy=False, max_hp=0):
@@ -110,21 +123,21 @@ class DamageCalculator:
     @staticmethod
     def calculate_player_damage(player_stats, player_max_hp, player_current_hp, is_magic_attack=False, weapon_bonus=0):
         stats = {k: int(v) for k, v in player_stats.items()}
-        base_damage = DamageCalculator.calculate_base_damage(stats, weapon_bonus)
+        base_damage = DamageCalculator.calculate_base_damage(stats, weapon_bonus, is_magic_attack)
 
         special_effects = []
         final_damage = base_damage
         is_unavoidable = False
 
-        # Strength
+        # Strength (positive Strength only boosts Physical attacks)
         final_damage, strength_effects = DamageCalculator.apply_strength_modifier(
-            final_damage, stats.get('Strength', 0), player_max_hp
+            final_damage, stats.get('Strength', 0), player_max_hp, is_magic_attack
         )
         special_effects.extend(strength_effects)
 
-        # Intelligence
+        # Intelligence (positive Intelligence only boosts Magic attacks)
         final_damage, intel_effect = DamageCalculator.apply_intelligence_modifier(
-            final_damage, stats.get('Intelligence', 0), stats
+            final_damage, stats.get('Intelligence', 0), stats, is_magic_attack
         )
         if intel_effect == "confused":
             return 0, [("confusion", True)], False
