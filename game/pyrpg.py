@@ -18,12 +18,19 @@ class PYRPG:
     def __init__(self):
         # Initialize player
         self.player_data = InputName.input_name()
+        self.saving_enabled = self._ask_saving_preference()
         self.in_town = True
         self.distance = 0
         self.failed_attempts = 0
 
         # Main game loop
         self.main_menu()
+
+    def _ask_saving_preference(self):
+        """Ask once per session whether auto-saves should write to the save file at all"""
+        print(f"\nWelcome, {self.player_data.name}!")
+        choice = input("Would you like your progress to be auto-saved this session? (Y/n): ").strip().lower()
+        return choice != "n"
 
     def main_menu(self):
         """Main game loop — dispatches to the town or wild menu depending on location"""
@@ -378,7 +385,10 @@ class PYRPG:
         input("\nPress Enter to continue...")
 
     def auto_save_player_state(self):
-        """Auto-save before risky actions like combat"""
+        """Auto-save before risky actions like combat, unless the player opted out this session"""
+        if not self.saving_enabled:
+            print("Skipping auto-save (disabled for this session).")
+            return
         self._do_save()
         print("Auto-save complete.")
 
