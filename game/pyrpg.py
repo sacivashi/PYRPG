@@ -122,6 +122,25 @@ class PYRPG:
             self.player_data.failed_attempts += 1
             self.enter_combat()
 
+    TOWN_RESPAWN_CHANCE = 55
+
+    def _handle_defeat_respawn(self):
+        """On defeat, either wake up back in town (as before) or get knocked backward along
+        the current trip and stay in the wild — failed_attempts resets either way, since
+        it's a fresh start from wherever you land."""
+        self.player_data.failed_attempts = 0
+
+        if self.player_data.distance <= 0 or random.randint(1, 100) <= self.TOWN_RESPAWN_CHANCE:
+            self.player_data.in_town = True
+            self.player_data.distance = 0
+            print(f"Game Over! You wake up back in town with {self.player_data.hp}/{self.player_data.max_hp} HP.")
+        else:
+            knockback = random.randint(1, self.player_data.distance)
+            self.player_data.distance -= knockback
+            print(f"Game Over! You're dragged backward {knockback} steps and wake up still "
+                  f"out in the wild, at distance {self.player_data.distance}, with "
+                  f"{self.player_data.hp}/{self.player_data.max_hp} HP.")
+
     REST_COST = 10
 
     def full_rest(self):
@@ -266,10 +285,7 @@ class PYRPG:
             self._roll_for_loot()
         elif result == "defeat":
             self.player_data.hp = max(1, int(self.player_data.max_hp * 0.5))
-            self.player_data.in_town = True
-            self.player_data.distance = 0
-            self.player_data.failed_attempts = 0
-            print(f"Game Over! You wake up back in town with {self.player_data.hp}/{self.player_data.max_hp} HP.")
+            self._handle_defeat_respawn()
 
         input("\nPress Enter to continue...")
 
