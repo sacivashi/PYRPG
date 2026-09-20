@@ -24,6 +24,7 @@ class Combat:
         self.allow_saves = False  # Block saves during combat
         self.enemy_corruption = self.enemy_stats.get('Corruption', 0)
         self.corruption_counter = 0  # Tracks cumulative corruption damage (corr++)
+        self.timer_cooldown = 0  # Turns remaining before Timer can be used again
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
         self.original_player_max_hp = self.player.max_hp
@@ -58,20 +59,25 @@ class Combat:
         self.current_turn = "enemy" if self.current_turn == "player" else "player"
         print(f"\n--- {'Your' if self.current_turn == 'player' else 'Enemy'} turn ---")
     
+    COMBAT_USABLE_ITEMS = ["Bomb", "Timer"]
+
     def player_turn(self):
         """Handle player's turn with menu options"""
+        if self.timer_cooldown > 0:
+            self.timer_cooldown -= 1
+
         print(f"\n{self.player.name}'s Turn")
         print(f"Your HP: {self.player.current_hp}/{self.player.max_hp}")
         print(f"Enemy HP: {self.enemy_hp}/{self.enemy_max_hp}")
-        
+
         while True:
-            choice = input("\nChoose action: [1] Physical Attack [2] Magic Attack [3] Defend [4] Skip Turn: ").strip()
-            
+            choice = input("\nChoose action: [1] Physical Attack [2] Magic Attack [3] Defend [4] Skip Turn [5] Use Item: ").strip()
+
             # No save option during combat!
             if choice in ["save", "s"]:
                 print("❌ Cannot save during combat!")
                 continue
-            
+
             if choice == "1":
                 hit_landed = self.player_attack(is_magic_attack=False)
                 if not hit_landed:
@@ -92,8 +98,61 @@ class Combat:
                 print("You skip your turn.")
                 self.switch_turns()
                 break
+            elif choice == "5":
+                outcome = self.use_item()
+                if outcome is None:
+                    continue  # cancelled or invalid — doesn't consume the turn
+                if outcome == "end_turn":
+                    self.switch_turns()
+                break  # "repeat_turn" (Timer): stay on player's turn, no switch_turns()
             else:
-                print("Invalid choice. Please enter 1, 2, 3, or 4.")
+                print("Invalid choice. Please enter 1, 2, 3, 4, or 5.")
+
+    def use_item(self):
+        """Consume a combat-usable item from loot. Returns 'end_turn', 'repeat_turn', or None (cancelled/invalid)."""
+        available = [item for item in self.player.loot if item in self.COMBAT_USABLE_ITEMS]
+        if not available:
+            print("You have no usable items.")
+            return None
+
+        print("\nUsable items:")
+        for i, item in enumerate(available, 1):
+            suffix = f" (cooldown: {self.timer_cooldown} more turns)" if item == "Timer" and self.timer_cooldown > 0 else ""
+            print(f"  [{i}] {item}{suffix}")
+        print("  [0] Cancel")
+
+        choice = input("Choose an item to use: ").strip()
+        if choice == "0":
+            return None
+
+        try:
+            index = int(choice) - 1
+            if index < 0 or index >= len(available):
+                raise ValueError
+        except ValueError:
+            print("Invalid choice.")
+            return None
+
+        item = available[index]
+
+        if item == "Bomb":
+            self.enemy_hp = max(0, self.enemy_hp - 35)
+            self.player.loot.remove("Bomb")
+            print(f"You throw a Bomb at the {self.enemy_name}, dealing 35 damage!")
+            if self.enemy_hp <= 0:
+                print(f"The {self.enemy_name} is defeated!")
+                self.combat_ongoing = False
+            return "end_turn"
+
+        if item == "Timer":
+            if self.timer_cooldown > 0:
+                print(f"Timer is on cooldown for {self.timer_cooldown} more turns.")
+                return None
+            print(f"Time freezes around the {self.enemy_name}! You act again immediately.")
+            self.timer_cooldown = 5
+            return "repeat_turn"
+
+        return None
     
     def player_attack(self, is_magic_attack=False):
         """Handle player attacking enemy using patch notes damage system"""

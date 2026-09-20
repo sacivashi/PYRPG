@@ -140,17 +140,27 @@ class PYRPG:
     SHOP_STOCK_SIZE = 4
     REROLL_BASE_COST = 5
     REROLL_COST_STEP = 5
+    VOUCHER_DISCOUNT = 0.15
 
     def shop(self):
-        """Buy from a rotating stock of random items; reroll the stock for a growing gold cost"""
+        """Buy from a rotating stock of random items; reroll the stock for a growing gold cost.
+        Bought slots go sold-out until the next reroll. A Voucher in loot gives 15% off and is
+        consumed the moment any purchase completes."""
         stock = self._roll_shop_stock()
         reroll_cost = self.REROLL_BASE_COST
+        sold_out = set()
 
         while True:
+            has_voucher = "Voucher" in self.player_data.loot
             print(f"\n=== Shop ===")
             print(f"Gold: {self.player_data.gold}")
+            if has_voucher:
+                print("(Voucher active: 15% off your next purchase)")
             for i, (name, price) in enumerate(stock, 1):
-                print(f"  [{i}] {name} - {price} gold")
+                if (i - 1) in sold_out:
+                    print(f"  [{i}] {name} - SOLD OUT")
+                else:
+                    print(f"  [{i}] {name} - {self._apply_voucher_discount(price, has_voucher)} gold")
             print(f"  [5] Reroll stock - {reroll_cost} gold")
             print("  [0] Leave shop")
 
@@ -171,6 +181,7 @@ class PYRPG:
 
                 self.player_data.gold -= reroll_cost
                 stock = self._roll_shop_stock()
+                sold_out = set()
                 reroll_cost += self.REROLL_COST_STEP
                 print(f"You reroll the shop's stock. Next reroll will cost {reroll_cost} gold.")
                 input("\nPress Enter to continue...")
@@ -185,16 +196,29 @@ class PYRPG:
                 input("\nPress Enter to continue...")
                 continue
 
+            if index in sold_out:
+                print("That item is sold out this visit.")
+                input("\nPress Enter to continue...")
+                continue
+
             item_name, price = stock[index]
-            if self.player_data.gold < price:
+            final_price = self._apply_voucher_discount(price, has_voucher)
+            if self.player_data.gold < final_price:
                 print("You don't have enough gold.")
                 input("\nPress Enter to continue...")
                 continue
 
-            self.player_data.gold -= price
+            self.player_data.gold -= final_price
             self.player_data.loot.append(item_name)
-            print(f"Bought {item_name} for {price} gold.")
+            sold_out.add(index)
+            print(f"Bought {item_name} for {final_price} gold.")
+            if has_voucher:
+                self.player_data.loot.remove("Voucher")
+                print("Your Voucher is used up.")
             input("\nPress Enter to continue...")
+
+    def _apply_voucher_discount(self, price, has_voucher):
+        return round(price * (1 - self.VOUCHER_DISCOUNT)) if has_voucher else price
 
     def _roll_shop_stock(self):
         """Pick a random subset of buyable items to stock the shop with"""
@@ -264,10 +288,38 @@ class PYRPG:
             self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + heal_amount)
             print(f"You rest peacefully and recover {heal_amount} HP.")
             print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
+            self._trigger_dice_machine_passive()
             input("\nPress Enter to continue...")
         else:
             print("Your rest is interrupted!")
             self.enter_combat()
+
+    DICE_MACHINE_PROC_CHANCE = 22
+
+    def _trigger_dice_machine_passive(self):
+        """While Dice machine is equipped, a successful rest gives each stat an independent
+        22% chance to permanently gain a random 1-5 bonus — a gamble on top of its usual
+        equip-time reroll."""
+        if not self.player_data.equipped or self.player_data.equipped.lower() != "dice machine":
+            return
+
+        print("\nThe Dice machine whirs to life...")
+        procced = False
+        for stat in STAT_COLUMNS:
+            if random.randint(1, 100) <= self.DICE_MACHINE_PROC_CHANCE:
+                bonus = random.randint(1, 5)
+                self.player_data.stats[stat] = self.player_data.stats.get(stat, 0) + bonus
+                print(f"  {stat} +{bonus}!")
+                procced = True
+
+        if not procced:
+            print("  ...nothing happens this time.")
+            return
+
+        old_max_hp = self.player_data.max_hp
+        new_max_hp = Player.calculate_hp(self.player_data.stats)
+        self.player_data.hp += max(0, new_max_hp - old_max_hp)
+        self.player_data.max_hp = new_max_hp
 
     def calculate_gold_reward(self):
         """Gold scales with Luck: low = max(5, luck * 0.42), high = max(low + 5, luck * 1.8)"""
