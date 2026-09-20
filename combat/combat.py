@@ -340,14 +340,14 @@ class Combat:
         if not self.player.is_alive():
             print("\n=== DEFEAT ===")
             print("Game Over!")
-            return "defeat"
+            return "defeat", self.player.current_hp
         elif self.enemy_hp <= 0:
             print("\n=== VICTORY ===")
             print(f"You defeated the {self.enemy_name}!")
-            return "victory"
+            return "victory", self.player.current_hp
         else:
             print("\n=== COMBAT ENDED ===")
-            return "ended"
+            return "ended", self.player.current_hp
 
 
 # Helper function to start combat

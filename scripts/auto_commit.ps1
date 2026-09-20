@@ -3,7 +3,7 @@
 #
 # Safety gate: only commits/pushes if `python -c "import game.pyrpg"` still
 # succeeds, so an obviously broken working tree never reaches GitHub unattended.
-# There is no test suite in this repo (see CLAUDE.md) — this import check is
+# There is no test suite in this repo (see CLAUDE.md) -- this import check is
 # the only automated gate, it does NOT verify gameplay correctness.
 
 $ErrorActionPreference = "Stop"
@@ -33,7 +33,7 @@ $python = if (Test-Path $venvPython) { $venvPython } else { "python" }
 # Safety gate: skip commit/push entirely if the game doesn't even import
 & $python -c "import game.pyrpg" 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
-    Write-Log "Import check FAILED — skipping commit/push. Working tree left as-is."
+    Write-Log "Import check FAILED -- skipping commit/push. Working tree left as-is."
     exit 1
 }
 

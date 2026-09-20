@@ -45,6 +45,24 @@ def is_item_buyable(name):
     return False
 
 
+def is_item_droppable(name):
+    """Whether the item can appear as a random loot drop. Defaults to False if no Droppable column exists yet."""
+    reader = read_csv(get_data("items_csv"))
+    headers = reader[0]
+    if "Droppable" not in headers:
+        return False
+    for row in reader[1:]:
+        if row[0].lower() == name.lower():
+            row_by_header = dict(zip(headers, row))
+            return row_by_header["Droppable"].strip().lower() == "yes"
+    return False
+
+
+def get_droppable_items():
+    """(name, rarity) pairs for every item eligible to drop as loot — rarity used as drop weight."""
+    return [(name, get_item_rarity(name)) for name in get_item_names() if is_item_droppable(name)]
+
+
 def is_item_consumable(name):
     """Whether the item is used-and-removed rather than equipped. Defaults to False if no Consumable column exists yet."""
     reader = read_csv(get_data("items_csv"))
@@ -58,10 +76,16 @@ def is_item_consumable(name):
     return False
 
 
+def _max_rarity():
+    """Highest Rarity weight across all items — the 'most common' reference point for pricing."""
+    return max((get_item_rarity(name) for name in get_item_names()), default=0)
+
+
 def get_item_price(name):
-    """Gold cost, derived from Rarity so there's one source of truth: price = round(500 / rarity)."""
+    """Gold cost, derived from Rarity so there's one source of truth: rarer (lower weight) items
+    cost more, floored at 15 so even the most common items aren't free: max(15, (max_rarity - rarity) * 0.79)."""
     rarity = get_item_rarity(name)
-    return round(500 / rarity) if rarity > 0 else 500
+    return max(15, round((_max_rarity() - rarity) * 0.79))
 
 
 def get_buyable_items():

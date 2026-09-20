@@ -17,3 +17,5 @@ jobs:
          python -c "import game.pyrpg"
          python -c "import combat.combat"
          python -c "import combat.damage_calculator"   # step 3: run a shell command
+      - run: pip install -r requirements-dev.txt        # step 4: install pytest on the runner
+      - run: python -m pytest -v                        # step 5: run the test suite
