@@ -18,6 +18,7 @@ class Player:
             self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
             self.gold = player_data.gold
             self.loot = list(player_data.loot)
+            self.exp = player_data.exp
             return
 
         if isinstance(player_data, tuple):
@@ -33,6 +34,7 @@ class Player:
             self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
             self.gold = player_data.gold
             self.loot = list(player_data.loot)
+            self.exp = player_data.exp
             return
 
         self.name = player_data
@@ -45,6 +47,7 @@ class Player:
         self.current_hp = min(hp if hp is not None else self.max_hp, self.max_hp)
         self.gold = 0
         self.loot = []
+        self.exp = 0
 
     @staticmethod
     def extract_player(player_data):
@@ -83,7 +86,8 @@ class Player:
 
     def player_data(self):
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.base_stats,
-                           max_hp=self.max_hp, gold=self.gold, loot=self.loot, equipped=self.equipped)
+                           max_hp=self.max_hp, gold=self.gold, loot=self.loot, equipped=self.equipped,
+                           exp=self.exp)
 
     def get_live_stats(self):
         return {

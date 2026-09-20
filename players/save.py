@@ -18,6 +18,7 @@ def put_new_player(new_player_obj):
         "gold": player_data.gold,
         "loot": player_data.loot,
         "equipped": player_data.equipped,
+        "exp": player_data.exp,
     }
 
     # Find existing player entry (if exists), else append

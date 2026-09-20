@@ -12,3 +12,4 @@ class PlayerData:
     gold: int = 0
     loot: list = field(default_factory=list)
     equipped: str = None
+    exp: float = 0

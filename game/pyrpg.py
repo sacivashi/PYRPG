@@ -8,10 +8,10 @@ sys.path.insert(0, project_root)
 
 from players.input_name import InputName
 from combat.combat import start_combat
-from enemies.enemies_data import get_enemy_names
+from enemies.enemies_data import get_enemy_names, get_enemy_stats
 from players.save import put_new_player
 from combat.combat_player import Player
-from items.items_data import get_item_stats, get_buyable_items
+from items.items_data import get_item_stats, get_buyable_items, STAT_COLUMNS
 
 
 class PYRPG:
@@ -236,6 +236,11 @@ class PYRPG:
             gold_reward = self.calculate_gold_reward()
             self.player_data.gold += gold_reward
             print(f"You gained {gold_reward} gold!")
+
+            exp_reward = self.calculate_exp_reward(enemy_name)
+            self.player_data.exp += exp_reward
+            print(f"You gained {exp_reward:.1f}% EXP!")
+            self._process_level_ups()
         elif result == "defeat":
             self.player_data.hp = max(1, int(self.player_data.max_hp * 0.5))
             print(f"Game Over! You wake up with {self.player_data.hp}/{self.player_data.max_hp} HP.")
@@ -269,13 +274,63 @@ class PYRPG:
         high = max(low + 5, luck * 1.8)
         return random.randint(int(low), int(high))
 
+    LEVEL_UP_POINTS = 5
+
+    def calculate_exp_reward(self, enemy_name):
+        """EXP (as % toward next level) scales with enemy difficulty (sum of abs stats),
+        +1% per Intelligence point, and decays 5% per player level (floored at 20% of base rate)."""
+        enemy_stats = get_enemy_stats(enemy_name)
+        difficulty = sum(abs(int(v)) for k, v in enemy_stats.items() if k != 'Name')
+
+        intelligence = self.player_data.stats.get('Intelligence', 0)
+        int_bonus = 1 + max(0, intelligence) * 0.01
+
+        level_penalty = max(0.2, 1 - (self.player_data.level - 1) * 0.05)
+
+        return (difficulty / 10) * int_bonus * level_penalty
+
+    def _process_level_ups(self):
+        """Roll over 100%+ EXP into level(s), granting ability points to allocate each time"""
+        while self.player_data.exp >= 100:
+            self.player_data.exp -= 100
+            self.player_data.level += 1
+            print(f"\n*** LEVEL UP! You are now level {self.player_data.level}! ***")
+            self._allocate_level_up_points(self.LEVEL_UP_POINTS)
+
+    def _allocate_level_up_points(self, points):
+        """Let the player spend ability points one at a time on any of the six stats"""
+        remaining = points
+        while remaining > 0:
+            print(f"\nAbility points remaining: {remaining}")
+            for i, stat in enumerate(STAT_COLUMNS, 1):
+                print(f"  [{i}] {stat}: {self.player_data.stats.get(stat, 0)}")
+
+            choice = input("Choose a stat to raise by 1: ").strip()
+            try:
+                index = int(choice) - 1
+                if index < 0 or index >= len(STAT_COLUMNS):
+                    raise ValueError
+            except ValueError:
+                print("Invalid choice.")
+                continue
+
+            stat = STAT_COLUMNS[index]
+            self.player_data.stats[stat] = self.player_data.stats.get(stat, 0) + 1
+            remaining -= 1
+
+        old_max_hp = self.player_data.max_hp
+        new_max_hp = Player.calculate_hp(self.player_data.stats)
+        self.player_data.hp += max(0, new_max_hp - old_max_hp)
+        self.player_data.max_hp = new_max_hp
+        print(f"New stats applied. HP: {self.player_data.hp}/{self.player_data.max_hp}")
+
     def view_stats(self):
         """Display player stats"""
         effective_stats = Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
         print(f"\n=== Player Stats ===")
         print(f"Name: {self.player_data.name}")
         print(f"Role: {self.player_data.role.capitalize()}")
-        print(f"Level: {self.player_data.level}")
+        print(f"Level: {self.player_data.level} ({self.player_data.exp:.1f}% to next level)")
         print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
         print(f"Gold: {self.player_data.gold}")
         print(f"Loot: {self.player_data.loot if self.player_data.loot else 'None'}")

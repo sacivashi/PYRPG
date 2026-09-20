@@ -97,6 +97,7 @@ def get_player(player_name):
                 gold=player.get("gold", 0),
                 loot=player.get("loot", []),
                 equipped=player.get("equipped"),
+                exp=player.get("exp", 0),
             )
 
     return None
