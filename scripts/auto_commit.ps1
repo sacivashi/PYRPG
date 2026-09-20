@@ -47,8 +47,11 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 $branch = git rev-parse --abbrev-ref HEAD
+$changedFiles = (git diff --cached --name-only) -join ", "
 $commitMessage = @"
 Auto-commit: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+
+Files: $changedFiles
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 "@
