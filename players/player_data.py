@@ -13,3 +13,6 @@ class PlayerData:
     loot: list = field(default_factory=list)
     equipped: str = None
     exp: float = 0
+    in_town: bool = True
+    distance: int = 0
+    failed_attempts: int = 0

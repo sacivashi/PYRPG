@@ -19,6 +19,9 @@ def put_new_player(new_player_obj):
         "loot": player_data.loot,
         "equipped": player_data.equipped,
         "exp": player_data.exp,
+        "in_town": player_data.in_town,
+        "distance": player_data.distance,
+        "failed_attempts": player_data.failed_attempts,
     }
 
     # Find existing player entry (if exists), else append

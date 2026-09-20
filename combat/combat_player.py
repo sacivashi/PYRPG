@@ -19,6 +19,9 @@ class Player:
             self.gold = player_data.gold
             self.loot = list(player_data.loot)
             self.exp = player_data.exp
+            self.in_town = player_data.in_town
+            self.distance = player_data.distance
+            self.failed_attempts = player_data.failed_attempts
             return
 
         if isinstance(player_data, tuple):
@@ -35,6 +38,9 @@ class Player:
             self.gold = player_data.gold
             self.loot = list(player_data.loot)
             self.exp = player_data.exp
+            self.in_town = player_data.in_town
+            self.distance = player_data.distance
+            self.failed_attempts = player_data.failed_attempts
             return
 
         self.name = player_data
@@ -48,6 +54,9 @@ class Player:
         self.gold = 0
         self.loot = []
         self.exp = 0
+        self.in_town = True
+        self.distance = 0
+        self.failed_attempts = 0
 
     @staticmethod
     def extract_player(player_data):
@@ -87,7 +96,8 @@ class Player:
     def player_data(self):
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.base_stats,
                            max_hp=self.max_hp, gold=self.gold, loot=self.loot, equipped=self.equipped,
-                           exp=self.exp)
+                           exp=self.exp, in_town=self.in_town, distance=self.distance,
+                           failed_attempts=self.failed_attempts)
 
     def get_live_stats(self):
         return {

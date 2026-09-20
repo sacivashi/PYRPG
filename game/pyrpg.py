@@ -11,16 +11,13 @@ from combat.combat import start_combat
 from enemies.enemies_data import get_enemy_names, get_enemy_stats
 from players.save import put_new_player
 from combat.combat_player import Player
-from items.items_data import get_item_stats, get_buyable_items, STAT_COLUMNS
+from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, STAT_COLUMNS
 
 
 class PYRPG:
     def __init__(self):
         # Initialize player and this session's save consent (asked once, inside InputName.input_name())
         self.player_data, self.saving_enabled = InputName.input_name()
-        self.in_town = True
-        self.distance = 0
-        self.failed_attempts = 0
 
         # Main game loop
         self.main_menu()
@@ -28,7 +25,7 @@ class PYRPG:
     def main_menu(self):
         """Main game loop — dispatches to the town or wild menu depending on location"""
         while True:
-            action = self.town_menu() if self.in_town else self.wild_menu()
+            action = self.town_menu() if self.player_data.in_town else self.wild_menu()
             if action == "exit":
                 print("Thanks for playing PyRPG!")
                 break
@@ -67,7 +64,7 @@ class PYRPG:
     def wild_menu(self):
         """Menu shown while out in the wild"""
         print(f"\n=== Out in the Wild ===")
-        print(f"Distance from town: {self.distance}")
+        print(f"Distance from town: {self.player_data.distance}")
         print("[1] Explore")
         print("[2] Rest")
         print("[3] Return to Town")
@@ -98,31 +95,31 @@ class PYRPG:
     def travel_outside(self):
         """Leave town and start a new trip into the wild"""
         print("\nYou leave the safety of town...")
-        self.in_town = False
-        self.distance = 0
-        self.failed_attempts = 0
+        self.player_data.in_town = False
+        self.player_data.distance = 0
+        self.player_data.failed_attempts = 0
 
     def explore(self):
         """Venture further out, increasing distance from town, and risk a combat encounter"""
-        self.distance += 1
+        self.player_data.distance += 1
         self.enter_combat()
 
     def return_to_town(self):
         """Attempt to return to town; failing raises the odds for the next attempt but triggers combat"""
-        return_chance = min(100, max(0, 30 - self.distance) + self.failed_attempts * 10)
+        return_chance = min(100, max(0, 30 - self.player_data.distance) + self.player_data.failed_attempts * 10)
         roll = random.randint(1, 100)
 
         print(f"\nYou attempt to return to town... ({return_chance}% chance of success)")
 
         if roll <= return_chance:
             print("You make it back to town safely!")
-            self.in_town = True
-            self.distance = 0
-            self.failed_attempts = 0
+            self.player_data.in_town = True
+            self.player_data.distance = 0
+            self.player_data.failed_attempts = 0
             input("\nPress Enter to continue...")
         else:
             print("You lose your way and are ambushed!")
-            self.failed_attempts += 1
+            self.player_data.failed_attempts += 1
             self.enter_combat()
 
     REST_COST = 10
@@ -241,9 +238,14 @@ class PYRPG:
             self.player_data.exp += exp_reward
             print(f"You gained {exp_reward:.1f}% EXP!")
             self._process_level_ups()
+
+            self._roll_for_loot()
         elif result == "defeat":
             self.player_data.hp = max(1, int(self.player_data.max_hp * 0.5))
-            print(f"Game Over! You wake up with {self.player_data.hp}/{self.player_data.max_hp} HP.")
+            self.player_data.in_town = True
+            self.player_data.distance = 0
+            self.player_data.failed_attempts = 0
+            print(f"Game Over! You wake up back in town with {self.player_data.hp}/{self.player_data.max_hp} HP.")
 
         input("\nPress Enter to continue...")
 
@@ -329,6 +331,27 @@ class PYRPG:
         self.player_data.hp += max(0, new_max_hp - old_max_hp)
         self.player_data.max_hp = new_max_hp
         print(f"New stats applied. HP: {self.player_data.hp}/{self.player_data.max_hp}")
+
+    def calculate_loot_drop_chance(self):
+        """Drop chance scales with Luck, independent of enemy difficulty: 20% baseline,
+        +1.5% per Luck point, floored at 5% and capped at 60%."""
+        luck = self.player_data.stats.get('Luck', 0)
+        return max(5, min(60, 20 + luck * 1.5))
+
+    def _roll_for_loot(self):
+        """On a successful roll, award one item drawn from the droppable pool, weighted by Rarity"""
+        droppable = get_droppable_items()
+        if not droppable:
+            return
+
+        drop_chance = self.calculate_loot_drop_chance()
+        if random.randint(1, 100) > drop_chance:
+            return
+
+        names, weights = zip(*droppable)
+        item_name = random.choices(names, weights=weights, k=1)[0]
+        self.player_data.loot.append(item_name)
+        print(f"The enemy dropped {item_name}!")
 
     def view_stats(self):
         """Display player stats"""
