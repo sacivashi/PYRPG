@@ -5,3 +5,4 @@ data/players.csv
 data/players.json
 .idea/
 .env
+scripts/auto_commit.log
