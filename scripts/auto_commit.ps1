@@ -19,6 +19,13 @@ function Write-Log {
 
 Set-Location $RepoRoot
 
+# Only run while actively working -- skip entirely if neither VS Code nor Claude Code is open
+$isActive = (Get-Process -Name "Code" -ErrorAction SilentlyContinue) -or (Get-Process -Name "claude" -ErrorAction SilentlyContinue)
+if (-not $isActive) {
+    Write-Log "Neither VS Code nor Claude Code is running, skipping."
+    exit 0
+}
+
 # Nothing to do if the working tree is clean
 $status = git status --porcelain
 if ([string]::IsNullOrWhiteSpace($status)) {
