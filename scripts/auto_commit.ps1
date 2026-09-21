@@ -26,10 +26,23 @@ if (-not $isActive) {
     exit 0
 }
 
-# Nothing to do if the working tree is clean
+$branch = git rev-parse --abbrev-ref HEAD
+
+# Clean tree: nothing to commit, but retry the push if an earlier push failed and left commits behind
 $status = git status --porcelain
 if ([string]::IsNullOrWhiteSpace($status)) {
-    Write-Log "No changes, skipping."
+    $ahead = [int](git rev-list --count "origin/$branch..HEAD" 2>$null)
+    if ($ahead -gt 0) {
+        git push origin $branch 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Log "Retried push: $ahead earlier commit(s) pushed to '$branch'."
+        } else {
+            Write-Log "Retried push FAILED for '$branch' ($ahead commit(s) still unpushed)."
+            exit 1
+        }
+    } else {
+        Write-Log "No changes, skipping."
+    }
     exit 0
 }
 
@@ -53,8 +66,7 @@ if ($LASTEXITCODE -eq 0) {
     exit 0
 }
 
-$branch = git rev-parse --abbrev-ref HEAD
-$changedFiles = (git diff --cached --name-only) -join ", "
+$changedFiles =(git diff --cached --name-only) -join ", "
 $commitMessage = @"
 Auto-commit: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 
