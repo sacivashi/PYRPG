@@ -16,3 +16,4 @@ class PlayerData:
     in_town: bool = True
     distance: int = 0
     failed_attempts: int = 0
+    dice_roll: dict = None  # the Dice machine's stat deltas — rolled once, then kept for good

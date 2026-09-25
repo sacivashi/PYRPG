@@ -67,7 +67,7 @@ def test_player_power_is_sum_of_absolute_effective_stats():
 
 def with_gear(monkeypatch, **deltas):
     """Pretend the player wears gear giving these stat deltas."""
-    def fake_apply_equipment(base_stats, equipped_name):
+    def fake_apply_equipment(base_stats, equipped_name, dice_roll=None):
         effective = dict(base_stats)
         for stat, delta in deltas.items():
             effective[stat] = effective.get(stat, 0) + delta

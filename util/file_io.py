@@ -101,6 +101,7 @@ def get_player(player_name):
                 in_town=player.get("in_town", True),
                 distance=player.get("distance", 0),
                 failed_attempts=player.get("failed_attempts", 0),
+                dice_roll=player.get("dice_roll"),
             )
 
     return None

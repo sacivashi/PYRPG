@@ -19,6 +19,9 @@ class PYRPG:
         # Initialize player and this session's save consent (asked once, inside InputName.input_name())
         self.player_data, self.saving_enabled = InputName.input_name()
 
+        # Older saves may have the Dice machine worn without a stored roll
+        self._ensure_dice_roll()
+
         # Main game loop
         self.main_menu()
 
@@ -300,7 +303,16 @@ class PYRPG:
         """Base stats with the equipped item's deltas applied — what the character actually has
         right now. Everything outside combat that reads a stat (rest odds, rewards, encounters,
         max HP) goes through this so gear counts everywhere, not just in fights."""
-        return Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
+        return Player.apply_equipment(self.player_data.stats, self.player_data.equipped, self.player_data.dice_roll)
+
+    def _ensure_dice_roll(self):
+        """The Dice machine rolls its stats once — the first time it's worn — and keeps them for good.
+        Unequipping and re-equipping doesn't reroll, otherwise you could spam it until it came up
+        all +5s."""
+        if self.player_data.dice_roll is None and Player.is_dice_machine(self.player_data.equipped):
+            self.player_data.dice_roll = Player.roll_dice_machine()
+            rolled = ", ".join(f"{stat} {delta:+d}" for stat, delta in self.player_data.dice_roll.items())
+            print(f"The Dice machine rolls and settles on: {rolled}")
 
     def _player_power(self):
         """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched against"""
@@ -498,6 +510,7 @@ class PYRPG:
 
             self.player_data.equipped = self.player_data.loot[index]
             print(f"Equipped {self.player_data.equipped}.")
+            self._ensure_dice_roll()
             self._apply_equipment_hp_change()
             input("\nPress Enter to continue...")
             return

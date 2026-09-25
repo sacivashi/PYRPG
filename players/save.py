@@ -22,6 +22,7 @@ def put_new_player(new_player_obj):
         "in_town": player_data.in_town,
         "distance": player_data.distance,
         "failed_attempts": player_data.failed_attempts,
+        "dice_roll": player_data.dice_roll,
     }
 
     # Find existing player entry (if exists), else append
