@@ -7,6 +7,15 @@ class DamageCalculator:
 
     PHYSICAL_STATS = ['Strength', 'Agility', 'Luck']
 
+    # No source of evasion can push a dodge chance past this. Anything that adds evasion later
+    # (e.g. gear) should be summed into calculate_evasion_chance so this cap covers it too.
+    EVASION_CAP = 0.35
+
+    @staticmethod
+    def calculate_evasion_chance(agility):
+        """Dodge chance from positive Agility: 4% per point, capped at EVASION_CAP"""
+        return min(DamageCalculator.EVASION_CAP, max(0, agility) * 0.04)
+
     @staticmethod
     def calculate_base_damage(attacker_stats, weapon_bonus=0, is_magic_attack=False):
         """Physical base damage is the highest of Strength/Agility/Luck. Magic base damage is
@@ -184,7 +193,7 @@ class DamageCalculator:
                     else:
                         counter_effects.append(("counter_attack", True))
             elif stats.get('Agility', 0) > 0:
-                dodge_chance = min(0.25, stats.get('Agility', 0) * 0.04)
+                dodge_chance = DamageCalculator.calculate_evasion_chance(stats.get('Agility', 0))
                 if random.random() < dodge_chance:
                     return 0, [("dodged", True)]
 

@@ -13,8 +13,8 @@
 - Actual gold and loot drops.
 - EXP gain, and level ups.
 - Possibility for stat arranging upon level up (choose which stats to raise).
-- Further features beyond combat; resting %healing and only heal when chosing to rest and succeeding, rather than passive between combat full heals.
-- Rest success rate; choosing to rest can fail and lead into combat instead.
+- Further features beyond combat; resting %healing and only heal when choosing to rest and succeeding, rather than passive between combat full heals.
+- Rest success rate; choosing to rest outside can fail and lead into combats instead.
 - Choice to go to town - shopping for loot and gold usage, possibility for town quests implementation
 - Enemy groups a chance to tackle 2-3 enemies of the same types/creature.
 - More enemies!
@@ -99,7 +99,7 @@ Also: -magic stat lowering curse now applies to a random enemy stat each success
 
 As you might of read -luck players will have a worse time to get rest chances, that will be an added feature added to -luck as well.
 
-> -Luck: Debuff: `-(min(35, abs(-lck)))%` accuracy, lower loot ~~rolls~~  → **odds** and `*new:* resting odds are max(20, 35 - abs(-lck) * 0.48)%` Benefit: Successful attacks are unavoidable
+> -Luck: Debuff: `-(min(35, abs(-lck)))%` accuracy, lower loot ~~rolls~~  → **odds** and `*new:* resting odds are max(15,  20 - abs(-lck) * 0.48)%` Benefit: Successful attacks are unavoidable
 
 ### HP calculation:
 Health is a little problematic in its current state, depending only on Def + Str stats. While relying on those two is intended, I'd like roles with fewer points in these stats to also have a fighting chance, and be able to design more roles going forward without worrying about breaking HP balance.

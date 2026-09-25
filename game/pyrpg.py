@@ -290,23 +290,35 @@ class PYRPG:
         input("\nPress Enter to continue...")
 
     def calculate_rest_chance(self):
-        """min(60, max(20, Luck))% — a flat 20% for negative Luck, per the Beta I notes"""
-        luck = self.player_data.stats.get('Luck', 0)
+        """min(60, max(30, Luck + 15))% for Luck >= 0; max(15, 25 - abs(Luck) * 0.48)% for -Luck"""
+        luck = self._effective_stats().get('Luck', 0)
         if luck < 0:
-            return 20
-        return min(60, max(20, luck))
+            return round(max(15, 25 - abs(luck) * 0.48), 1)
+        return min(60, max(30, luck + 15))
+
+    def _effective_stats(self):
+        """Base stats with the equipped item's deltas applied — what the character actually has
+        right now. Everything outside combat that reads a stat (rest odds, rewards, encounters,
+        max HP) goes through this so gear counts everywhere, not just in fights."""
+        return Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
 
     def _player_power(self):
         """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched against"""
-        effective_stats = Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
-        return sum(abs(int(v)) for v in effective_stats.values())
+        return sum(abs(int(v)) for v in self._effective_stats().values())
+
+    def _sync_max_hp_after_growth(self):
+        """Recompute max HP (gear included) after a permanent stat gain, healing by however much it grew"""
+        old_max_hp = self.player_data.max_hp
+        new_max_hp = Player.calculate_hp(self._effective_stats())
+        self.player_data.hp += max(0, new_max_hp - old_max_hp)
+        self.player_data.max_hp = new_max_hp
 
     def rest(self):
         """Attempt to rest: Luck-based odds to succeed and heal 30% max HP, otherwise ambushed into combat"""
         success_chance = self.calculate_rest_chance()
         roll = random.randint(1, 100)
 
-        print(f"\nYou attempt to rest... ({success_chance}% chance of success)")
+        print(f"\nYou attempt to rest... ({success_chance:g}% chance of success)")
 
         if roll <= success_chance:
             heal_amount = round(self.player_data.max_hp * 0.30)
@@ -341,14 +353,11 @@ class PYRPG:
             print("  ...nothing happens this time.")
             return
 
-        old_max_hp = self.player_data.max_hp
-        new_max_hp = Player.calculate_hp(self.player_data.stats)
-        self.player_data.hp += max(0, new_max_hp - old_max_hp)
-        self.player_data.max_hp = new_max_hp
+        self._sync_max_hp_after_growth()
 
     def calculate_gold_reward(self):
         """Gold scales with Luck: low = max(5, luck * 0.42), high = max(low + 5, luck * 1.8)"""
-        luck = self.player_data.stats.get('Luck', 0)
+        luck = self._effective_stats().get('Luck', 0)
         low = max(5, luck * 0.42)
         high = max(low + 5, luck * 1.8)
         return random.randint(int(low), int(high))
@@ -361,12 +370,13 @@ class PYRPG:
         -Magic users earn 15% less."""
         difficulty = get_enemy_difficulty(get_enemy_stats(enemy_name))
 
-        intelligence = self.player_data.stats.get('Intelligence', 0)
+        stats = self._effective_stats()
+        intelligence = stats.get('Intelligence', 0)
         int_bonus = 1 + max(0, intelligence) * 0.01
 
         level_penalty = max(0.2, 1 - (self.player_data.level - 1) * 0.05)
 
-        magic_penalty = 0.85 if self.player_data.stats.get('Magic', 0) < 0 else 1
+        magic_penalty = 0.85 if stats.get('Magic', 0) < 0 else 1
 
         return (difficulty / 10) * int_bonus * level_penalty * magic_penalty
 
@@ -405,16 +415,13 @@ class PYRPG:
             self.player_data.stats[stat] = self.player_data.stats.get(stat, 0) + delta
             remaining -= 1
 
-        old_max_hp = self.player_data.max_hp
-        new_max_hp = Player.calculate_hp(self.player_data.stats)
-        self.player_data.hp += max(0, new_max_hp - old_max_hp)
-        self.player_data.max_hp = new_max_hp
+        self._sync_max_hp_after_growth()
         print(f"New stats applied. HP: {self.player_data.hp}/{self.player_data.max_hp}")
 
     def calculate_loot_drop_chance(self):
         """Drop chance scales with Luck, independent of enemy difficulty: 20% baseline,
         +1.5% per Luck point, floored at 5% and capped at 60%."""
-        luck = self.player_data.stats.get('Luck', 0)
+        luck = self._effective_stats().get('Luck', 0)
         return max(5, min(60, 20 + luck * 1.5))
 
     def _roll_for_loot(self):
@@ -434,7 +441,7 @@ class PYRPG:
 
     def view_stats(self):
         """Display player stats"""
-        effective_stats = Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
+        effective_stats = self._effective_stats()
         print(f"\n=== Player Stats ===")
         print(f"Name: {self.player_data.name}")
         print(f"Role: {self.player_data.role.capitalize()}")
@@ -523,8 +530,7 @@ class PYRPG:
 
     def _apply_equipment_hp_change(self):
         """Recompute max HP after equipping/unequipping. Clamp only — no free heal from gear."""
-        effective_stats = Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
-        new_max_hp = Player.calculate_hp(effective_stats)
+        new_max_hp = Player.calculate_hp(self._effective_stats())
         self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
 
