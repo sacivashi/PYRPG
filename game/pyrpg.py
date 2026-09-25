@@ -8,7 +8,7 @@ sys.path.insert(0, project_root)
 
 from players.input_name import InputName
 from combat.combat import start_combat
-from enemies.enemies_data import get_enemy_names, get_enemy_stats
+from enemies.enemies_data import get_encounter_enemy, get_enemy_difficulty, get_enemy_stats
 from players.save import put_new_player
 from combat.combat_player import Player
 from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, STAT_COLUMNS
@@ -262,7 +262,7 @@ class PYRPG:
 
     def enter_combat(self):
         """Start a combat encounter"""
-        enemy_name = get_enemy_names()
+        enemy_name = get_encounter_enemy(self._player_power())
         print(f"\nA wild {enemy_name} appears!")
         
         # Auto-save before risky combat
@@ -289,12 +289,21 @@ class PYRPG:
 
         input("\nPress Enter to continue...")
 
-    def rest(self):
-        """Attempt to rest: Luck-scaled odds to succeed and heal 30% max HP, otherwise ambushed into combat"""
+    def calculate_rest_chance(self):
+        """min(60, max(20, Luck))% — a flat 20% for negative Luck, per the Beta I notes"""
         luck = self.player_data.stats.get('Luck', 0)
-        low = min(35, luck * 0.85)
-        high = max(20, luck * 0.95)
-        success_chance = random.randint(int(low), int(high))
+        if luck < 0:
+            return 20
+        return min(60, max(20, luck))
+
+    def _player_power(self):
+        """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched against"""
+        effective_stats = Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
+        return sum(abs(int(v)) for v in effective_stats.values())
+
+    def rest(self):
+        """Attempt to rest: Luck-based odds to succeed and heal 30% max HP, otherwise ambushed into combat"""
+        success_chance = self.calculate_rest_chance()
         roll = random.randint(1, 100)
 
         print(f"\nYou attempt to rest... ({success_chance}% chance of success)")
@@ -348,16 +357,18 @@ class PYRPG:
 
     def calculate_exp_reward(self, enemy_name):
         """EXP (as % toward next level) scales with enemy difficulty (sum of abs stats),
-        +1% per Intelligence point, and decays 5% per player level (floored at 20% of base rate)."""
-        enemy_stats = get_enemy_stats(enemy_name)
-        difficulty = sum(abs(int(v)) for k, v in enemy_stats.items() if k != 'Name')
+        +1% per Intelligence point, and decays 5% per player level (floored at 20% of base rate).
+        -Magic users earn 15% less."""
+        difficulty = get_enemy_difficulty(get_enemy_stats(enemy_name))
 
         intelligence = self.player_data.stats.get('Intelligence', 0)
         int_bonus = 1 + max(0, intelligence) * 0.01
 
         level_penalty = max(0.2, 1 - (self.player_data.level - 1) * 0.05)
 
-        return (difficulty / 10) * int_bonus * level_penalty
+        magic_penalty = 0.85 if self.player_data.stats.get('Magic', 0) < 0 else 1
+
+        return (difficulty / 10) * int_bonus * level_penalty * magic_penalty
 
     def _process_level_ups(self):
         """Roll over 100%+ EXP into level(s), granting ability points to allocate each time"""
