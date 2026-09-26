@@ -7,7 +7,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 from players.input_name import InputName
-from combat.combat import start_combat
+from combat.combat import start_combat, roll_group_size
 from enemies.enemies_data import get_encounter_enemy, get_enemy_difficulty, get_enemy_stats
 from players.save import put_new_player
 from combat.combat_player import Player
@@ -266,26 +266,33 @@ class PYRPG:
     def enter_combat(self):
         """Start a combat encounter"""
         enemy_name = get_encounter_enemy(self._player_power())
-        print(f"\nA wild {enemy_name} appears!")
-        
+        group_size = roll_group_size()
+        if group_size > 1:
+            print(f"\nA group of {group_size} {enemy_name}s appears!")
+        else:
+            print(f"\nA wild {enemy_name} appears!")
+
         # Auto-save before risky combat
         print("💾 Auto-saving before combat...")
         self.auto_save_player_state()
-        
-        result, current_hp = start_combat(self.player_data, enemy_name)
+
+        result, current_hp = start_combat(self.player_data, enemy_name, group_size)
         self.player_data.hp = current_hp
 
         if result == "victory":
-            gold_reward = self.calculate_gold_reward()
+            # Rewards are per-enemy, summed independently rather than one roll * group_size,
+            # so a group's payout has the same variance as fighting each member separately.
+            gold_reward = sum(self.calculate_gold_reward() for _ in range(group_size))
             self.player_data.gold += gold_reward
             print(f"You gained {gold_reward} gold!")
 
-            exp_reward = self.calculate_exp_reward(enemy_name)
+            exp_reward = sum(self.calculate_exp_reward(enemy_name) for _ in range(group_size))
             self.player_data.exp += exp_reward
             print(f"You gained {exp_reward:.1f}% EXP!")
             self._process_level_ups()
 
-            self._roll_for_loot()
+            for _ in range(group_size):
+                self._roll_for_loot()
         elif result == "defeat":
             self.player_data.hp = max(1, int(self.player_data.max_hp * 0.5))
             self._handle_defeat_respawn()

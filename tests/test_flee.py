@@ -59,7 +59,7 @@ def make_combat(agility, enemy_speed=0, hp=NATURAL_MAX_HP):
     stats = {**STATS, 'Agility': agility}
     pd = PlayerData(name="T", role="warrior", level=1, hp=hp, stats=stats, max_hp=NATURAL_MAX_HP)
     combat = Combat(pd, "Bandit")
-    combat.enemy_stats['Speed'] = enemy_speed
+    combat.enemies[0].stats['Speed'] = enemy_speed
     return combat
 
 
@@ -98,7 +98,7 @@ def test_fled_grants_no_gold_exp_or_loot(monkeypatch):
     game.player_data = PlayerData(name="T", role="warrior", level=1, hp=30,
                                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': 0,
                                           'Defence': 5, 'Magic': 5, 'Luck': 5}, max_hp=30)
-    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name: ("fled", 30))
+    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("fled", 30))
     monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr("builtins.input", lambda *_: "")
