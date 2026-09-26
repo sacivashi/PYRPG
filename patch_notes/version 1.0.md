@@ -21,3 +21,40 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 - rest odds and percentage healing.
 
 - Loot & equipment
+
+#
+
+### **upcoming:**
+
+Imagine this, you boot PYRPG, choose a magical class, you use "magic attack" in combat, and.... it's like you hit the enemy with a physical attack decorated as "magic". Plain as the day you were born.
+
+### **NO MORE**
+I am introducing, the age of magic... and now that I think of it I guess it is a stat adjustment ._.
+
+anyhow, yeah:
+
+- Adding mana
+- Adding spells
+- AOE logic (for not only magic users)
+- More consumable items and ways to heal out of town and combat rather than being misrable in trying to rest
+- Obviously add more quests
+- Maybe more roles?
+- No spells = no magic attacks, cry about it.
+- DOT spells/attacks?
+- Magical creatures (enemies)
+
+## stats and logic:
+
+*magic reworked:*
+
+> **Spell damage:** `Spell Base Damage × max(0.1, 1 + Magic × 0.1)`. A dedicated caster (high Magic) roughly doubles a spell's base damage. The multiplier is floored at 0.1 (10% of base) so damage can never hit 0 or go negative, no matter how far Magic gets pushed down via leveling.
+
+> **Two spell pools:** `+Magic` learns from the normal spell list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — just weaker there, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal-Magic characters never get access to them.
+
+> **No spell learned?** Selecting Magic Attack with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
+
+> *Open question, still deciding:* once spells carry their own base damage, does Intelligence still matter for a caster, or does it shift to being a pure utility stat (accuracy, debuff chance) while Magic alone drives spell power?
+
+> **Answer:** Intelligence decides max mana. Magic = spell power, Intelligence = how much you can cast before running dry — gives Int its own lane instead of overlapping with Magic.
+
+> *Still open:* `-Intelligence` already has its own debuff/benefit (confusion chance / hit-harder). Does going negative also shrink max mana as part of that existing debuff, or does Int stay positive-only for mana purposes (negative Int just means "not much of a pool," nothing special happens)?
