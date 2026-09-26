@@ -34,7 +34,7 @@ __________________
 
 > Stat raising choice: This one is an interesting concept, yet feels cool. instead of auto raising priority stats per role or stats read. Though I might leave it for later
 
-> Rest & resting success: right now each combat you can heal to full, which is pretty wonky. I think a luck check for both resting chance and heal % (up to 30% of max hp). failing the rest chance will trigger a combat. rest odds are currently `min(60,max(20, luck))% not including -luck stats!`
+> Rest & resting success: right now each combat you can heal to full, which is pretty wonky. I think a luck check for both resting chance and heal % (up to 30% of max hp). failing the rest chance will trigger a combat. rest odds are currently `min(60,max(30, luck + 15))% not including -luck stats!`
 
 > Town: complex thinking; choice to go to town, yet I think there can be like a "distance" system - like how far you are from town, and also luck check to return to town without combat on the way... Other than that yes- an actual town to go to, rest, buy gear, and possibly get quests from.
 
@@ -85,7 +85,7 @@ Reworked -agi as a whole adding another debuff:
 ### -Defence stats:
 -def was unbalanced with it's alpha II state. Following the same pattern, I will adjust them accordingly.
 
-> -Defence: Debuff: Getting hit makes you take ~~`(abs(-def))`~~ → `max(max_hp * 0.05, abs(-def))` bonus damage, Benefit: you reflect ~~int((damage taken * 1.5 + (abs(-def))) / 2.5)~~ → `max(15, min(35, max(damage_taken, abs(-def)) * 0.35))%` flat damage back (flat damage means damage before the bonus)
+> -Defence: Debuff: Getting hit makes you take ~~`(abs(-def))`~~ → `max(max_hp * 0.05, abs(-def))` bonus damage, Benefit: you reflect ~~int((damage taken * 1.5 + (abs(-def))) / 2.5)~~ → `max(15, min(35, max(damage_taken, abs(-def)) * 0.35))%` of the flat damage back (flat damage means damage before the bonus)
 
 ### -magic stats:
 
