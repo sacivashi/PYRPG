@@ -289,6 +289,7 @@ class PYRPG:
         elif result == "defeat":
             self.player_data.hp = max(1, int(self.player_data.max_hp * 0.5))
             self._handle_defeat_respawn()
+        # "fled": no rewards, no penalty — nothing to do beyond the HP sync already above
 
         input("\nPress Enter to continue...")
 

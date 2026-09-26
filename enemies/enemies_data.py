@@ -1,11 +1,15 @@
 from util.file_io import get_data, read_csv
 import random
 
-# Encounter weighting. Each enemy has a "difficulty" (sum of its absolute stats — the same
-# score EXP uses). It's compared to a target scaled from the player's power: enemies near the
-# target are the most likely, tougher ones fall off fast (but never to zero, so a rare
-# out-of-depth fight can still happen), and weaker ones fade more gently.
-ENCOUNTER_TARGET_RATIO = 2.5   # target difficulty = player power * this
+# Encounter weighting. Each enemy has a "threat" score — HP and Attack in full, other stats
+# scaled down, so a fast/lucky-but-fragile enemy (e.g. Goblin: 60 Speed, 50 Luck, only 10 HP)
+# doesn't read as more dangerous than its HP/Attack actually make it. This is deliberately
+# separate from get_enemy_difficulty(), which EXP uses and counts every stat equally.
+# Threat is compared to a target scaled from the player's power: enemies near the target are
+# the most likely, tougher ones fall off fast (but never to zero, so a rare out-of-depth fight
+# can still happen), and weaker ones fade more gently.
+THREAT_WEIGHTS = {'HP': 1.0, 'Attack': 1.0, 'Defense': 0.5, 'Speed': 0.3, 'Luck': 0.3, 'Corruption': 0.5}
+ENCOUNTER_TARGET_RATIO = 2.5   # target threat = player power * this
 ENCOUNTER_SHARPNESS = 4        # how quickly odds drop for enemies tougher than the target
 MIN_WEAK_WEIGHT = 0.2          # floor for enemies far below the target
 MIN_ENCOUNTER_WEIGHT = 0.001   # floor for everything, so weights never all collapse to 0
@@ -35,14 +39,19 @@ def get_enemy_stats(name):
 
 
 def get_enemy_difficulty(enemy_stats):
-    """Sum of the enemy's absolute stats (Name excluded)."""
+    """Sum of the enemy's absolute stats (Name excluded). Drives EXP — every stat counts equally."""
     return sum(abs(int(v)) for k, v in enemy_stats.items() if k != 'Name')
 
 
-def get_encounter_weight(difficulty, player_power):
-    """Relative chance of meeting an enemy of this difficulty, given the player's power."""
+def get_enemy_threat(enemy_stats):
+    """Weighted danger score (see THREAT_WEIGHTS above). Drives encounter matching only."""
+    return sum(abs(int(v)) * THREAT_WEIGHTS.get(k, 1.0) for k, v in enemy_stats.items() if k != 'Name')
+
+
+def get_encounter_weight(threat, player_power):
+    """Relative chance of meeting an enemy of this threat level, given the player's power."""
     target = max(1, player_power * ENCOUNTER_TARGET_RATIO)
-    ratio = difficulty / target
+    ratio = threat / target
     if ratio <= 1:
         weight = max(MIN_WEAK_WEIGHT, ratio)
     else:
@@ -59,7 +68,7 @@ def get_encounter_weights(player_power):
         if not row:
             continue
         stats = _parse_enemy_row(headers, row)
-        weights.append((stats["Name"], get_encounter_weight(get_enemy_difficulty(stats), player_power)))
+        weights.append((stats["Name"], get_encounter_weight(get_enemy_threat(stats), player_power)))
     return weights
 
 

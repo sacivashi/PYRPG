@@ -17,6 +17,21 @@ class DamageCalculator:
         return min(DamageCalculator.EVASION_CAP, max(0, agility) * 0.04)
 
     @staticmethod
+    def calculate_flee_chance(agility, enemy_speed):
+        """Continuous through 25% at Agility 0: max(20, 25 - abs(agi)*0.25)% for -Agility,
+        min(60, 25 + agi*2)% for +Agility. A -Speed enemy adds +min(15, abs(-spd)*0.3)% on top,
+        since a slower enemy is easier to outrun."""
+        if agility < 0:
+            base = max(20, 25 - abs(agility) * 0.25)
+        else:
+            base = min(60, 25 + agility * 2)
+
+        if enemy_speed < 0:
+            base += min(15, abs(enemy_speed) * 0.3)
+
+        return round(min(100, base), 1)
+
+    @staticmethod
     def calculate_base_damage(attacker_stats, weapon_bonus=0, is_magic_attack=False):
         """Physical base damage is the highest of Strength/Agility/Luck. Magic base damage is
         the highest of abs(Intelligence)/abs(Magic) — same 'pick your best relevant stat' shape

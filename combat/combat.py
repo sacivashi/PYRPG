@@ -25,6 +25,7 @@ class Combat:
         self.enemy_corruption = self.enemy_stats.get('Corruption', 0)
         self.corruption_counter = 0  # Tracks cumulative corruption damage (corr++)
         self.timer_cooldown = 0  # Turns remaining before Timer can be used again
+        self.player_fled = False
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
         self.original_player_max_hp = self.player.max_hp
@@ -71,7 +72,8 @@ class Combat:
         print(f"Enemy HP: {self.enemy_hp}/{self.enemy_max_hp}")
 
         while True:
-            choice = input("\nChoose action: [1] Physical Attack [2] Magic Attack [3] Defend [4] Skip Turn [5] Use Item: ").strip()
+            choice = input("\nChoose action: [1] Physical Attack [2] Magic Attack [3] Defend [4] Skip Turn "
+                           "[5] Use Item [6] Flee: ").strip()
 
             # No save option during combat!
             if choice in ["save", "s"]:
@@ -105,8 +107,32 @@ class Combat:
                 if outcome == "end_turn":
                     self.switch_turns()
                 break  # "repeat_turn" (Timer): stay on player's turn, no switch_turns()
+            elif choice == "6":
+                if not self.attempt_flee():
+                    self.switch_turns()  # failed flee costs the turn, same as a missed attack
+                break  # successful flee: combat_ongoing is now False, no turn to switch to
             else:
-                print("Invalid choice. Please enter 1, 2, 3, 4, or 5.")
+                print("Invalid choice. Please enter 1, 2, 3, 4, 5, or 6.")
+
+    def attempt_flee(self):
+        """Attempt to flee: chance depends on the player's Agility and the enemy's Speed
+        (DamageCalculator.calculate_flee_chance). Success ends combat immediately, no rewards
+        and no penalty. Failure just costs the turn, like a missed attack."""
+        agility = self.player.get_live_stats()['stats'].get('Agility', 0)
+        enemy_speed = self.enemy_stats.get('Speed', 0)
+        flee_chance = DamageCalculator.calculate_flee_chance(agility, enemy_speed)
+
+        roll = random.randint(1, 100)
+        print(f"\nYou attempt to flee... ({flee_chance:g}% chance of success)")
+
+        if roll <= flee_chance:
+            print("You successfully flee from combat!")
+            self.player_fled = True
+            self.combat_ongoing = False
+            return True
+
+        print("You fail to escape!")
+        return False
 
     def use_item(self):
         """Consume a combat-usable item from loot. Returns 'end_turn', 'repeat_turn', or None (cancelled/invalid)."""
@@ -400,6 +426,10 @@ class Combat:
             print("\n=== DEFEAT ===")
             print("Game Over!")
             return "defeat", self.player.current_hp
+        elif self.player_fled:
+            print("\n=== FLED ===")
+            print(f"You got away from the {self.enemy_name}, but gained nothing from the encounter.")
+            return "fled", self.player.current_hp
         elif self.enemy_hp <= 0:
             print("\n=== VICTORY ===")
             print(f"You defeated the {self.enemy_name}!")
