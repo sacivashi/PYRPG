@@ -45,7 +45,13 @@ def delete_player(player_name):  # removes a player entry, returns True/False
 
 ### Player Data
 
-Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats, max_hp, gold, loot, equipped`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `gold` (int, default 0) and `loot` (list of owned item names, default empty) are awarded outside of combat, in `pyrpg.py`, after a "victory" result — `Combat`/`Player` don't compute rewards themselves. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
+Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name, role, level, hp, stats, max_hp, gold, loot, equipped, exp, in_town, distance, failed_attempts, dice_roll, quest_flags, completed_quests`) everywhere in the active game flow — both `NewPlayer.player_data()` and `get_player()` return one. `gold` (int, default 0) and `loot` (list of owned item names, default empty) are awarded outside of combat, in `pyrpg.py`, after a "victory" result — `Combat`/`Player` don't compute rewards themselves. `combat_player.py`'s `Player.__init__` also accepts a raw `(name, role, level, hp, stats)` tuple for backward compatibility, but nothing in the current flow produces one anymore.
+
+Every field added to `PlayerData` after the original set needs the same three-way wiring or it silently resets on save: `Player.__init__`/`Player.player_data()` (all three constructor branches) to carry it through combat, `players/save.py` to write it, `util/file_io.py`'s `get_player()` to read it back (with a default, for saves predating the field). This bit gold/loot once early on — see git history — and every field since has followed the same pattern.
+
+### Quests
+
+`PYRPG.QUESTS` (`game/pyrpg.py`) is a dict of quest id → `{flag, enemy, reward, title, description}`. `_update_quest_progress(enemy_name)`, called after every combat victory, sets `PlayerData.quest_flags[flag] = True` when the defeated enemy matches. The Town menu's `quest_board()` lists every quest, offers to claim (award `reward` gold, add the id to `PlayerData.completed_quests`) once its flag is set, and shows "Completed" thereafter — `completed_quests` is what prevents re-claiming. Only one quest exists so far ("lost_cat": defeat a Cat, turn in at the board for 30 gold) — adding another is a new `QUESTS` entry, not new code, as long as its condition is "defeated a specific enemy."
 
 ### Equipment
 

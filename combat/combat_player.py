@@ -41,6 +41,8 @@ class Player:
             self.in_town = player_data.in_town
             self.distance = player_data.distance
             self.failed_attempts = player_data.failed_attempts
+            self.quest_flags = dict(player_data.quest_flags)
+            self.completed_quests = list(player_data.completed_quests)
             return
 
         if isinstance(player_data, tuple):
@@ -61,6 +63,8 @@ class Player:
             self.in_town = player_data.in_town
             self.distance = player_data.distance
             self.failed_attempts = player_data.failed_attempts
+            self.quest_flags = dict(player_data.quest_flags)
+            self.completed_quests = list(player_data.completed_quests)
             return
 
         self.name = player_data
@@ -78,6 +82,8 @@ class Player:
         self.in_town = True
         self.distance = 0
         self.failed_attempts = 0
+        self.quest_flags = {}
+        self.completed_quests = []
 
     @staticmethod
     def extract_player(player_data):
@@ -119,7 +125,8 @@ class Player:
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.base_stats,
                            max_hp=self.max_hp, gold=self.gold, loot=self.loot, equipped=self.equipped,
                            exp=self.exp, in_town=self.in_town, distance=self.distance,
-                           failed_attempts=self.failed_attempts, dice_roll=self.dice_roll)
+                           failed_attempts=self.failed_attempts, dice_roll=self.dice_roll,
+                           quest_flags=self.quest_flags, completed_quests=self.completed_quests)
 
     def get_live_stats(self):
         return {

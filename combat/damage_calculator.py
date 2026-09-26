@@ -77,7 +77,10 @@ class DamageCalculator:
             # Debuff: min(35, abs(-int) + 5)% confusion chance (any attack type)
             confusion_chance = min(35, abs(intelligence) + 5) / 100
             if random.random() < confusion_chance:
-                return 0, "confused"
+                # Damage is NOT zeroed here — a confused hit deals the same damage as a normal
+                # one, just against a different target (combat.py redirects it). Only a solo
+                # fight, with nowhere to redirect to, turns this into an actual miss.
+                return damage, "confused"
             else:
                 # Benefit: int(0.08 * damage) + int(min(abs(-int) * 0.75, highest_stat // 8)) bonus damage
                 highest_stat = max([v for k, v in attacker_stats.items() if k not in ['Intelligence', 'Defence', 'HP']])
@@ -164,7 +167,9 @@ class DamageCalculator:
             final_damage, stats.get('Intelligence', 0), stats, is_magic_attack
         )
         if intel_effect == "confused":
-            return 0, [("confusion", True)], False
+            # Not a miss — the same damage keeps flowing through Luck/Magic below, just tagged
+            # so combat.py can redirect it to a different target instead of the intended one.
+            special_effects.append(("confusion", True))
         elif intel_effect == "focused":
             special_effects.append(("focused_attack", True))
 

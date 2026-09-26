@@ -102,6 +102,8 @@ def get_player(player_name):
                 distance=player.get("distance", 0),
                 failed_attempts=player.get("failed_attempts", 0),
                 dice_roll=player.get("dice_roll"),
+                quest_flags=player.get("quest_flags", {}),
+                completed_quests=player.get("completed_quests", []),
             )
 
     return None

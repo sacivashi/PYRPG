@@ -98,22 +98,39 @@ def test_player_attack_never_touches_untargeted_enemies(monkeypatch):
         assert combat.enemies[2].hp == combat.enemies[2].max_hp
 
 
-def test_confusion_redirect_still_results_in_a_miss(monkeypatch):
-    # Known limitation: confusion changes which enemy's name is printed, but the underlying
-    # damage from calculate_player_damage is unconditionally 0 on confusion, so a redirect
-    # never actually deals damage to the new target either — it's flavor text, not a real hit.
+def test_confusion_redirects_with_full_damage_to_a_different_target(monkeypatch):
+    # Confusion no longer zeroes damage — it deals the same damage a normal hit would,
+    # just against a different living target than the one chosen.
     pd = PlayerData(name="T", role="warrior", level=1, hp=999,
                      stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defence': 5,
                             'Magic': 5, 'Luck': 5}, max_hp=999)
     combat = Combat(pd, "Bandit", group_size=3)
-    monkeypatch.setattr("builtins.input", lambda *_: "1")
+    monkeypatch.setattr("builtins.input", lambda *_: "1")  # intended target: enemy #1 (index 0)
     monkeypatch.setattr("random.random", lambda: 0.0)  # guarantees confusion (chance is 35%)
-    hp_before = [e.hp for e in combat.enemies]
+    monkeypatch.setattr("random.choice", lambda seq: seq[0])  # deterministic redirect pick
+
+    result = combat.player_attack(is_magic_attack=False)
+
+    assert result is True
+    assert combat.enemies[0].hp == combat.enemies[0].max_hp  # the intended target is untouched
+    hit = [e for e in combat.enemies[1:] if e.hp < e.max_hp]
+    assert len(hit) == 1  # exactly one other enemy actually took the (real) damage
+
+
+def test_confusion_is_a_real_miss_in_a_solo_fight(monkeypatch):
+    # With nobody else to redirect to, confusion has to fall back to a genuine miss —
+    # otherwise -Intelligence would lose its debuff entirely outside of group fights.
+    pd = PlayerData(name="T", role="warrior", level=1, hp=999,
+                     stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defence': 5,
+                            'Magic': 5, 'Luck': 5}, max_hp=999)
+    combat = Combat(pd, "Bandit", group_size=1)
+    monkeypatch.setattr("random.random", lambda: 0.0)  # guarantees confusion
+    hp_before = combat.enemies[0].hp
 
     result = combat.player_attack(is_magic_attack=False)
 
     assert result is False
-    assert [e.hp for e in combat.enemies] == hp_before
+    assert combat.enemies[0].hp == hp_before
 
 
 def test_bomb_hits_every_alive_enemy(monkeypatch):

@@ -40,10 +40,11 @@ class PYRPG:
         print("[1] Travel Outside")
         print("[2] Rest")
         print("[3] Shop")
-        print("[4] View Stats")
-        print("[5] Manage Loot")
-        print("[6] Save Game")
-        print("[7] Exit Game")
+        print("[4] Quest Board")
+        print("[5] View Stats")
+        print("[6] Manage Loot")
+        print("[7] Save Game")
+        print("[8] Exit Game")
 
         choice = input("\nChoose an option: ").strip()
 
@@ -54,15 +55,17 @@ class PYRPG:
         elif choice == "3":
             self.shop()
         elif choice == "4":
-            self.view_stats()
+            self.quest_board()
         elif choice == "5":
-            self.manage_loot()
+            self.view_stats()
         elif choice == "6":
-            self.save_game()
+            self.manage_loot()
         elif choice == "7":
+            self.save_game()
+        elif choice == "8":
             return "exit"
         else:
-            print("Invalid choice. Please enter a number between 1 and 7.")
+            print("Invalid choice. Please enter a number between 1 and 8.")
 
     def wild_menu(self):
         """Menu shown while out in the wild"""
@@ -293,10 +296,45 @@ class PYRPG:
 
             for _ in range(group_size):
                 self._roll_for_loot()
+
+            self._update_quest_progress(enemy_name)
         elif result == "defeat":
             self.player_data.hp = max(1, int(self.player_data.max_hp * 0.5))
             self._handle_defeat_respawn()
         # "fled": no rewards, no penalty — nothing to do beyond the HP sync already above
+
+        input("\nPress Enter to continue...")
+
+    # Quest ids map to (defeat-flag key, enemy name required, gold reward). Only one quest for
+    # now — "Lost Cat" — but this stays a dict so a second quest is a new entry, not new code.
+    QUESTS = {
+        "lost_cat": {"flag": "defeated_cat", "enemy": "cat", "reward": 30,
+                     "title": "Lost Cat",
+                     "description": "A worried townsperson has lost their cat. Defeat a Cat and return here for a reward."},
+    }
+
+    def _update_quest_progress(self, enemy_name):
+        """Called after every victory — flips a quest's progress flag if this fight satisfies it"""
+        for quest in self.QUESTS.values():
+            if enemy_name.lower() == quest["enemy"]:
+                self.player_data.quest_flags[quest["flag"]] = True
+
+    def quest_board(self):
+        """Town quest board — lists every quest, lets you turn in ones that are ready"""
+        print("\n=== Quest Board ===")
+        for quest_id, quest in self.QUESTS.items():
+            print(f"\n{quest['title']}: {quest['description']}")
+
+            if quest_id in self.player_data.completed_quests:
+                print("  Status: Completed.")
+            elif self.player_data.quest_flags.get(quest["flag"]):
+                choice = input(f"  Ready to turn in for {quest['reward']} gold! Claim it now? (yes/no): ").strip().lower()
+                if choice in ("y", "yes"):
+                    self.player_data.gold += quest["reward"]
+                    self.player_data.completed_quests.append(quest_id)
+                    print(f"  Quest complete! You received {quest['reward']} gold.")
+            else:
+                print("  Status: In progress.")
 
         input("\nPress Enter to continue...")
 

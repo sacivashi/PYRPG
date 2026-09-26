@@ -17,3 +17,5 @@ class PlayerData:
     distance: int = 0
     failed_attempts: int = 0
     dice_roll: dict = None  # the Dice machine's stat deltas — rolled once, then kept for good
+    quest_flags: dict = field(default_factory=dict)  # progress markers, e.g. {"defeated_cat": True}
+    completed_quests: list = field(default_factory=list)  # quest ids already turned in — can't reclaim
