@@ -29,7 +29,7 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 Imagine this, you boot PYRPG, choose a magical class, you use "magic attack" in combat, and.... it's like you hit the enemy with a physical attack decorated as "magic". Plain as the day you were born.
 
 ### **NO MORE**
-I am introducing, the age of magic... and now that I think of it I guess it is a stat adjustment ._.
+I am introducing, the age of magic, splitting magic & physical damage. Pokemon gen 3 who?
 
 anyhow, yeah:
 
