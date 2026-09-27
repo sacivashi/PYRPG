@@ -41,7 +41,7 @@ anyhow, yeah:
 - Maybe more roles?
 - No spells = no magic attacks, cry about it.
 - DOT spells/attacks?
-- Magical creatures (enemies)
+- Magical creatures (enemies & roles)
 
 ## stats and logic:
 
@@ -61,3 +61,23 @@ anyhow, yeah:
 > > for my next magic trick what if I told you it was thought of ahead of time... somewhat?
 > > - -magic: Debuff: ~~Magic attacks~~ **cursed spells** drain **~~(abs(-mag))%~~** → `min(25, abs(-mag))%` from your MAX HP (temporary, restores after combat) **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
 >> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
+
+new enemies (sorted):
+
+|name|corr|hp|attack|def|speed|luck|
+|----|----|----|----|----|----|----|
+|Elf|0|13|8|0|11|7|
+|Fairy|0|12|3|11|25|7|
+|Unicorn|0|20|8|2|15|10|
+|Vampire|0|9|-15|2|6|0|
+
+new roles (sorted):
+|Class|Strength|Agility|Intelligence|Defence|Magic|Luck|
+|----|----|----|----|----|----|----|
+|dwarf|7|3|5|7|3|0|
+|Satyr|2|7|9|3|5|3|
+
+## miscellaneous updates:
+- Sort roles alphabetically
+- Sort descriptions alphabetically (by roles)
+- Add new roles descriptions
