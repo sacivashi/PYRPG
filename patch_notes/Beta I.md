@@ -13,8 +13,8 @@
 - Actual gold and loot drops.
 - EXP gain, and level ups.
 - Possibility for stat arranging upon level up (choose which stats to raise).
-- Further features beyond combat; resting %healing and only heal when choosing to rest and succeeding, rather than passive between combat full heals.
-- Rest success rate; choosing to rest outside can fail and lead into combats instead.
+- Further features beyond combat; resting %healing and only heal when chosing to rest and succeeding, rather than passive between combat full heals.
+- Rest success rate; choosing to rest can fail and lead into combat instead.
 - Choice to go to town - shopping for loot and gold usage, possibility for town quests implementation
 - Enemy groups a chance to tackle 2-3 enemies of the same types/creature.
 - More enemies!
@@ -34,7 +34,7 @@ __________________
 
 > Stat raising choice: This one is an interesting concept, yet feels cool. instead of auto raising priority stats per role or stats read. Though I might leave it for later
 
-> Rest & resting success: right now each combat you can heal to full, which is pretty wonky. I think a luck check for both resting chance and heal % (up to 30% of max hp). failing the rest chance will trigger a combat. rest odds are currently `min(60,max(30, luck + 15))% not including -luck stats!`
+> Rest & resting success: right now each combat you can heal to full, which is pretty wonky. I think a luck check for both resting chance and heal % (up to 30% of max hp). failing the rest chance will trigger a combat. rest odds are currently `min(60,max(20, luck))% not including -luck stats!`
 
 > Town: complex thinking; choice to go to town, yet I think there can be like a "distance" system - like how far you are from town, and also luck check to return to town without combat on the way... Other than that yes- an actual town to go to, rest, buy gear, and possibly get quests from.
 
@@ -85,7 +85,7 @@ Reworked -agi as a whole adding another debuff:
 ### -Defence stats:
 -def was unbalanced with it's alpha II state. Following the same pattern, I will adjust them accordingly.
 
-> -Defence: Debuff: Getting hit makes you take ~~`(abs(-def))`~~ → `max(max_hp * 0.05, abs(-def))` bonus damage, Benefit: you reflect ~~int((damage taken * 1.5 + (abs(-def))) / 2.5)~~ → `max(15, min(35, max(damage_taken, abs(-def)) * 0.35))%` of the flat damage back (flat damage means damage before the bonus)
+> -Defence: Debuff: Getting hit makes you take ~~`(abs(-def))`~~ → `max(max_hp * 0.05, abs(-def))` bonus damage, Benefit: you reflect ~~int((damage taken * 1.5 + (abs(-def))) / 2.5)~~ → `max(15, min(35, max(damage_taken, abs(-def)) * 0.35))%` flat damage back (flat damage means damage before the bonus)
 
 ### -magic stats:
 
@@ -99,7 +99,7 @@ Also: -magic stat lowering curse now applies to a random enemy stat each success
 
 As you might of read -luck players will have a worse time to get rest chances, that will be an added feature added to -luck as well.
 
-> -Luck: Debuff: `-(min(35, abs(-lck)))%` accuracy, lower loot ~~rolls~~  → **odds** and `*new:* resting odds are max(15,  20 - abs(-lck) * 0.48)%` Benefit: Successful attacks are unavoidable
+> -Luck: Debuff: `-(min(35, abs(-lck)))%` accuracy, lower loot ~~rolls~~  → **odds** and `*new:* resting odds are max(20, 35 - abs(-lck) * 0.48)%` Benefit: Successful attacks are unavoidable
 
 ### HP calculation:
 Health is a little problematic in its current state, depending only on Def + Str stats. While relying on those two is intended, I'd like roles with fewer points in these stats to also have a fighting chance, and be able to design more roles going forward without worrying about breaking HP balance.
@@ -149,7 +149,7 @@ Also: same as -magic, -luck enemies stat lowering curse applies to random player
 
  ## enemies balance:
 
- Some enemy stats were garbled, so Alpha II adjustment were rewritten over enemies.csv (look at ALPHA II enemy balance changes).
+ Some enemy stats were garbled, so Alpha II adjustments were rewritten over enemies.csv (look at ALPHA II enemy balance changes).
 
  Moving on, the following enemies stats will change. This time in ascending alphabetical order:
 

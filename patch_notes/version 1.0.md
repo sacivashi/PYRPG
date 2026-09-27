@@ -6,7 +6,7 @@ Welcome to PYRPG! or should I write welcome back?
 Regarding Beta I, things are fully written, flows work overall, some edge parts are left for later.
 
 ### what changed?:
-- stats were adjusted and now feel overall balanced
+- stats were adjusted and now feel overall balanced, well except for magic and int
 
 - More enemies were added
 
@@ -53,8 +53,11 @@ anyhow, yeah:
 
 > **No spell learned?** Selecting Magic Attack with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
-> *Open question, still deciding:* once spells carry their own base damage, does Intelligence still matter for a caster, or does it shift to being a pure utility stat (accuracy, debuff chance) while Magic alone drives spell power?
+> **-intelligence?:** 
+> >  - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier magic users:
+> > - -intelligence: Debuff: ~~`min(50, abs(-int) + 5)%`~~ → `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell mana cost * 1.5)`** Benefit: ~~You find enemies weak points faster dealing~~ → **your spells deal**   ~~`(2 * (abs(-int)) - ( highest stat / 10))`~~ → `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage.
 
-> **Answer:** Intelligence decides max mana. Magic = spell power, Intelligence = how much you can cast before running dry — gives Int its own lane instead of overlapping with Magic.
-
-> *Still open:* `-Intelligence` already has its own debuff/benefit (confusion chance / hit-harder). Does going negative also shrink max mana as part of that existing debuff, or does Int stay positive-only for mana purposes (negative Int just means "not much of a pool," nothing special happens)?
+> **-magic?:** 
+> > for my next magic trick what if I told you it was thought of ahead of time... somewhat?
+> > - -magic: Debuff: ~~Magic attacks~~ **cursed spells** drain **~~(abs(-mag))%~~** → `min(25, abs(-mag))%` from your MAX HP (temporary, restores after combat) **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
+>> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
