@@ -12,7 +12,17 @@ Must be run from the project root — imports are root-relative.
 
 ## Running Tests
 
-There is currently no test suite. Testing is manual (`python main.py` and play through it).
+```bash
+pytest
+```
+
+`tests/` holds the automated suite (94 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+
+## Working with Patch Notes
+
+Files under `patch_notes/` (including drafts like `version 1.0.md`) are the user's own — don't proactively rewrite or add to them. Do write directly into them when asked, including phrasing like "help me write this up" or "add to the md" — that counts as being asked, not as overstepping.
+
+When the conversation's intent is discussing/brainstorming a patch (ideas, direction, future plans — not just when a patch_notes file happens to be open), default to engaging with the ideas rather than validating them: skip formula tables, min/max correctness checks, and bug callouts unless asked directly. Switch back to normal rigor once the user says they're actually building/implementing something.
 
 ## Architecture
 
