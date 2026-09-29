@@ -75,7 +75,7 @@ anyhow, yeah:
 I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
-resting succesfully maximum 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana < 20.... somehow).
+resting succesfully up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana < 20.... somehow).
 
 new enemies (sorted):
 
