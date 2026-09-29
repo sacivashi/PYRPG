@@ -22,6 +22,11 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 
 - Loot & equipment
 
+- Save deletions
+
+- Auto-save opt-out
+
+- Choosing which stat to raise on level-up
 #
 
 ### **upcoming:**
@@ -58,13 +63,19 @@ anyhow, yeah:
 >> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell mana cost * 1.5)`** Benefit: ~~You find enemies weak points faster dealing~~ → **your spells deal** `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
->> for my next magic trick what if I told you it was thought of ahead of time... somewhat?
+>> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
 >> - -magic: Debuff: ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
 >> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
 
 > -strength:
 >> strength curse shouldn't benefit or be damaged by magic
->> Debuff: ~~After attacking~~ → using physical attacks damages you for `abs(-str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str) * 0.2**)` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you by  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+>> Debuff: ~~After attacking~~ → using physical attacks damages you for `abs(-str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str) * 0.7**)` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+
+## learning spells:
+I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
+
+## mana generation:
+resting succesfully maximum 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana < 20.... somehow).
 
 new enemies (sorted):
 
