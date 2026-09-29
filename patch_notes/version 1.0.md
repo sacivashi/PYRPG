@@ -10,13 +10,13 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 
 - More enemies were added
 
-- Encountersare based of off your stats x enemy stats
+- Encounters are based of off your stats x enemy stats
 
 - EXP, gold, a shop, a town, only 1 quest available to do in town (will expand later)
 
 - Enemies can appear in groups now, enemy group difficulty curve is a known issue, I am thinking on solutions while writing this patch...
 
-- Fleeing a monster and town returning
+- Fleeing an enemy and town returning
 
 - rest odds and percentage healing.
 
@@ -33,12 +33,11 @@ I am introducing, the age of magic, splitting magic & physical damage. Pokemon g
 
 anyhow, yeah:
 
-- Adding mana
-- Adding spells
+- Add mana
+- Add spells
 - AOE logic (for not only magic users)
 - More consumable items and ways to heal out of town and combat rather than being misrable in trying to rest
 - Obviously add more quests
-- Maybe more roles?
 - No spells = no magic attacks, cry about it.
 - DOT spells/attacks?
 - Magical creatures (enemies & roles)
@@ -53,14 +52,19 @@ anyhow, yeah:
 
 > **No spell learned?** Selecting Magic Attack with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
-> **-intelligence?:** 
-> >  - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier magic users:
-> > - -intelligence: Debuff: ~~`min(50, abs(-int) + 5)%`~~ → `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell mana cost * 1.5)`** Benefit: ~~You find enemies weak points faster dealing~~ → **your spells deal**   ~~`(2 * (abs(-int)) - ( highest stat / 10))`~~ → `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage.
+> **-intelligence?:**
+>> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
+>> - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier magic users:
+>> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell mana cost * 1.5)`** Benefit: ~~You find enemies weak points faster dealing~~ → **your spells deal** `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
-> > for my next magic trick what if I told you it was thought of ahead of time... somewhat?
-> > - -magic: Debuff: ~~Magic attacks~~ **cursed spells** drain **~~(abs(-mag))%~~** → `min(25, abs(-mag))%` from your MAX HP (temporary, restores after combat) **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
+>> for my next magic trick what if I told you it was thought of ahead of time... somewhat?
+>> - -magic: Debuff: ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
 >> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
+
+> -strength:
+>> strength curse shouldn't benefit or be damaged by magic
+>> Debuff: ~~After attacking~~ → using physical attacks damages you for `abs(-str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str) * 0.2**)` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you by  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
 
 new enemies (sorted):
 
