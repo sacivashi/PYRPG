@@ -122,7 +122,7 @@ Interestingly enemy -attack formula had capping, but it didn't look like enough.
 > -Attack: The enemy deals ~~0~~ → `max(0, 15 + (-att))` damage, but will siphon the player's HP, healing itself based on the flat ~~`min(10, abs(-atk) / 100)%`~~ → `max(5, abs(-atk) * 0.46)` HP value. **The siphon damage cannot be reflected.**
 
 
-### enemy -defence:
+### enemy -defense:
 enemies -def was almost there, but needed tweaks as well.
 
 > -Defense: The enemy takes ~~`+min(20, abs(-def))%`~~ →  `+max(3, abs(-def) * 0.75)` **bonus** damage from attacks, but will return ~~`(damage / 100 + abs(-def))`~~ → `min(5, (damage_taken + abs(-def)) * 0.2)%` of the **flat** damage taken back (flat == before bonus)
