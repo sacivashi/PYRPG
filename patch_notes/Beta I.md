@@ -131,7 +131,7 @@ enemies -def was almost there, but needed tweaks as well.
 
 Following players -agi changes, the rerouting is done here too
 
-> -Speed: ~~The player will always strike -speed enemies first, the enemy's attacks are unavoidable~~ → **Act last, unless the player's agi stat is lower than you.** `*new*: +min(15, abs(-spd) * 0.3)% higher chance to succesfully flee from -spd enemies`, -spd enemy attacks cannot be avoided.
+> -Speed: ~~The player will always strike -speed enemies first, the enemy's attacks are unavoidable~~ → **Act last, unless the player's agi stat is lower than you.** `*new*: +min(15, abs(-spd) * 0.3)% higher chance to succesfully flee from -spd enemies... looking at you there lord cathulu`, -spd enemy attacks cannot be avoided.
 
 ### enemy -luck:
 
