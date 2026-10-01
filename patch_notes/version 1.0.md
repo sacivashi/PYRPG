@@ -86,8 +86,8 @@ anyhow, yeah:
 **Also, take `max(7, abs(-def) * 0.82)` bonus damage from magic attacks, doesn't reflect any damage back.**
 
 > corruption:
->> same as -def, satisfying for last patch, a rework feels at place.
->> Corruption: The enemy ~~recieves~~ → takes  `max(current_hp * 0.08, max(++corr, ~~5~~ → 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(hp, damage_taken * corr * 1.2) / 100)` → `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes min(damage_taken, damage_taken - (++corr)) when damage taken - the corr value reaches a negative, heal for: min(corr * 0.75, abs(damage_taken - corr) * max_hp * 0.01)
+>> A big rework feels at place.
+>>> Corruption: The enemy ~~recieves~~ → takes  `max(current_hp * 0.08, max(++corr, ~~5~~ → 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(hp, damage_taken * corr * 1.2) / 100)` → `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes min(damage_taken, damage_taken - (++corr)) when damage taken - the corr value reaches a negative, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0.
 
 
 ## learning spells:
@@ -114,7 +114,8 @@ new enemies (sorted):
 new roles (sorted):
 |Class|Strength|Agility|Intelligence|Defence|Magic|Luck|
 |----|----|----|----|----|----|----|
-|dwarf|7|3|5|7|3|0|
+|Dwarf|7|3|5|7|3|0|
+|Elf|4|7|6|4|5|2|
 |Satyr|2|7|9|3|5|3|
 
 ## miscellaneous updates:
