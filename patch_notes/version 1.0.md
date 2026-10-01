@@ -82,7 +82,7 @@ anyhow, yeah:
 > enemy -defense:
 >> Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, so a minimal adjustment:
 
-> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return `min(5, (damage_taken + abs(-def)) * 0.2)%` of the flat damage taken back. **Also, 
+> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →   **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. **Also, take `max(7, abs(-def) * 0.82)` bonus damage from magic attacks, and return the same damage value back.** 
 
 ## learning spells:
 I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
