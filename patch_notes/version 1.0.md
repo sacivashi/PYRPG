@@ -93,14 +93,17 @@ resting succesfully gives up to 30% of max mana back, natural per turn 2% max ma
 
 new enemies (sorted):
 
-I know that more on the easier side enemies need to be added, so I will add these according to the magical patch theme 
+> I know that more on the easier side enemies need to be added, so I will add some according to the magical patch theme, while also adding general enemies too.
 
 |name|corr|hp|attack|def|speed|luck|
 |----|----|----|----|----|----|----|
+|Banshee|0|13|8|2|0|-12|
 |Elf|0|13|8|0|11|7|
 |Fairy|0|12|3|11|25|7|
 |Unicorn|0|20|8|2|15|10|
 |Vampire|0|9|-15|2|6|0|
+|Werewolf|1|23|13|9|20|4|
+
 
 new roles (sorted):
 |Class|Strength|Agility|Intelligence|Defence|Magic|Luck|
