@@ -82,8 +82,13 @@ anyhow, yeah:
 > Enemy -defense:
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, so a minimal adjustments:
 
->> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →   **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. 
+>> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. 
 **Also, take `max(7, abs(-def) * 0.82)` bonus damage from magic attacks, doesn't reflect any damage back.**
+
+> corruption:
+>> same as -def, satisfying for last patch, a rework feels at place.
+>> Corruption: The enemy ~~recieves~~ → takes  `max(current_hp * 0.08, max(++corr, ~~5~~ → 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(hp, damage_taken * corr * 1.2) / 100)` → `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes min(damage_taken, damage_taken - (++corr)) when damage taken - the corr value reaches a negative, heal for: min(corr * 0.75, abs(damage_taken - corr) * max_hp * 0.01)
+
 
 ## learning spells:
 I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
@@ -93,13 +98,14 @@ resting succesfully gives up to 30% of max mana back, natural per turn 2% max ma
 
 new enemies (sorted):
 
-> I know that more on the easier side enemies need to be added, so I will add some according to the magical patch theme, while also adding general enemies too.
+> I know that more on the easier side enemies need to be added, so I will add some according to the magical patch theme, while also adding other power level enemies too.
 
 |name|corr|hp|attack|def|speed|luck|
 |----|----|----|----|----|----|----|
 |Banshee|0|13|8|2|0|-12|
 |Elf|0|13|8|0|11|7|
 |Fairy|0|12|3|11|25|7|
+|Living armor|5|200|0|70|0|0|
 |Unicorn|0|20|8|2|15|10|
 |Vampire|0|9|-15|2|6|0|
 |Werewolf|1|23|13|9|20|4|
