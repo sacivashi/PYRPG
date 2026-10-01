@@ -71,6 +71,13 @@ anyhow, yeah:
 >> strength curse shouldn't benefit or be damaged by magic
 >> Debuff: ~~After attacking~~ → using physical attacks damages you for `abs(-str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str) * 0.7**)` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
 
+> Player Defence:
+>> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! I am nerfing damage reduction scaling while adjusting it:
+>> def: take `min(25, 1 + def * 0.9)%` less damage
+
+> Enemy Defense:
+>> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
+
 ## learning spells:
 I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
