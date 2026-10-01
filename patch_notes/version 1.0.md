@@ -79,18 +79,21 @@ anyhow, yeah:
 >> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
 >> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, take `min(15, 1 + def * 0.2)%` less magic damage
 
-> enemy -defense:
->> Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, so a minimal adjustment:
+> Enemy -defense:
+>>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, so a minimal adjustments:
 
-> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →   **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. **Also, take `max(7, abs(-def) * 0.82)` bonus damage from magic attacks, and return the same damage value back.** 
+>> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →   **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. 
+**Also, take `max(7, abs(-def) * 0.82)` bonus damage from magic attacks, doesn't reflect any damage back.**
 
 ## learning spells:
 I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
-resting succesfully up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana < 20.... somehow).
+resting succesfully gives up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana < 20.... somehow).
 
 new enemies (sorted):
+
+I know that more on the easier side enemies need to be added, so I will add these according to the magical patch theme 
 
 |name|corr|hp|attack|def|speed|luck|
 |----|----|----|----|----|----|----|
