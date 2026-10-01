@@ -94,7 +94,11 @@ anyhow, yeah:
 I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
-resting succesfully gives up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana < 20.... somehow).
+resting succesfully gives up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
+
+## items:
+Adding the new items also means that I will make it so the healing/spell learning (and probably future consumables) can be used out of combat.
+I am also thinking of loot upgrading option (loot stat upgrading which costs gold), and loot selling.
 
 new enemies (sorted):
 
@@ -122,6 +126,11 @@ The thought line is to expand the amount of choices, so some may hit similar sta
 |Elf|4|7|6|4|5|2|
 |Satyr|2|7|9|3|4|4|
 |Tank|0|-5|2|12|1|5|
+
+new items (sorted):
+
+- Health potion, consumable, upon usage, heal for 20 HP
+- Mana potion, consumable, upon usage, gain 20 mana
 
 ## miscellaneous updates:
 - Sort roles alphabetically
