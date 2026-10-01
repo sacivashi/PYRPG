@@ -113,7 +113,7 @@ new enemies (sorted):
 
 new roles (sorted):
 
->Some new roles as well, mostly fitting the theme.
+> Some new roles as well, mostly fitting the theme.
 The thought line is to expand the amount of choices, so some may hit similar stat lines or be well tuned.
 
 |Class|Strength|Agility|Intelligence|Defence|Magic|Luck|
