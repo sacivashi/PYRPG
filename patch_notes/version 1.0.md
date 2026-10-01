@@ -1,5 +1,5 @@
 # PYRPG v 1.0:
-## The age of magic:
+## The age of magic....and abilities:
 
 Welcome to PYRPG! or should I write welcome back?
 
@@ -40,7 +40,8 @@ anyhow, yeah:
 
 - Add mana
 - Add spells
-- AOE logic (for not only magic users)
+- Add abilities
+- AOE logic (both magic and abilities)
 - More consumable items and ways to heal out of town and combat rather than being misrable in trying to rest
 - Obviously add more quests
 - No spells = no magic attacks, cry about it.
@@ -53,9 +54,9 @@ anyhow, yeah:
 
 > **Spell damage:** `Spell Base Damage × max(0.1, 1 + Magic × 0.1)`. A dedicated caster (high Magic) roughly doubles a spell's base damage. The multiplier is floored at 0.1 (10% of base) so damage can never hit 0 or go negative, no matter how far Magic gets pushed down via leveling.
 
-> **Two spell pools:** `+Magic` learns from the normal spell list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — just weaker there, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal-Magic characters never get access to them.
+> **Two spell pools:** `+Magic` learns from the normal abilities list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — just weaker there, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal-Magic characters never get access to them.
 
-> **No spell learned?** Selecting Magic Attack with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
+> **No spell/abilty learned?** Selecting abilities with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
@@ -83,15 +84,15 @@ anyhow, yeah:
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, so a minimal adjustments:
 
 >> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. 
-**Also, take `max(7, abs(-def) * 0.82)` bonus damage from magic attacks, doesn't reflect any damage back.**
+**Also, take `max(7, abs(-def) * 0.82)` bonus damage from spells, doesn't reflect any damage back.**
 
 > corruption:
 >> A big rework feels at place.
->>> Corruption: The enemy ~~recieves~~ → takes  `max(current_hp * 0.08, max(++corr, ~~5~~ → 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(hp, damage_taken * corr * 1.2) / 100)` → `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes min(damage_taken, damage_taken - (++corr)) when damage taken - the corr value reaches a negative, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0.
+>>> Corruption: The enemy ~~recieves~~ → takes  `max(current_hp * 0.08, max(++corr, ~~5~~ → 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(hp, damage_taken * corr * 1.2) / 100)` → `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes min(damage_taken, damage_taken - (++corr)) damage. When damage taken - the corr value reaches a negative, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0.
 
 
-## learning spells:
-I will add new consumable loot drops/shop items (like TMs) that teach you spells, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
+## learning spells/abilities:
+I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
 resting succesfully gives up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
@@ -134,7 +135,8 @@ new items (sorted):
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their loot.
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells tab automatically, spell mana cost: entire mana pool, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5.
-- Thunder descible, consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 magic damage. non droppable, rarity 25 purchase-able. 
+- Thunder descible, consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 magic damage. non droppable, rarity 25 purchase-able.
+- Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other action during those 4 turns.
 
 ## miscellaneous updates:
 - Sort roles alphabetically
