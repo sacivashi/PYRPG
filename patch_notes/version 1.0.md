@@ -1,9 +1,9 @@
-# PYRPG v 1.0:
-## The age of magic....and abilities:
+# PYRPG v 1.0 & knuckles:
+## The age of magic....and abilities.... & knuckles?:
 
 Welcome to PYRPG! or should I write welcome back?
 
-Regarding Beta I, things are fully written, flows work overall, some edge parts are left for later.
+Regarding Beta I, things are fully written, flows work overall, some edge parts are left, now onto a super big patch! & knuckles
 
 ### what changed?:
 - stats were adjusted and now feel overall balanced, well except for magic and int
@@ -27,21 +27,20 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 - Auto-save opt-out
 
 - Choosing which stat to raise on level-up
-#
 
 ### **upcoming:**
 
 Imagine this, you boot PYRPG, choose a magical class, you use "magic attack" in combat, and.... it's like you hit the enemy with a physical attack decorated as "magic". Plain as the day you were born.
 
 ### **NO MORE**
-I am introducing, the age of magic, splitting magic & physical damage. Pokemon gen 3 who?
+I am introducing, the age of magic and abilities & knuckles, splitting magic & physical damage. Pokemon gen 3 who?
 
 anyhow, yeah:
 
 - Add mana
 - Add spells
 - Add abilities
-- AOE logic (both magic and abilities)
+- AOE logic (both magic and abilities and consumables)
 - More consumable items and ways to heal out of town and combat rather than being misrable in trying to rest
 - Obviously add more quests
 - No spells = no magic attacks, cry about it.
@@ -135,7 +134,7 @@ new items (sorted):
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their loot.
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells tab automatically, spell mana cost: entire mana pool, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5.
-- Thunder descible, consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 magic damage. non droppable, rarity 25 purchase-able.
+- Thunder descible, consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able.
 - Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other action during those 4 turns.
 
 ## miscellaneous updates:
