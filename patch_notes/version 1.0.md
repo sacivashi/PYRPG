@@ -112,11 +112,16 @@ new enemies (sorted):
 
 
 new roles (sorted):
+
+>Some new roles as well, mostly fitting the theme.
+The thought line is to expand the amount of choices, so some may hit similar stat lines or be well tuned.
+
 |Class|Strength|Agility|Intelligence|Defence|Magic|Luck|
 |----|----|----|----|----|----|----|
 |Dwarf|7|3|5|7|3|0|
 |Elf|4|7|6|4|5|2|
-|Satyr|2|7|9|3|5|3|
+|Satyr|2|7|9|3|4|4|
+|Tank|0|-5|2|12|1|5|
 
 ## miscellaneous updates:
 - Sort roles alphabetically
