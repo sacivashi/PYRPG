@@ -67,27 +67,27 @@ anyhow, yeah:
 >> - -magic: Debuff: ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
 >> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
 
-> -strength:
->> strength curse shouldn't benefit or be damaged by magic
->> Debuff: ~~After attacking~~ → using physical attacks damages you for `abs(-str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str) * 0.7**)` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+> **-strength:**
+>> strength curse shouldn't benefit or be damaged by spells
+>> Debuff: ~~After attacking~~ → using physical attacks or skills, damages you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str)) * 0.7**))` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
 
-> Player Defence:
+> **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
 >> def: You take `min(25, 1 + def * 0.9)%` less damage
 
-> Enemy Defense:
+> **Enemy Defense:**
 >> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
 >> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, take `min(15, 1 + def * 0.2)%` less magic damage
 
-> Enemy -defense:
->>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, so a minimal adjustments:
+> **Enemy -defense:**
+>>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
 
->> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, flat-damage-taken * (abs(-def) * 0.4)%`** damage back. 
+>> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of flat damage back. 
 **Also, take `max(7, abs(-def) * 0.82)` bonus damage from spells, doesn't reflect any damage back.**
 
-> corruption:
->> A big rework feels at place.
->>> Corruption: The enemy ~~recieves~~ → takes  `max(current_hp * 0.08, max(++corr, ~~5~~ → 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(hp, damage_taken * corr * 1.2) / 100)` → `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes min(damage_taken, damage_taken - (++corr)) damage. When damage taken - the corr value reaches a negative, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0.
+> **corruption:**
+>> A nerf-rework feels at place.
+>>> Corruption: The enemy ~~recieves~~ → takes  ~~`max(current_hp * 0.08, max(++corr, 5))`~~  → `max(current_hp * 0.04, max(++corr, 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes `min(damage_taken, damage_taken - (++corr))` damage. When damage taken - the corr value reaches <= 0, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0. corr grows after each turn the enemy takes.
 
 
 ## learning spells/abilities:
