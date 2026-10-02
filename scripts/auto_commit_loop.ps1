@@ -26,7 +26,10 @@ try {
     $nextRun = (Get-Date).AddMinutes($IntervalMinutes)
     while (Test-Working) {
         if ((Get-Date) -ge $nextRun) {
-            & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $CycleScript | Out-Null
+            # WScript.Shell.Run with windowStyle 0 never creates a console window at all,
+            # unlike powershell.exe -WindowStyle Hidden which can still briefly flash one.
+            $shell = New-Object -ComObject WScript.Shell
+            $shell.Run("powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$CycleScript`"", 0, $true) | Out-Null
             $nextRun = (Get-Date).AddMinutes($IntervalMinutes)
         }
         Start-Sleep -Seconds 15

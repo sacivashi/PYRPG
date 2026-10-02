@@ -4,13 +4,10 @@
         {
             "label": "PYRPG auto-commit",
             "type": "process",
-            "command": "powershell.exe",
+            "command": "wscript.exe",
             "args": [
-                "-NoProfile",
-                "-ExecutionPolicy",
-                "Bypass",
-                "-File",
-                "${workspaceFolder}\\scripts\\auto_commit_loop.ps1"
+                "//B",
+                "${workspaceFolder}\\scripts\\run_auto_commit_loop_hidden.vbs"
             ],
             "isBackground": true,
             "runOptions": {
