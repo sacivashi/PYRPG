@@ -59,25 +59,29 @@ anyhow, yeah:
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
->> - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier magic users:
+>> - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier spells users:
 >> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell mana cost * 1.5)`** Benefit: ~~You find enemies weak points faster dealing~~ → **your spells deal** `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
->> - -magic: Debuff: ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, `*new*: get 15% less EXP`. Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat `*new*; by min(7, abs(-mag))` 
+>> - -magic: Debuff: ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, and get 15% less EXP. Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
 >> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
->> Debuff: ~~After attacking~~ → using physical attacks or skills, damages you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str)) * 0.7**))` damage, **whether  you hit or miss the attack** Benefit: ~~hitting~~ → landing physical attacks on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+>> Debuff: ~~After attacking~~ → using physical attacks or abilities, damages you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str)) * 0.7**))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
 
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
+
 >> def: You take `min(25, 1 + def * 0.9)%` less damage
 
 > **Enemy Defense:**
 >> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
->> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, take `min(15, 1 + def * 0.2)%` less magic damage
+
+>> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, 
+
+>> take `min(15, 1 + def * 0.2)%` less magic damage
 
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
@@ -134,7 +138,7 @@ new items (sorted):
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their loot.
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells tab automatically, spell mana cost: entire mana pool, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5.
-- Thunder descible, consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able.
+- Thunder disciple, consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able.
 - Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other action during those 4 turns.
 
 ## miscellaneous updates:
