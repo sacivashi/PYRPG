@@ -144,10 +144,14 @@ new items (sorted):
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
+- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: when you win 3 combats, raise on random stat by 1.
 
 items adjustment:
 
+> **Dice machine:**
+>> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
 
+>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, deal AOE dice damage, while striking the chosen enemy for your damage.
 
 
 ## miscellaneous updates:
