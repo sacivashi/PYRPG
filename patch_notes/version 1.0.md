@@ -46,6 +46,7 @@ anyhow, yeah:
 - No spells = no magic attacks, cry about it.
 - DOT spells/attacks?
 - Magical creatures (enemies & roles)
+- Encounter difficulty curve rework
 
 ## stats and logic:
 
@@ -102,7 +103,7 @@ resting succesfully gives up to 30% of max mana back, natural per turn 2% max ma
 
 ## items:
 Adding the new items also means that I will make it so the healing/spell learning (and probably future consumables) can be used out of combat.
-I am also thinking of loot upgrading option (loot stat upgrading which costs gold), and loot selling.
+
 
 new enemies (sorted):
 
