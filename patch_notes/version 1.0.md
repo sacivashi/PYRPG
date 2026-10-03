@@ -151,7 +151,7 @@ items adjustment:
 > **Dice machine:**
 >> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
 
->> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, deal AOE dice damage, while striking the chosen enemy for your damage.
+>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE that dice damage.
 
 
 ## miscellaneous updates:
