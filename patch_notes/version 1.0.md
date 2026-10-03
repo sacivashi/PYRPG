@@ -48,6 +48,17 @@ anyhow, yeah:
 - Magical creatures (enemies & roles)
 - Encounter difficulty curve rework
 
+## enemies encounter:
+Yes I know previous patch made it so enemies are encountered based on your stats, but I want the "depth" mechanic to contribute more towards what you may encounter.
+
+> **encounter logic:**
+>> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats)
+>> - depth 5 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.)
+>> - depth 10 ~ 15: thougher to medium difficulty enemies.
+depth
+>> - depth 15 ~ 20: medium - hard
+>> - 20 ~ >20:  hard - insane
+
 ## stats and logic:
 
 *magic reworked:*
