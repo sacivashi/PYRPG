@@ -33,7 +33,7 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 Imagine this, you boot PYRPG, choose a magical class, you use "magic attack" in combat, and.... it's like you hit the enemy with a physical attack decorated as "magic". Plain as the day you were born.
 
 ### **NO MORE**
-I am introducing, the age of magic and abilities & knuckles, splitting magic & physical damage. Pokemon gen 3 who?
+I am introducing, the age of magic and abilities & knuckles, splitting magic & physical damage. Pokemon gen 4 who?
 
 anyhow, yeah:
 
@@ -62,7 +62,7 @@ fast travel cost: int(5 * depth * 0.5)
 >> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.)
 >> - depth 11 ~ 15: thougher to medium difficulty enemies.
 >> - depth 16 ~ 20: medium - hard
->> - higher than 20:  hard - insane
+>> - 21 ~ beyond :  hard - insane
 
 ## stats and logic:
 
@@ -74,10 +74,13 @@ fast travel cost: int(5 * depth * 0.5)
 
 > **No spell/abilty learned?** Selecting abilities with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
+> **mana:**
+>> going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`.
+
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
->> - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier spell users:
->> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`**, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
+ Also adjusting -int to be more powerful for heavier spell users:
+>> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`**, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.3 * damage) + int(min(abs(int) * 0.75, max(abs(mag), 5) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
@@ -86,7 +89,7 @@ fast travel cost: int(5 * depth * 0.5)
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
->> Debuff: ~~After attacking~~ → using physical attacks or abilities, damages you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp * ~~0.01~~ → 0.08, **abs(str)) * 0.7**))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+>> Debuff: ~~After attacking~~ → using physical attacks or abilities, damages you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp *  0.08, abs(str)) * 0.7))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
 
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
