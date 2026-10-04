@@ -43,21 +43,27 @@ anyhow, yeah:
 - AOE logic (both magic and abilities and consumables)
 - More consumable items and ways to heal out of town and combat rather than being misrable in trying to rest
 - Obviously add more quests
-- No spells = no magic attacks, cry about it.
+- No spells/abilities = spells/ability tab says it's empty, cry about it.
 - DOT spells/attacks?
 - Magical creatures (enemies & roles)
 - Encounter difficulty curve rework
+- Implement "fast travel"
 
 ## enemies encounter:
 Yes I know previous patch made it so enemies are encountered based on your stats, but I want the "depth" mechanic to contribute more towards what you may encounter.
 
+## fast travel:
+Reached a specific depth and got stuck or somehow died and returned to town? Well cr no more! "fast travel" option will take you up to the depth you reached for a price * depth number!
+
+fast travel cost: int(5 * depth * 0.5)
+
 > **encounter logic:**
 >> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats)
->> - depth 5 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.)
->> - depth 10 ~ 15: thougher to medium difficulty enemies.
+>> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.)
+>> - depth 11 ~ 15: thougher to medium difficulty enemies.
 depth
->> - depth 15 ~ 20: medium - hard
->> - 20 ~ >20:  hard - insane
+>> - depth 16 ~ 20: medium - hard
+>> - higher than 20:  hard - insane
 
 ## stats and logic:
 
