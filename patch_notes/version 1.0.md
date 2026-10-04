@@ -53,7 +53,7 @@ anyhow, yeah:
 Yes I know previous patch made it so enemies are encountered based on your stats, but I want the "depth" mechanic to contribute more towards what you may encounter.
 
 ## fast travel:
-Reached a specific depth and got stuck or somehow died and returned to town? Well cr no more! "fast travel" option will take you up to the depth you reached for a price * depth number!
+Reached a specific depth and got stuck or somehow died and returned to town? Well cry no more! "fast travel" option will take you up to the depth you reached for a price * depth number! (choose whichever <= depth)
 
 fast travel cost: int(5 * depth * 0.5)
 
