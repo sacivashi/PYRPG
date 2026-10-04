@@ -61,7 +61,6 @@ fast travel cost: int(5 * depth * 0.5)
 >> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats)
 >> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.)
 >> - depth 11 ~ 15: thougher to medium difficulty enemies.
-depth
 >> - depth 16 ~ 20: medium - hard
 >> - higher than 20:  hard - insane
 
@@ -71,19 +70,19 @@ depth
 
 > **Spell damage:** `Spell Base Damage × max(0.1, 1 + Magic × 0.1)`. A dedicated caster (high Magic) roughly doubles a spell's base damage. The multiplier is floored at 0.1 (10% of base) so damage can never hit 0 or go negative, no matter how far Magic gets pushed down via leveling.
 
-> **Two spell pools:** `+Magic` learns from the normal abilities list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — just weaker there, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal-Magic characters never get access to them.
+> **Two spell pools:** `+Magic` learns from the normal spells and abilities list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — weaker spells, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal Magic characters never get access to them.
 
 > **No spell/abilty learned?** Selecting abilities with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
->> - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier spells users:
->> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell mana cost * 1.5)`** Benefit: ~~You find enemies weak points faster dealing~~ → **your spells deal** `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
+>> - going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`. Also adjusting -int to be more powerful for heavier spell users:
+>> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`**, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.08 * damage) + int(min(abs(-int) * 0.75, max(abs(magic), 0) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
->> - -magic: Debuff: ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, and get 15% less EXP. Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
->> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 50). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
+>> - -magic: Debuff: gain 15% less EXP. ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
+>> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 72). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
@@ -104,8 +103,8 @@ depth
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
 
->> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of flat damage back. 
-**Also, take `max(7, abs(-def) * 0.82)` bonus damage from spells, doesn't reflect any damage back.**
+>> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of the flat damage taken back. 
+**Also, take `max(7, abs(-def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
 
 > **corruption:**
 >> A nerf-rework feels at place.
@@ -151,7 +150,7 @@ The thought line is to expand the amount of choices, so some may hit similar sta
 
 new items (sorted):
 
-- Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells tab automatically, spell mana cost: entire mana pool, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
+- Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
 - Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
 - Mana potion: consumable, upon usage, gain 20 mana, costs 15 gold, always available and doesn't go out of stock.
@@ -162,7 +161,7 @@ new items (sorted):
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
-- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: when you win 3 combats, raise on random stat by 1.
+- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, up to 10 each. undroppable, purchaseable, rarity 6.
 
 items adjustment:
 
