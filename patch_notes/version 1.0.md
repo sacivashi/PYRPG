@@ -75,11 +75,11 @@ fast travel cost: int(5 * depth * 0.5)
 > **No spell/abilty learned?** Selecting abilities with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
 > **mana:**
->> going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1)`.
+>> going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1 + 15)`.
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
- Also adjusting -int to be more powerful for heavier spell users:
+>>> Also adjusting -int to be more powerful for heavier spell users:
 >> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.5 * spell_damage) + int(min(abs(intel) // 3, abs(mag) * 0.8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
@@ -153,7 +153,7 @@ The thought line is to expand the amount of choices, so some may hit similar sta
 
 new items (sorted):
 
-- Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
+- Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: int(max(5, mana * 0.40)), can be cast once a combat. single target, rarity 12, purchase-able
 - Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
 - Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
