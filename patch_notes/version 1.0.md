@@ -75,7 +75,7 @@ fast travel cost: int(5 * depth * 0.5)
 > **No spell/abilty learned?** Selecting abilities with nothing learned shows "you have no spells" and kicks you back to choose a different action (Physical Attack, etc.) instead — doesn't waste the turn on an empty action.
 
 > **mana:**
->> going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 1.1 + 15)`.
+>> going forward mana pool is buffed by abs(int). `mana = max(20, abs(int) * 4.5)`.
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
@@ -121,7 +121,9 @@ fast travel cost: int(5 * depth * 0.5)
 I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
-resting succesfully gives up to 30% of max mana back, natural per turn 2% max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
+resting succesfully gives up to 30% of max mana back, natural per turn 10% of max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
+
+Resting in town fully restores mana, same as HP. Mana carries over between fights; it doesn't reset per combat.
 
 ## items:
 Adding the new items also means that I will make it so the healing/spell learning (and probably future consumables) can be used out of combat.
@@ -168,15 +170,18 @@ new items (sorted):
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
-- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, up to 10 each permanently. undroppable, purchaseable, rarity 6.
+- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
 
 
-items adjustment:
+items adjustment (and filling out last patch addage ones):
 
-> **Dice machine:**
+>  - **Dice machine:**
 >> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
+>>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE that dice damage.
 
->> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE that dice damage.
+> - Bomb
+>> AOE damage... yeah, but also I didn't really note what it does last patch... oops.
+>>> **bomb:** consumable buyable undroppable, 50 rarity. on usage deal 35 damage to all enemies
 
 
 ## miscellaneous updates:
