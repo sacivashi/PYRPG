@@ -80,7 +80,7 @@ fast travel cost: int(5 * depth * 0.5)
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
  Also adjusting -int to be more powerful for heavier spell users:
->> - -intelligence: Debuff: `min(35, abs(-int) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`**, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.3 * damage) + int(min(abs(int) * 0.75, max(abs(mag), 5) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
+>> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.3 * spell_damage) + int(min(abs(intel) * 0.75, max(abs(mag), 5) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
@@ -155,6 +155,7 @@ new items (sorted):
 
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: int(max(5, mana * 0.40)), single target, rarity 12, purchase-able
 - Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
+- Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
 - Mana potion: consumable, upon usage, gain 20 mana, costs 15 gold, always available and doesn't go out of stock.
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5.
@@ -165,6 +166,7 @@ new items (sorted):
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
 - Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, up to 10 each. undroppable, purchaseable, rarity 6.
+
 
 items adjustment:
 
