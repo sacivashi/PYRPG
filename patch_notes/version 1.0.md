@@ -80,12 +80,15 @@ fast travel cost: int(5 * depth * 0.5)
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
 >>> Also adjusting -int to be more powerful for heavier spell users:
->> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.5 * spell_damage) + int(min(abs(intel) // 3, abs(mag) * 0.8))` bonus **magic** damage **regardless if the debuff applied or not**.
+>> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **spells (spells only) deal** `int(0.5 * spell_damage) + int(min(abs(intel) // 3, abs(mag) * 0.8))` bonus **magic** damage **regardless if the debuff applied or not**.
+
+
 
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
->> - -magic: Debuff: gain 15% less EXP. ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost min(abs(mag), mana_cost * 0.88) HP **instead of mana**, Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
->> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 72). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
+>> - -magic: Debuff: gain 15% less EXP. ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost `min(abs(mag), mana_cost * 0.88)` HP **instead of mana**, Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
+>> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 71). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
+>>> Having -int and -mag both means if you use a cursed spell, have `min(35, abs(intel) + 5)%` to cost `min(abs(mag), mana_cost * 0.88)` * 1.5 HP. or if you don't have the hp to pay well, you die :D
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
@@ -94,24 +97,24 @@ fast travel cost: int(5 * depth * 0.5)
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
 
->> def: You take `min(25, 1 + def * 0.9)%` less damage
+>> def: You take `min(25, 1 + def * 0.9)%` less damage as long as your defence is > 0. at 0 and < 0 defence, you get 0% damage reduction. 
+
 
 > **Enemy Defense:**
 >> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
-
 >> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, 
-
 >> take `min(15, 1 + def * 0.2)%` less magic damage
+>>> -def have 0% damage defence!
 
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
 
->> -Defense: The enemy takes `+max(3, abs(-def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(-def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of the flat damage taken back. 
-**Also, take `max(7, abs(-def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
+>> -Defense: The enemy takes `+max(3, abs(def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of the flat damage taken back. 
+**Also, take `max(7, abs(def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
 
 > **corruption:**
 >> A nerf-rework feels at place.
->>> Corruption: The enemy ~~recieves~~ → takes  ~~`max(current_hp * 0.08, max(++corr, 5))`~~  → `max(current_hp * 0.04, max(++corr, 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes `min(damage_taken, damage_taken - (++corr))` damage. When damage taken - the corr value reaches <= 0, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0. corr grows after each turn the enemy takes.
+>>> Corruption: The enemy ~~recieves~~ → takes  ~~`max(current_hp * 0.08, max(corr, 5))`~~  → `max(current_hp * 0.04, max(corr, 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes `min(damage_taken, damage_taken - (corr))` damage. When damage taken - the corr value reaches <= 0, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0. **corr grows by 1, after each turn the enemy takes.**
 
 
 ## learning spells/abilities:
@@ -158,14 +161,14 @@ new items (sorted):
 - Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
 - Mana potion: consumable, upon usage, gain 20 mana, costs 15 gold, always available and doesn't go out of stock.
-- Mana rod: equipment, 0,0,15,0,0,0, rarity: 5.
+- Mana rod: equipment, 0,0,15,0,0,0, rarity: 5. buyable droppable
 - Mana surge book: consumable, on use learn the spell mana surge, spell mana; 5, +3 each cast in combat, spell damage: 2, +2 each cast in combat. undroppable, not purchase-able, mages start with this consumable in their inventory.
 - Nature's codex: consumable, on use learn the ability nature's gift, 25 mana, ability effect: for 3 turns heal 5 HP. Monks start out with this in their inventory, 17 rarity, droppable, purchaseable
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their inventory.
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
-- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, up to 10 each. undroppable, purchaseable, rarity 6.
+- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, up to 10 each permanently. undroppable, purchaseable, rarity 6.
 
 
 items adjustment:
