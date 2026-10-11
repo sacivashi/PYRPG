@@ -1,9 +1,9 @@
-# PYRPG v 1.0 & knuckles:
+# PYRPG v 1.0:
 ## The age of magic....and abilities.... & knuckles?:
 
 Welcome to PYRPG! or should I write welcome back?
 
-Regarding Beta I, things are fully written, flows work overall, some edge parts are left, now onto a super big patch! & knuckles
+Regarding Beta I, things are fully written, flows work overall, some edge parts are left, now onto a super big patch!
 
 ### what changed?:
 - stats were adjusted and now feel overall balanced, well except for magic and int
@@ -14,7 +14,7 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 
 - EXP, gold, a shop, a town, only 1 quest available to do in town (will expand later)
 
-- Enemies can appear in groups now, enemy group difficulty curve is a known issue, I am thinking on solutions while writing this patch...
+- Enemies can appear in groups now, enemy group difficulty curve is a known issue, I will write solutions in this patch...
 
 - Fleeing an enemy and town returning
 
@@ -80,7 +80,7 @@ fast travel cost: int(5 * depth * 0.5)
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
  Also adjusting -int to be more powerful for heavier spell users:
->> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.3 * spell_damage) + int(min(abs(intel) * 0.75, max(abs(mag), 5) // 8))` bonus **magic** damage **regardless if the debuff applied or not**.
+>> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **your spells (spells only) deal** `int(0.5 * spell_damage) + int(min(abs(intel) // 3, abs(mag) * 0.8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
