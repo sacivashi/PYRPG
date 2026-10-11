@@ -175,14 +175,22 @@ new items (sorted):
 
 items adjustment (and filling out last patch addage ones):
 
+> - Bomb
+>> AOE damage... yeah, but also I didn't really note what it does last patch... oops.
+>>> **bomb:** consumable buyable undroppable, 50 rarity. on usage deal 35 damage to all enemies. can be used once, dissapears on usage.
+
 >  - **Dice machine:**
 >> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
 >>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE that dice damage.
 
-> - Bomb
->> AOE damage... yeah, but also I didn't really note what it does last patch... oops.
->>> **bomb:** consumable buyable undroppable, 50 rarity. on usage deal 35 damage to all enemies
+> - Timer
+>> having an extra turn for yourself in combat is pretty exciting, but I am dropping it's stats to become a full on consumable and some small nerfs.
+>>> **Timer:** consumable undroppable purchaseable, ~~25~~ → 15 rarity.
+>>> On use, gain another turn, after that turn cooldown for ~~5~~ → 6 turns.
 
+> - Voucher
+>> this was hidden last patch.
+>>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/dissapears. 
 
 ## miscellaneous updates:
 - Sort roles alphabetically
