@@ -193,18 +193,21 @@ items adjustment (and filling out last patch added ones):
 >> this was hidden last patch.
 >>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/dissapears.
 
-all rings: giving all rings extra 2 def
+- all rings: giving all rings extra 2 def, and giving arcane ring more purpose.
+- sword evolution: making things a little minecraft-y... but also real life accurate kinda? with the addage of wooden and diamond swords.
+
+
 
 |Name|Consumable|Strength|Agility|Intelligence|Defence|Magic|Luck|Rarity|Buyable|Droppable|
 |-|-|-|-|-|-|-|-|-|-|-|
-|Arcane Ring|No|0|0|~~0~~ → 3|~~0~~ → 2|5|0|35|Yes|Yes|
+|Arcane Ring|No|0|0|~~0~~ → 3|~~0~~ → 2|5|0|~~35~~ → 32 |Yes|Yes|
 |Bloody Crown|No|-6|2|9|-7|4|-1|6|No|Yes|
 |Bomb|Yes|0|0|0|0|0|0|50|Yes|No|
 |Cursed Blade|No|6|0|0|-3|0|-2|14|No|Yes|
 |Dagger|No|1|~~4~~ → 3|0|0|0|1|~~20~~ → 30|Yes|Yes|
 |Dice machine|Yes|0|0|0|0|0|0|20|No|No|
-|Golden Ring|No|0|0|0|~~0~~ → 2|0|5|35|No|Yes|
-|Hard Ring|No|0|0|0|~~5~~ → 7|0|0|35|Yes|Yes|
+|Golden Ring|No|0|0|0|~~0~~ → 2|0|5|~~35~~ → 32|No|Yes|
+|Hard Ring|No|0|0|0|~~5~~ → 7|0|0|~~35~~ → 32|Yes|Yes|
 |Hexing amulet|No|0|0|0|0|3|-9|10|No|Yes|
 |Iron Sword|No|~~3~~ → 4|1|0|~~0~~ → 1|0|~~4~~ → 2|30|Yes|No|
 |Lucky Clover|No|0|0|0|0|0|15|12|Yes|Yes|
@@ -213,10 +216,10 @@ all rings: giving all rings extra 2 def
 |Mind Shocker|No|10|5|-10|4|0|4|7|No|Yes|
 |Nullifier|No|8|-4|-3|-2|-1|0|9|No|Yes|
 |Necronomicon|No|0|0|10|0|-10|2|10|Yes|Yes|
-|Power Ring|No|5|0|0|0|0|0|35|Yes|Yes|
+|Power Ring|No|5|0|0|2|0|0|~~35~~ → 32|Yes|Yes|
 |Scroll|No|0|0|7|0|3|0|25|Yes|Yes|
-|Smart Ring|No|0|0|5|0|0|0|35|Yes|Yes|
-|Speed Ring|No|0|5|0|0|0|0|35|Yes|Yes|
+|Smart Ring|No|0|0|5|2|0|0|~~35~~ → 32|Yes|Yes|
+|Speed Ring|No|0|5|0|2|0|0|~~35~~ → 32|Yes|Yes|
 |Spiked Gloves|No|6|-2|0|0|0|2|22|Yes|Yes|
 |Starter gear|No|1|1|1|1|1|1|60|Yes|No|
 |Steel Shield|No|0|-1|0|7|0|0|30|Yes|Yes|
