@@ -205,7 +205,7 @@ items adjustment (and filling out last patch added ones):
 |Bomb|Yes|0|0|0|0|0|0|50|Yes|No|
 |Cursed Blade|No|6|0|0|-3|0|-2|14|No|Yes|
 |Dagger|No|1|~~4~~ → 3|0|0|0|1|~~20~~ → 30|Yes|Yes|
-|Dice machine|Yes|0|0|0|0|0|0|20|No|No|
+|Dice machine|Yes|0|0|0|0|0|0|~~3~~ → 20|No|No|
 |Golden Ring|No|0|0|0|~~0~~ → 2|0|5|~~35~~ → 32|No|Yes|
 |Hard Ring|No|0|0|0|~~5~~ → 7|0|0|~~35~~ → 32|Yes|Yes|
 |Hexing amulet|No|0|0|0|0|3|-9|10|No|Yes|
