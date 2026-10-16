@@ -171,7 +171,8 @@ new items (sorted):
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
 - Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
-
+- Wooden sword: equipment, 2,1,0,1,0,0,1,80,yes,yes.
+- Diamond sword: equipment, 8,-3,0,2,1,3,15, yes,yes.
 
 items adjustment (and filling out last patch added ones):
 
@@ -192,6 +193,7 @@ items adjustment (and filling out last patch added ones):
 >> this was hidden last patch.
 >>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/dissapears.
 
+all rings: giving all rings extra 2 def
 
 |Name|Consumable|Strength|Agility|Intelligence|Defence|Magic|Luck|Rarity|Buyable|Droppable|
 |-|-|-|-|-|-|-|-|-|-|-|
@@ -204,7 +206,7 @@ items adjustment (and filling out last patch added ones):
 |Golden Ring|No|0|0|0|~~0~~ → 2|0|5|35|No|Yes|
 |Hard Ring|No|0|0|0|~~5~~ → 7|0|0|35|Yes|Yes|
 |Hexing amulet|No|0|0|0|0|3|-9|10|No|Yes|
-|Iron Sword|No|3|1|0|0|0|4|30|Yes|No|
+|Iron Sword|No|~~3~~ → 4|1|0|~~0~~ → 1|0|~~4~~ → 2|30|Yes|No|
 |Lucky Clover|No|0|0|0|0|0|15|12|Yes|Yes|
 |Magic Mushroom|No|3|3|3|3|3|3|5|No|Yes|
 |Mana rock|No|0|0|2|0|6|1|35|Yes|No|
