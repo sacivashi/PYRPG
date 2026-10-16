@@ -173,7 +173,7 @@ new items (sorted):
 - Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
 
 
-items adjustment (and filling out last patch addage ones):
+items adjustment (and filling out last patch added ones):
 
 > - Bomb
 >> AOE damage... yeah, but also I didn't really note what it does last patch... oops.
@@ -181,7 +181,7 @@ items adjustment (and filling out last patch addage ones):
 
 >  - **Dice machine:**
 >> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
->>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE that dice damage.
+>>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE dice damage. rarity ~~6~~ → 20
 
 > - Timer
 >> having an extra turn for yourself in combat is pretty exciting, but I am dropping it's stats to become a full on consumable and some small nerfs.
@@ -190,7 +190,40 @@ items adjustment (and filling out last patch addage ones):
 
 > - Voucher
 >> this was hidden last patch.
->>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/dissapears. 
+>>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/dissapears.
+
+
+|Name|Consumable|Strength|Agility|Intelligence|Defence|Magic|Luck|Rarity|Buyable|Droppable|
+|-|-|-|-|-|-|-|-|-|-|-|
+|Arcane Ring|No|0|0|~~0~~ → 3|~~0~~ → 2|5|0|35|Yes|Yes|
+|Bloody Crown|No|-6|2|9|-7|4|-1|6|No|Yes|
+|Bomb|Yes|0|0|0|0|0|0|50|Yes|No|
+|Cursed Blade|No|6|0|0|-3|0|-2|14|No|Yes|
+|Dagger|No|1|~~4~~ → 3|0|0|0|1|~~20~~ → 30|Yes|Yes|
+|Dice machine|Yes|0|0|0|0|0|0|20|No|No|
+|Golden Ring|No|0|0|0|~~0~~ → 2|0|5|35|No|Yes|
+|Hard Ring|No|0|0|0|~~5~~ → 7|0|0|35|Yes|Yes|
+|Hexing amulet|No|0|0|0|0|3|-9|10|No|Yes|
+|Iron Sword|No|3|1|0|0|0|4|30|Yes|No|
+|Lucky Clover|No|0|0|0|0|0|15|12|Yes|Yes|
+|Magic Mushroom|No|3|3|3|3|3|3|5|No|Yes|
+|Mana rock|No|0|0|2|0|6|1|35|Yes|No|
+|Mind Shocker|No|10|5|-10|4|0|4|7|No|Yes|
+|Nullifier|No|8|-4|-3|-2|-1|0|9|No|Yes|
+|Necronomicon|No|0|0|10|0|-10|2|10|Yes|Yes|
+|Power Ring|No|5|0|0|0|0|0|35|Yes|Yes|
+|Scroll|No|0|0|7|0|3|0|25|Yes|Yes|
+|Smart Ring|No|0|0|5|0|0|0|35|Yes|Yes|
+|Speed Ring|No|0|5|0|0|0|0|35|Yes|Yes|
+|Spiked Gloves|No|6|-2|0|0|0|2|22|Yes|Yes|
+|Starter gear|No|1|1|1|1|1|1|60|Yes|No|
+|Steel Shield|No|0|-1|0|7|0|0|30|Yes|Yes|
+|Swift coat|No|0|7|2|3|0|1|18|Yes|No|
+|Timer|Yes|0|~~7~~ → 0|~~1~~ → 0|0|0|0|~~25~~ → 15|Yes|No|
+|Turtle Shell|No|0|-7|2|12|0|0|14|Yes|No|
+|Voodoo Doll|No|2|0|3|0|-1|-10|10|No|Yes|
+|Voucher|Yes|0|0|0|0|0|0|15|No|Yes|
+
 
 ## miscellaneous updates:
 - Sort roles alphabetically
