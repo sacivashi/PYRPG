@@ -122,9 +122,8 @@ fast travel cost: int(5 * depth * 0.5)
 >>>
 >>> - **End of the enemy's turn:** takes ~~`max(current_hp * 0.08, max(corr, 5))`~~ → `max(current_hp * 0.04, corr, 3)` *searing* damage, then **corr grows by 1**.
 >>> - **When you hit it:** your damage is reduced by corr, the enemy takes `damage_taken - corr` *searing* damage.
->>> - **Hit too weak?** If `damage_taken - corr <= 0`, the enemy heals instead: ~~`min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → `min(corr * 0.75, abs(damage_taken - corr))`.
->>>
->>> *searing damage = damage that cannot be blocked or reduced.*
+>>> - **Hit too weak?** If `damage_taken - corr <= 0`, the enemy heals instead: ~~`min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → `min(corr * 0.75, abss(damage_taken - corr))`.
+>>>> *searing damage = damage that cannot be blocked or reduced.*
 
 
 ## learning spells/abilities:
@@ -151,7 +150,7 @@ new enemies (sorted):
 |Living armor|5|200|0|70|0|0|
 |Unicorn|0|20|8|2|15|10|
 |Vampire|0|9|-15|2|6|0|
-|Werewolf|1|23|13|9|20|4|
+|Werewolf|1|23|13|0|20|4|
 
 
 new roles (sorted):
