@@ -94,7 +94,8 @@ fast travel cost: int(5 * depth * 0.5)
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
->> Debuff: ~~After attacking~~ → using physical attacks or abilities, damages you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp *  0.08, abs(str)) * 0.7))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+>> Debuff: ~~After attacking~~ → using physical attacks or abilities, ~~damages~~ → *sears* you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp *  0.08, abs(str)) * 0.7))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+*searing damage = damage that cannot be blocked*
 
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
@@ -107,7 +108,7 @@ fast travel cost: int(5 * depth * 0.5)
 >> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, 
 >> take `min(15, 1 + def * 0.2)%` less magic damage
 >>> -def have 0% damage defence!
->>> Damage reductions do not effect corruption!
+>>> Damage reductions do not affect corruption
 
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
@@ -117,7 +118,13 @@ fast travel cost: int(5 * depth * 0.5)
 
 > **corruption:**
 >> A nerf-rework feels at place.
->>> Corruption: The enemy ~~recieves~~ → takes  ~~`max(current_hp * 0.08, max(corr, 5))`~~  → `max(current_hp * 0.04, max(corr, 3))` **magic** damage at the end of it's turn, ~~damage from the player will heal it by `min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → The enemy takes `min(damage_taken, damage_taken - (corr))` damage. When damage taken - the corr value reaches <= 0, heal for: `min(corr * 0.75, abs(damage_taken - (++corr) * max_hp * 0.01))`. corruption grows only if the enemy corruption > 0. **corr grows by 1, after each turn the enemy takes.**
+>>> **Corruption replaces defense.** Corrupted enemies (corr > 0) ignore their defense stat entirely, positive *or* negative: no damage reduction, no -def bonus damage, no reflect. Corruption is their only protection.
+>>>
+>>> - **End of the enemy's turn:** takes ~~`max(current_hp * 0.08, max(corr, 5))`~~ → `max(current_hp * 0.04, corr, 3)` *searing* damage, then **corr grows by 1**.
+>>> - **When you hit it:** your damage is reduced by corr, the enemy takes `damage_taken - corr` *searing* damage.
+>>> - **Hit too weak?** If `damage_taken - corr <= 0`, the enemy heals instead: ~~`min(max_hp * 0.01, (damage_taken + corr) * 0.03)`~~ → `min(corr * 0.75, abs(damage_taken - corr))`.
+>>>
+>>> *searing damage = damage that cannot be blocked or reduced.*
 
 
 ## learning spells/abilities:
