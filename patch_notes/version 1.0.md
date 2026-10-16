@@ -60,9 +60,11 @@ fast travel cost: int(5 * depth * 0.5)
 > **encounter logic:**
 >> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats), less chances to encounter groups 5% for 2 enemies at once
 >> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.) 8% groups, always of 2.
->> - depth 11 ~ 15: thougher to medium difficulty enemies. 15% groups 60% 2, 40% 3.
+>> - depth 11 ~ 15: tougher to medium difficulty enemies. 15% groups 60% 2, 40% 3.
 >> - depth 16 ~ 20: medium - hard. 25% groups, 55% 2, 45% 3.
->> - 21 ~ beyond :  hard - insane. 35%++ groups, 40% 2, 60% 3. 
+>> - 21 ~ beyond :  hard - insane. min(50,35 + (depth - 21))%  groups, 40% 2, 60% 3. 
+>> - 50+... somehow?: enemies > 0 stats get buffed for depth - 50.
+>> - 100+?: Death is coming for you...
 
 ## stats and logic:
 
@@ -105,6 +107,7 @@ fast travel cost: int(5 * depth * 0.5)
 >> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, 
 >> take `min(15, 1 + def * 0.2)%` less magic damage
 >>> -def have 0% damage defence!
+>>> Damage reductions do not effect corruption!
 
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
