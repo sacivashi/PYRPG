@@ -58,11 +58,11 @@ Reached a specific depth and got stuck or somehow died and returned to town? Wel
 fast travel cost: int(5 * depth * 0.5)
 
 > **encounter logic:**
->> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats)
->> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.)
->> - depth 11 ~ 15: thougher to medium difficulty enemies.
->> - depth 16 ~ 20: medium - hard
->> - 21 ~ beyond :  hard - insane
+>> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats), less chances to encounter groups 5% for 2 enemies at once
+>> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.) 8% groups, always of 2.
+>> - depth 11 ~ 15: thougher to medium difficulty enemies. 15% groups 60% 2, 40% 3.
+>> - depth 16 ~ 20: medium - hard. 25% groups, 55% 2, 45% 3.
+>> - 21 ~ beyond :  hard - insane. 35%++ groups, 40% 2, 60% 3. 
 
 ## stats and logic:
 
@@ -159,18 +159,18 @@ The thought line is to expand the amount of choices, so some may hit similar sta
 new items (sorted):
 
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: int(max(5, mana * 0.40)), can be cast once a combat. single target, rarity 12, purchase-able
-- Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
 - Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
+- Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
 - Mana potion: consumable, upon usage, gain 20 mana, costs 15 gold, always available and doesn't go out of stock.
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5. buyable droppable
 - Mana surge book: consumable, on use learn the spell mana surge, spell mana; 5, +3 each cast in combat, spell damage: 2, +2 each cast in combat. undroppable, not purchase-able, mages start with this consumable in their inventory.
 - Nature's codex: consumable, on use learn the ability nature's gift, 25 mana, ability effect: for 3 turns heal 5 HP. Monks start out with this in their inventory, 17 rarity, droppable, purchaseable
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their inventory.
+- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
-- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
 - Wooden sword: equipment, 2,1,0,1,0,0,1,80,yes,yes.
 - Diamond sword: equipment, 8,-3,0,2,1,3,15, yes,yes.
 
@@ -205,7 +205,7 @@ items adjustment (and filling out last patch added ones):
 |Bomb|Yes|0|0|0|0|0|0|50|Yes|No|
 |Cursed Blade|No|6|0|0|-3|0|-2|14|No|Yes|
 |Dagger|No|1|~~4~~ → 3|0|0|0|1|~~20~~ → 30|Yes|Yes|
-|Dice machine|Yes|0|0|0|0|0|0|~~3~~ → 20|No|No|
+|Dice machine|Yes|0|0|0|0|0|0|~~3~~ → 20|~~No~~ → Yes|No|
 |Golden Ring|No|0|0|0|~~0~~ → 2|0|5|~~35~~ → 32|No|Yes|
 |Hard Ring|No|0|0|0|~~5~~ → 7|0|0|~~35~~ → 32|Yes|Yes|
 |Hexing amulet|No|0|0|0|0|3|-9|10|No|Yes|
