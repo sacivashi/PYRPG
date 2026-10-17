@@ -64,7 +64,7 @@ fast travel cost: int(5 * depth * 0.5)
 >> - depth 16 ~ 20: medium - hard. 25% groups, 55% 2, 45% 3.
 >> - 21 ~ beyond :  hard - insane. min(50,35 + (depth - 21))%  groups, 40% 2, 60% 3. 
 >> - 50+... somehow?: enemies > 0 stats get buffed for depth - 50.
->> - 100+?: Death is coming for you...
+>> - 100+?: Death is coming for you...you can't flee it.
 
 ## stats and logic:
 
