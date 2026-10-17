@@ -145,15 +145,25 @@ new enemies (sorted):
 |name|corr|hp|attack|def|speed|luck|
 |----|----|----|----|----|----|----|
 |Banshee|0|13|8|2|0|-12|
+|Death|0|9999|9999|9999|9999|9999|
 |Elf|0|13|8|0|11|7|
 |Fairy|0|12|3|11|25|7|
-|Living armor|5|200|0|70|0|0|
+|Living armor|50|200|0|0|0|0|
 |Unicorn|0|20|8|2|15|10|
 |Vampire|0|9|-15|2|6|0|
 |Werewolf|1|23|13|0|20|4|
 
 
-new roles (sorted):
+enemies adjustment:
+
+|name|corr|hp|attack|def|speed|luck|
+|----|----|----|----|----|----|----|
+|Cursed Human|15|40|9|~~-5~~ → 0|10|-5|
+|Jester|20|35|4|~~10~~ → 0|15|22|
+|Plague Rat|~~12~~ → 3|10|5|~~2~~ → 0|15|-6|
+|Zombie|8|20|3|~~-10~~ → 0|-2|-2
+
+new roles:
 
 > Some new roles as well, mostly fitting the theme.
 The thought line is to expand the amount of choices, so some may hit similar stat lines or be well tuned.
@@ -180,7 +190,7 @@ new items (sorted):
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
-- Wooden sword: equipment, 2,1,0,1,0,0,1,80,yes,yes.
+- Wooden sword: equipment, 2,1,0,1,0,1,80,yes,yes.
 - Diamond sword: equipment, 8,-3,0,2,1,3,15, yes,yes.
 
 items adjustment (and filling out last patch added ones):
@@ -191,7 +201,7 @@ items adjustment (and filling out last patch added ones):
 
 >  - **Dice machine:**
 >> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
->>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE dice damage. rarity ~~6~~ → 20
+>>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE dice damage. rarity ~~3~~ → 20
 
 > - Timer
 >> having an extra turn for yourself in combat is pretty exciting, but I am dropping it's stats to become a full on consumable and some small nerfs.
@@ -237,6 +247,8 @@ items adjustment (and filling out last patch added ones):
 |Turtle Shell|No|0|-7|2|12|0|0|14|Yes|No|
 |Voodoo Doll|No|2|0|3|0|-1|-10|10|No|Yes|
 |Voucher|Yes|0|0|0|0|0|0|15|No|Yes|
+
+Shop adjustments: 
 
 
 ## miscellaneous updates:
