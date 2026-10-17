@@ -94,7 +94,7 @@ fast travel cost: int(5 * depth * 0.5)
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
->> Debuff: ~~After attacking~~ → using physical attacks or abilities, ~~damages~~ → *sears* you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(**min**(max_hp *  0.08, abs(str)) * 0.7))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min(int(sqrt(missing_hp + damage_done) * 0.5), int(self_damage * 0.75))`
+>> Debuff: ~~After attacking~~ → using physical attacks or abilities, ~~damages~~ → *sears* you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(min(max_hp *  0.08, abs(str)) * 0.5))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min((abs(str) + missing_hp) * 0.8, (damage_done + abs(str)) * 0.65)`
 *searing damage = damage that cannot be blocked*
 
 > **Player Defence:**
