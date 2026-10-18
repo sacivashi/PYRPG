@@ -248,8 +248,9 @@ items adjustment (and filling out last patch added ones):
 |Voodoo Doll|No|2|0|3|0|-1|-10|10|No|Yes|
 |Voucher|Yes|0|0|0|0|0|0|15|No|Yes|
 
-Shop adjustments: 
-
+### Shop adjustments: 
+> adding a wooden sword with 80 rarity and gold cost depending on highest - item rarity * 0.79 made every price go up.... inflation isn't for today.
+>> gold cost: ~~(highest_rarity − rarity) × 0.79~~ → `max(15,int(abs(65 - rarity) * 0.65))`
 
 ## miscellaneous updates:
 - Sort roles alphabetically
