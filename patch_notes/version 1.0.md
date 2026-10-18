@@ -70,7 +70,9 @@ fast travel cost: int(5 * depth * 0.5)
 
 *magic reworked:*
 
-> **Spell damage:** `Spell Base Damage × max(0.1, 1 + Magic × 0.1)`. A dedicated caster (high Magic) roughly doubles a spell's base damage. The multiplier is floored at 0.1 (10% of base) so damage can never hit 0 or go negative, no matter how far Magic gets pushed down via leveling.
+<a id="spell_damage"></a>
+> ### Spell damage: 
+>`Spell Base Damage × max(0.1, 1 + Magic × 0.1)`. A dedicated caster (high Magic) roughly doubles a spell's base damage. The multiplier is floored at 0.1 (10% of base) so damage can never hit 0 or go negative, no matter how far Magic gets pushed down via leveling.
 
 > **Two spell pools:** `+Magic` learns from the normal spells and abilities list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — weaker spells, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal Magic characters never get access to them.
 
@@ -89,7 +91,7 @@ fast travel cost: int(5 * depth * 0.5)
 > **-magic?:** 
 >> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
 >> - -magic: Debuff: gain 15% less EXP. ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost `min(abs(mag), mana_cost * 0.88)` HP **instead of mana**, Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
->> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read line 71). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
+>> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read [Spell damage](#spell_damage)). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
 >>> Having -int and -mag both means if you use a cursed spell, have `min(35, abs(intel) + 5)%` to cost `min(abs(mag), mana_cost * 0.88)` * 1.5 HP. or if you don't have the hp to pay well, you die :D
 
 > **-strength:**
@@ -191,7 +193,7 @@ new items (sorted):
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
 - Wooden sword: equipment, 2,1,0,1,0,1,80,yes,yes.
-- Diamond sword: equipment, 8,-3,0,2,1,3,15, yes,yes.
+- Diamond sword: equipment, 8,-3,0,2,1,3,15,yes,yes.
 
 items adjustment (and filling out last patch added ones):
 
@@ -249,8 +251,8 @@ items adjustment (and filling out last patch added ones):
 |Voucher|Yes|0|0|0|0|0|0|15|No|Yes|
 
 ### Shop adjustments: 
-> adding a wooden sword with 80 rarity and gold cost depending on highest - item rarity * 0.79 made every price go up.... inflation isn't for today.
->> gold cost: ~~(highest_rarity − rarity) × 0.79~~ → `max(15,int(abs(65 - rarity) * 0.65))`
+> adding a wooden sword with 80 rarity and shop costs depending on `(highest_rarity - rarity) * 0.79` made every price go up.... inflation isn't for today plus this doesn't make any sense as well.
+>> shop costs: ~~(highest_rarity − rarity) × 0.79~~ → `max(15,int(abs(65 - rarity) * 0.65))`
 
 ## miscellaneous updates:
 - Sort roles alphabetically
