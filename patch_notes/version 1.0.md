@@ -14,7 +14,7 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 
 - EXP, gold, a shop, a town, only 1 quest available to do in town (will expand later)
 
-- Enemies can appear in groups now, enemy group difficulty curve is a known issue, This patch provides several solutions to that!
+- Enemies can appear in groups now, enemy group difficulty curve was a known issue, this patch provides several solutions to that!
 
 - Fleeing an enemy and town returning
 
@@ -44,18 +44,12 @@ anyhow, yeah:
 - More consumable items and ways to heal out of town and combat rather than being miserable in trying to rest
 - Obviously add more quests
 - No spells/abilities = spells/ability tab says it's empty, cry about it.
-- DOT spells/attacks?
 - Magical creatures (enemies & roles)
-- Encounter difficulty curve rework
+- Encounter difficulty curve rework (including groups)
 - Implement "fast travel"
 
 ## enemies encounter:
 Yes I know previous patch made it so enemies are encountered based on your stats, but I want the "depth" mechanic to contribute more towards what you may encounter.
-
-## fast travel:
-Reached a specific depth and got stuck or somehow died and returned to town? Well cry no more! "fast travel" option will take you up to the depth you reached for a price * depth number! (choose whichever <= depth)
-
-fast travel cost: `int(5 * depth * 0.5)`
 
 > **encounter logic:**
 >> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats), less chances to encounter groups 5% for 2 enemies at once
@@ -66,6 +60,17 @@ fast travel cost: `int(5 * depth * 0.5)`
 >> - 50+... somehow?: enemies > 0 stats get buffed for depth - 50.
 >> - 100+?: `min(100, depth - 99)%` Death is coming for you...you can't flee it.
 
+
+## fast travel:
+Reached a specific depth and got stuck or somehow died and returned to town? Well cry no more! "fast travel" option will take you up to the depth you reached for a price * depth number! (choose whichever <= depth)
+
+fast travel cost: `int(5 * depth * 0.5)`
+
+--------------
+
+
+
+now on to the bigger part
 # *magic reworked:*
 
 <a id="spell_damage"></a>
@@ -93,7 +98,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
 >>> Debuff: ~~After attacking~~ → using physical attacks or abilities, ~~damages~~ → *sears* you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(min(max_hp *  0.08, abs(str)) * 0.5))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min((abs(str) + missing_hp) * 0.8, (damage_done + abs(str)) * 0.65)`
->>>> *searing damage = damage that cannot be blocked*
+>>>> *searing damage = damage that cannot be blocked or reduced.*
 
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
@@ -198,7 +203,7 @@ items adjustment (and filling out last patch added ones):
 >>> **bomb:** consumable buyable undroppable, 50 rarity. on usage deal 35 damage to all enemies. can be used once, disappears on usage.
 
 >  - **Dice machine:**
->> dice machine as a whole felt like its identity isn't correct for it, reworking into a true consumable and placed its old usage/equippale instance into Sleight of stats:
+>> dice machine as a whole felt like its identity isn't correct for it, reworking into a true consumable and placed its old usage/equippable instance into Sleight of stats:
 >>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE dice damage. rarity ~~3~~ → 20
 
 > - Timer
@@ -211,7 +216,7 @@ items adjustment (and filling out last patch added ones):
 >>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/disappears.
 
 - all rings: giving all rings extra 2 def, and giving arcane ring more purpose.
-- sword evolution: making things a little minecraft-y... but also real life accurate kinda? with the addage of wooden and diamond swords.
+- sword evolution: making things a little minecraft-y... but also real life accurate kinda? with the addition of wooden and diamond swords.
 
 
 
