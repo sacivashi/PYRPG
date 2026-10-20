@@ -92,6 +92,7 @@ def get_player(player_name):
                 role=player["role"],
                 level=player["level"],
                 hp=player["hp"],
+                mana=player.get("mana"),
                 stats=player["stats"],
                 max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
                 gold=player.get("gold", 0),

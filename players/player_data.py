@@ -8,6 +8,7 @@ class PlayerData:
     level: int
     hp: int
     stats: dict
+    mana: int = None
     max_hp: int = None
     gold: int = 0
     loot: list = field(default_factory=list)

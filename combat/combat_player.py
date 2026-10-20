@@ -114,6 +114,14 @@ class Player:
         # max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)
         return int(max(22, abs(int(stats['Strength'])) * 0.95 + abs(int(stats['Defence'])) * 2.3))
 
+
+    @staticmethod
+    def calculate_mana(stats):
+        # max(20, abs(Intelligence) * 4.5)
+        return int(max(20, abs(int(stats['Intelligence'])) * 4.5))
+
+
+
     @staticmethod
     def _resolve_current_hp(saved_hp, saved_max_hp, new_max_hp):
         """Preserve damage taken across max_hp changes (formula tweaks, stat changes) by
