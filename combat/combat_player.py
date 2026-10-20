@@ -35,6 +35,8 @@ class Player:
             self.stats = self.apply_equipment(self.base_stats, self.equipped, self.dice_roll)
             self.max_hp = self.calculate_hp(self.stats)
             self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
+            self.max_mana = self.calculate_mana(self.stats)
+            self.current_mana = self.max_mana if player_data.mana is None else min(player_data.mana, self.max_mana)
             self.gold = player_data.gold
             self.loot = list(player_data.loot)
             self.exp = player_data.exp
@@ -57,6 +59,8 @@ class Player:
             self.stats = self.apply_equipment(self.base_stats, self.equipped, self.dice_roll)
             self.max_hp = self.calculate_hp(self.stats)
             self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
+            self.max_mana = self.calculate_mana(self.stats)
+            self.current_mana = self.max_mana if player_data.mana is None else min(player_data.mana, self.max_mana)
             self.gold = player_data.gold
             self.loot = list(player_data.loot)
             self.exp = player_data.exp
@@ -76,6 +80,8 @@ class Player:
         self.stats = self.apply_equipment(self.base_stats, self.equipped, self.dice_roll)
         self.max_hp = self.calculate_hp(self.stats)
         self.current_hp = min(hp if hp is not None else self.max_hp, self.max_hp)
+        self.max_mana = self.calculate_mana(self.stats)
+        self.current_mana = self.max_mana
         self.gold = 0
         self.loot = []
         self.exp = 0
@@ -131,7 +137,7 @@ class Player:
 
     def player_data(self):
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.base_stats,
-                           max_hp=self.max_hp, gold=self.gold, loot=self.loot, equipped=self.equipped,
+                           max_hp=self.max_hp, mana=self.current_mana, gold=self.gold, loot=self.loot, equipped=self.equipped,
                            exp=self.exp, in_town=self.in_town, distance=self.distance,
                            failed_attempts=self.failed_attempts, dice_roll=self.dice_roll,
                            quest_flags=self.quest_flags, completed_quests=self.completed_quests)
