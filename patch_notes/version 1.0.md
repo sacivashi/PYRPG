@@ -14,7 +14,7 @@ Regarding Beta I, things are fully written, flows work overall, some edge parts 
 
 - EXP, gold, a shop, a town, only 1 quest available to do in town (will expand later)
 
-- Enemies can appear in groups now, enemy group difficulty curve is a known issue, I will write solutions in this patch...
+- Enemies can appear in groups now, enemy group difficulty curve is a known issue, This patch provides several solutions to that!
 
 - Fleeing an enemy and town returning
 
@@ -55,7 +55,7 @@ Yes I know previous patch made it so enemies are encountered based on your stats
 ## fast travel:
 Reached a specific depth and got stuck or somehow died and returned to town? Well cry no more! "fast travel" option will take you up to the depth you reached for a price * depth number! (choose whichever <= depth)
 
-fast travel cost: int(5 * depth * 0.5)
+fast travel cost: `int(5 * depth * 0.5)`
 
 > **encounter logic:**
 >> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats), less chances to encounter groups 5% for 2 enemies at once
@@ -77,7 +77,7 @@ fast travel cost: int(5 * depth * 0.5)
 > **No spell/ability learned?** Selecting abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
 
 > **mana:**
->> going forward mana pool is buffed by abs(int). `mana = max(20, abs(intel) * 4.5)`.
+>> going forward mana pool is buffed by abs(intel). `mana = max(20, abs(intel) * 4.5)`.
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
@@ -143,7 +143,7 @@ new enemies (sorted):
 |name|corr|hp|attack|def|speed|luck|
 |----|----|----|----|----|----|----|
 |Banshee|0|13|8|2|0|-12|
-|Death|0|9999|9999|9999|9999|9999|
+|Death|0|9999|9999|9999|9999|-9999|
 |Elf|0|13|8|0|11|7|
 |Fairy|0|12|3|11|25|7|
 |Living armor|50|200|0|0|0|0|
@@ -159,7 +159,7 @@ enemies adjustment:
 |Cursed Human|15|40|9|~~-5~~ → 0|10|-5|
 |Jester|20|35|4|~~10~~ → 0|15|22|
 |Plague Rat|~~12~~ → 3|10|5|~~2~~ → 0|15|-6|
-|Zombie|8|20|3|~~-10~~ → 0|-2|-2
+|Zombie|8|20|3|~~-10~~ → 0|-2|-2|
 
 new roles:
 
