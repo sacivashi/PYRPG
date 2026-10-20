@@ -82,7 +82,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 >> - Abilities: can be learned by anyone. Ability damage is separate from spell damage (spell damage boosts don't apply), each ability lists its own damage formula, and abilities cost mana too. Mana logic is coming up.
 
 > **No spell/ability learned?** 
->> Selecting spells\abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
+>> Selecting spells/abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
 
 > **mana:**
 >> going forward mana pool is buffed by abs(intel). `mana = max(20, abs(intel) * 4.5)`.
@@ -119,8 +119,9 @@ fast travel cost: `int(5 * depth * 0.5)`
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
 
->> -Defense: The enemy takes `+max(3, abs(def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of the flat damage taken back. 
-**Also, take `+max(7, abs(def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
+>> -Defense: 
+>> - The enemy takes `+max(3, abs(def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of the flat damage taken back. 
+>> - **Also, take `+max(7, abs(def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
 
 > **corruption:**
 >> A nerf-rework feels at place.
@@ -133,18 +134,17 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 ## learning spells/abilities:
-I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
+> I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
-resting successfully gives up to 30% of max mana back, natural per turn 10% of max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
-
-Resting in town fully restores mana, same as HP. Mana carries over between fights; it doesn't reset per combat.
+> resting successfully gives up to 30% of max mana back, natural per turn 10% of max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
+>> Resting in town fully restores mana, same as HP. Mana carries over between fights; it doesn't reset per combat. Same as HP.
 
 ## items:
-Adding the new items also means that I will make it so the healing/spell learning (and probably future consumables) can be used out of combat.
+> Adding the new items also means that I will make it so the healing/spell learning (and probably future consumables) can be used out of combat.
 
 
-new enemies (sorted):
+## new enemies:
 
 > I know that more on the easier side enemies need to be added, so I will add some according to the magical patch theme, while also adding other power level enemies too.
 
@@ -154,34 +154,34 @@ new enemies (sorted):
 |Death|0|9999|9999|9999|9999|-9999|
 |Elf|0|13|8|0|11|7|
 |Fairy|0|12|3|11|25|7|
-|Living armor|50|200|0|0|0|0|
+|Living armor|0|200|0|100|0|0|
 |Unicorn|0|20|8|2|15|10|
 |Vampire|0|9|-15|2|6|0|
 |Werewolf|1|23|13|0|20|4|
 
 
-enemies adjustment:
+## enemies adjustment:
 
-|name|corr|hp|attack|def|speed|luck|
+|name|corr|hp|atk|def|spd|lck|
 |----|----|----|----|----|----|----|
 |Cursed Human|15|40|9|~~-5~~ → 0|10|-5|
 |Jester|20|35|4|~~10~~ → 0|15|22|
 |Plague Rat|~~12~~ → 3|10|5|~~2~~ → 0|15|-6|
 |Zombie|8|20|3|~~-10~~ → 0|-2|-2|
 
-new roles:
+## new roles:
 
 > Some new roles as well, mostly fitting the theme.
-The thought line is to expand the amount of choices, so some may hit similar stat lines or be well tuned.
+>>The thought line is to expand the amount of choices, so some may hit similar stat lines or be tuned in the future.
 
-|Class|Strength|Agility|Intelligence|Defence|Magic|Luck|
+|Cls|Str|Agi|Intel|Def|Mag|Lck|
 |----|----|----|----|----|----|----|
 |Dwarf|7|3|5|7|3|0|
 |Elf|4|7|6|4|5|2|
 |Satyr|2|7|9|3|4|4|
 |Tank|0|-5|2|12|1|5|
 
-new items (sorted):
+## new items:
 
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: `int(max(5, mana * 0.40))`, can be cast once a combat. single target, rarity 12, purchase-able
 - Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
@@ -199,7 +199,7 @@ new items (sorted):
 - Wooden sword: equipment, 2,1,0,1,0,1,80,yes,yes.
 - Diamond sword: equipment, 8,-3,0,2,1,3,15,yes,yes.
 
-items adjustment (and filling out last patch added ones):
+## items adjustment (and filling out last patch added ones):
 
 > - Bomb
 >> AOE damage... yeah, but also I didn't really note what it does last patch... oops.
