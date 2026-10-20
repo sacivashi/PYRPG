@@ -70,16 +70,19 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 
-now on to the bigger part
 # *magic reworked:*
 
 <a id="spell_damage"></a>
 > ### Spell damage: 
 > `Spell Base Damage × max(0.1, 1 + Magic × 0.1)`. A dedicated caster (high Magic) roughly doubles a spell's base damage. The multiplier is floored at 0.1 (10% of base) so damage can never hit 0 or go negative, no matter how far Magic gets pushed down via leveling.
 
-> **Two spell pools:** `+Magic` learns from the normal spells and abilities list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — weaker spells, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal Magic characters never get access to them.
+> Three pools:
+>> - Normal spells: learned by +Magic characters. -Magic can learn them too, but they're weaker, since the spell damage formula works against a negative Magic stat (see [Spell damage](#spell_damage)).
+>> - Cursed spells: exclusive to -Magic (full power, part of their kit). Normal Magic characters never get access to them.
+>> - Abilities: can be learned by anyone. Ability damage is separate from spell damage (spell damage boosts don't apply), each ability lists its own damage formula, and abilities cost mana too. Mana logic is coming up.
 
-> **No spell/ability learned?** Selecting abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
+> **No spell/ability learned?** 
+>> Selecting spells\abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
 
 > **mana:**
 >> going forward mana pool is buffed by abs(intel). `mana = max(20, abs(intel) * 4.5)`.
@@ -90,34 +93,34 @@ now on to the bigger part
 >> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **spells (spells only) deal** `int(0.5 * spell_damage) + int(min(abs(intel) // 3, abs(mag) * 0.8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
->> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat?
+>> for my next magic (heh get it, magic?) trick what if I told you it was thought of ahead of time... somewhat.
 >> - -magic: Debuff: gain 15% less EXP. ~~Magic attacks~~ → **cursed spells** ~~drain `min(25, abs(-mag))%` from your MAX HP~~ → cost `min(abs(mag), mana_cost * 0.88)` HP **instead of mana**, Benefit: **Each ~~magic attack~~ → cursed spell has** `min(65, int(sqrt(abs(-mag)) * 10))%` chance to lower a **randomly picked** enemy stat by `min(7, abs(-mag))` 
 >> - **additionally (and obviously) -mag only can access cursed spells, and deal less damage with normal spells (read [Spell damage](#spell_damage)). cursed spells deal `Spell Base Damage × max(0.1, 1 + abs(Magic) × 0.1)`**
 >>> Having -int and -mag both means if you use a cursed spell, have `min(35, abs(intel) + 5)%` chance to cost `min(abs(mag), mana_cost * 0.88)` * 1.5 HP. or if you don't have the hp to pay. well, you die :D
 
 > **-strength:**
 >> strength curse shouldn't benefit or be damaged by spells
->>> Debuff: ~~After attacking~~ → using physical attacks or abilities, ~~damages~~ → *sears* you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(min(max_hp *  0.08, abs(str)) * 0.5))` damage, **whether  you hit or miss the attack**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min((abs(str) + missing_hp) * 0.8, (damage_done + abs(str)) * 0.65)`
+>>> Debuff: ~~After attacking~~ → using physical attacks or abilities, ~~damages~~ → **sears** you for ~~`abs(str) + int(max_hp * 0.01)`~~ → `int(abs(str) + int(min(max_hp *  0.08, abs(str)) * 0.5))` damage, **whether  you hit or miss the attack/ability**. Benefit: ~~hitting~~ → landing physical attacks or abilities on enemies heals you for  `min((abs(str) + missing_hp) * 0.8, (damage_done + abs(str)) * 0.65)`
 >>>> *searing damage = damage that cannot be blocked or reduced.*
 
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
 
->> def: You take `min(25, 1 + def * 0.9)%` less damage as long as your defence is > 0. at 0 and < 0 defence, you get 0% damage reduction. 
+>> def: You take `min(25, 1 + def * 0.9)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction. 
 
 
 > **Enemy Defense:**
 >> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
 >> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, 
 >> take `min(15, 1 + def * 0.2)%` less magic damage
->>> -def have 0% damage defence!
+>>> -def and def 0 have 0% damage defence!
 >>> Damage reductions do not affect corruption
 
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:
 
 >> -Defense: The enemy takes `+max(3, abs(def) * 0.75)` bonus damage from **physical** attacks and  abilities, but will return ~~`min(5, (damage_taken + abs(def)) * 0.2)%`~~ →  **`min(11, abs(def) * 0.4)%`** of the flat damage taken back. 
-**Also, take `max(7, abs(def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
+**Also, take `+max(7, abs(def) * 0.82)` bonus damage from spells, doesn't reflect any damage taken back.**
 
 > **corruption:**
 >> A nerf-rework feels at place.
