@@ -41,7 +41,7 @@ anyhow, yeah:
 - Add spells
 - Add abilities
 - AOE logic (both magic and abilities and consumables)
-- More consumable items and ways to heal out of town and combat rather than being misrable in trying to rest
+- More consumable items and ways to heal out of town and combat rather than being miserable in trying to rest
 - Obviously add more quests
 - No spells/abilities = spells/ability tab says it's empty, cry about it.
 - DOT spells/attacks?
@@ -74,14 +74,14 @@ fast travel cost: int(5 * depth * 0.5)
 
 > **Two spell pools:** `+Magic` learns from the normal spells and abilities list. `-Magic` gets their own exclusive **cursed spells** (full power, part of their kit) *and* can also learn from the normal list — weaker spells, since the floor formula above works against a negative Magic stat. Cursed spells stay exclusive to `-Magic`; normal Magic characters never get access to them.
 
-> **No spell/abilty learned?** Selecting abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
+> **No spell/ability learned?** Selecting abilities with nothing learned shows "you have no spells or abilities" and returns you back to choose a different action (Physical Attack, etc.) instead. doesn't waste the turn on an empty action.
 
 > **mana:**
 >> going forward mana pool is buffed by abs(int). `mana = max(20, abs(intel) * 4.5)`.
 
 > **-intelligence?:**
 >> *adding AOE and hitting a different enemy doesn't make the debuff logical... reworking it!*
->>> Also adjusting -int to be more powerful for heavier spell users:
+>>> Also adjusting -intel to be more powerful for heavier spell users:
 >> - -intelligence: Debuff: `min(35, abs(intel) + 5)%` ~~chance to attack a different enemy~~ → **chance to waste `(spell/ability mana cost * 1.5)`** if spell/ability cost * 1.5 > your mana pool, spend all mana, this doesn't make the spell/ability fail. Benefit: ~~You find enemies weak points faster dealing~~ → **spells (spells only) deal** `int(0.5 * spell_damage) + int(min(abs(intel) // 3, abs(mag) * 0.8))` bonus **magic** damage **regardless if the debuff applied or not**.
 
 > **-magic?:** 
@@ -128,7 +128,7 @@ fast travel cost: int(5 * depth * 0.5)
 I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
 ## mana generation:
-resting succesfully gives up to 30% of max mana back, natural per turn 10% of max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
+resting successfully gives up to 30% of max mana back, natural per turn 10% of max mana regeneration, mana potions (consumable to be added to shop) that fill you with 20 mana (or fill to full if max mana <= 20.... somehow).
 
 Resting in town fully restores mana, same as HP. Mana carries over between fights; it doesn't reset per combat.
 
@@ -175,16 +175,16 @@ The thought line is to expand the amount of choices, so some may hit similar sta
 
 new items (sorted):
 
-- Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: int(max(5, mana * 0.40)), can be cast once a combat. single target, rarity 12, purchase-able
+- Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: `int(max(5, mana * 0.40))`, can be cast once a combat. single target, rarity 12, purchase-able
 - Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
-- Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal max(4, int(str * 0.8 + abs(mag) * 0.4)) physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
+- Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal `max(4, int(str * 0.8 + abs(mag) * 0.4))` physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
 - Mana potion: consumable, upon usage, gain 20 mana, costs 15 gold, always available and doesn't go out of stock.
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5. buyable droppable
 - Mana surge book: consumable, on use learn the spell mana surge, spell mana; 5, +3 each cast in combat, spell damage: 2, +2 each cast in combat. undroppable, not purchase-able, mages start with this consumable in their inventory.
 - Nature's codex: consumable, on use learn the ability nature's gift, 25 mana, ability effect: for 3 turns heal 5 HP. Monks start out with this in their inventory, 17 rarity, droppable, purchaseable
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their inventory.
-- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise on random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
+- Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise one random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
@@ -195,20 +195,20 @@ items adjustment (and filling out last patch added ones):
 
 > - Bomb
 >> AOE damage... yeah, but also I didn't really note what it does last patch... oops.
->>> **bomb:** consumable buyable undroppable, 50 rarity. on usage deal 35 damage to all enemies. can be used once, dissapears on usage.
+>>> **bomb:** consumable buyable undroppable, 50 rarity. on usage deal 35 damage to all enemies. can be used once, disappears on usage.
 
 >  - **Dice machine:**
->> dice machine as a whole felt like it's identity isn't correct for it, reworking into a true consumable and placed it's old usage/equippal-ism instance into Sleught of stats:
+>> dice machine as a whole felt like its identity isn't correct for it, reworking into a true consumable and placed its old usage/equippale instance into Sleight of stats:
 >>> **dice machine:** consumable 6 times per combat, on use, roll a 6 sided dice, summon a huge dice that deals AOE dice damage. rarity ~~3~~ → 20
 
 > - Timer
->> having an extra turn for yourself in combat is pretty exciting, but I am dropping it's stats to become a full on consumable and some small nerfs.
+>> having an extra turn for yourself in combat is pretty exciting, but I am dropping its stats to become a full on consumable and some small nerfs. (this was also hidden last patch).
 >>> **Timer:** consumable undroppable purchaseable, ~~25~~ → 15 rarity.
 >>> On use, gain another turn, after that turn cooldown for ~~5~~ → 6 turns.
 
 > - Voucher
 >> this was hidden last patch.
->>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/dissapears.
+>>> consumable, droppable, unpurchasable. passive: your next shop purchase costs 15% less, upon purchasing, this gets consumed/disappears.
 
 - all rings: giving all rings extra 2 def, and giving arcane ring more purpose.
 - sword evolution: making things a little minecraft-y... but also real life accurate kinda? with the addage of wooden and diamond swords.
@@ -231,8 +231,8 @@ items adjustment (and filling out last patch added ones):
 |Magic Mushroom|No|3|3|3|3|3|3|5|No|Yes|
 |Mana rock|No|0|0|2|0|6|1|35|Yes|No|
 |Mind Shocker|No|10|5|-10|4|0|4|7|No|Yes|
-|Nullifier|No|8|-4|-3|-2|-1|0|9|No|Yes|
 |Necronomicon|No|0|0|10|0|-10|2|10|Yes|Yes|
+|Nullifier|No|8|-4|-3|-2|-1|0|9|No|Yes|
 |Power Ring|No|5|0|0|2|0|0|~~35~~ → 32|Yes|Yes|
 |Scroll|No|0|0|7|0|3|0|25|Yes|Yes|
 |Smart Ring|No|0|0|5|2|0|0|~~35~~ → 32|Yes|Yes|
