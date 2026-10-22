@@ -259,6 +259,10 @@ fast travel cost: `int(5 * depth * 0.5)`
 > adding a wooden sword with 80 rarity and shop costs depending on `(highest_rarity - rarity) * 0.79` made every price go up.... inflation isn't for today plus this doesn't make any sense as well.
 >> shop costs: ~~(highest_rarity − rarity) × 0.79~~ → `max(15,int(abs(65 - rarity) * 0.65))`
 
+### Death penalties:
+> So far, I didn't really want to touch dying consequences too badly since the game's specs were small and larger penalties would have felt unfair. Now that v1.0 is coming up some more consequences feel right. You'd probably miss pre beta days where dying just full healed you.
+>> Dying in combat, loses you 15% of current gold, have a 25% for an item to be lost (aka be removed from inventory or equipment), resurrect with 30% mana based on max mana, and 50% HP based on max HP. lose 20% of your EXP progress (e.g. 60% → 48%), can't drop a level. 
+
 ## miscellaneous updates:
 - Sort roles alphabetically
 - Sort descriptions alphabetically (by roles)
