@@ -116,4 +116,4 @@ def test_max_hp_growth_uses_gear_adjusted_stats(monkeypatch):
     with_gear(monkeypatch, Defence=10)                 # effective Def 15 -> 39 max HP
     game._sync_max_hp_after_growth()
     assert game.player_data.max_hp == 39
-    assert game.player_data.hp == 39                   # healed by the 17 it grew
+    assert game.player_data.hp == 22                   # cap rises, current HP doesn't — no free heal

@@ -376,10 +376,10 @@ class PYRPG:
         return max_mana if self.player_data.mana is None else min(self.player_data.mana, max_mana)
 
     def _sync_max_hp_after_growth(self):
-        """Recompute max HP (gear included) after a permanent stat gain, healing by however much it grew"""
-        old_max_hp = self.player_data.max_hp
+        """Recompute max HP (gear included) after a permanent stat gain. Raises the cap only — no free
+        heal, same as mana; clamps in case the stat change lowered max HP."""
         new_max_hp = Player.calculate_hp(self._effective_stats())
-        self.player_data.hp += max(0, new_max_hp - old_max_hp)
+        self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
 
     def rest(self):
