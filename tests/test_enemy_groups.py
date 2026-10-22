@@ -189,7 +189,7 @@ def test_full_group_fight_ends_in_victory_for_an_overwhelming_player(monkeypatch
     combat.player.current_hp = 9999
     monkeypatch.setattr("builtins.input", lambda *_: "1")  # attack; and "1" targets whoever's first if asked
 
-    result, hp = combat.run_combat()
+    result, hp, _mana = combat.run_combat()
 
     assert result == "victory"
     assert all(not e.is_alive() for e in combat.enemies)
@@ -204,7 +204,7 @@ def test_group_victory_calls_reward_calculations_once_per_enemy(monkeypatch):
 
     monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
     monkeypatch.setattr("game.pyrpg.roll_group_size", lambda: 3)
-    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30))
+    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30, None))
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr(game, "_process_level_ups", lambda: None)
     monkeypatch.setattr("builtins.input", lambda *_: "")
@@ -232,7 +232,7 @@ def test_solo_victory_still_calls_reward_calculations_exactly_once(monkeypatch):
 
     monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
     monkeypatch.setattr("game.pyrpg.roll_group_size", lambda: 1)
-    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30))
+    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30, None))
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr(game, "_process_level_ups", lambda: None)
     monkeypatch.setattr("builtins.input", lambda *_: "")

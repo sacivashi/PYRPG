@@ -281,8 +281,9 @@ class PYRPG:
         print("💾 Auto-saving before combat...")
         self.auto_save_player_state()
 
-        result, current_hp = start_combat(self.player_data, enemy_name, group_size)
+        result, current_hp, current_mana = start_combat(self.player_data, enemy_name, group_size)
         self.player_data.hp = current_hp
+        self.player_data.mana = current_mana
 
         if result == "victory":
             # Rewards are per-enemy, summed independently rather than one roll * group_size,

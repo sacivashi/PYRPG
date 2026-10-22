@@ -87,7 +87,7 @@ def test_run_combat_reports_fled_with_no_hp_change():
     combat = make_combat(agility=0, hp=15)
     combat.player_fled = True
     combat.combat_ongoing = False  # loop body never runs; goes straight to the end-of-combat result
-    result, hp = combat.run_combat()
+    result, hp, _mana = combat.run_combat()
     assert result == "fled"
     assert hp == 15
 
@@ -98,7 +98,7 @@ def test_fled_grants_no_gold_exp_or_loot(monkeypatch):
     game.player_data = PlayerData(name="T", role="warrior", level=1, hp=30,
                                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': 0,
                                           'Defence': 5, 'Magic': 5, 'Luck': 5}, max_hp=30)
-    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("fled", 30))
+    monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("fled", 30, None))
     monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr("builtins.input", lambda *_: "")

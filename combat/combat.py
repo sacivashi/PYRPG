@@ -44,6 +44,7 @@ class Enemy:
 
 class Combat:
     COMBAT_USABLE_ITEMS = ["Bomb", "Timer"]
+    MANA_REGEN_PERCENT = 0.10  # of max mana, at the start of every player turn after the first
 
     def __init__(self, player_data, enemy_name, group_size=1):
         self.player = Player(player_data)
@@ -62,6 +63,7 @@ class Combat:
         self.combat_ongoing = True
         self.allow_saves = False  # Block saves during combat
         self.timer_cooldown = 0  # Turns remaining before Timer can be used again
+        self.player_turns_taken = 0  # first turn gets no mana regen — nothing has been spent yet
         self.player_fled = False
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
@@ -113,9 +115,13 @@ class Combat:
         """Handle player's turn with menu options"""
         if self.timer_cooldown > 0:
             self.timer_cooldown -= 1
+        if self.player_turns_taken > 0:
+            self.regenerate_mana()
+        self.player_turns_taken += 1
 
         print(f"\n{self.player.name}'s Turn")
         print(f"Your HP: {self.player.current_hp}/{self.player.max_hp}")
+        print(f"Your Mana: {self.player.current_mana}/{self.player.max_mana}")
         for i, enemy in enumerate(self.enemies, 1):
             if enemy.is_alive():
                 label = enemy.name if len(self.enemies) == 1 else f"{enemy.name} #{i}"
@@ -163,6 +169,11 @@ class Combat:
                 break  # successful flee: combat_ongoing is now False, no turn to advance to
             else:
                 print("Invalid choice. Please enter 1, 2, 3, 4, 5, or 6.")
+
+    def regenerate_mana(self):
+        """Natural per-turn regen: MANA_REGEN_PERCENT of max mana, capped at max"""
+        regen = int(self.player.max_mana * self.MANA_REGEN_PERCENT)
+        self.player.current_mana = min(self.player.max_mana, self.player.current_mana + regen)
 
     def _choose_target(self):
         """Auto-picks the lone survivor; prompts when more than one enemy is still alive."""
@@ -522,22 +533,22 @@ class Combat:
         if not self.player.is_alive():
             print("\n=== DEFEAT ===")
             print("Game Over!")
-            return "defeat", self.player.current_hp
+            return "defeat", self.player.current_hp, self.player.current_mana
         elif self.player_fled:
             print("\n=== FLED ===")
             target_desc = self.enemies[0].name if len(self.enemies) == 1 else f"the {self.enemies[0].name} group"
             print(f"You got away from {target_desc}, but gained nothing from the encounter.")
-            return "fled", self.player.current_hp
+            return "fled", self.player.current_hp, self.player.current_mana
         elif not any(e.is_alive() for e in self.enemies):
             print("\n=== VICTORY ===")
             if len(self.enemies) == 1:
                 print(f"You defeated the {self.enemies[0].name}!")
             else:
                 print(f"You defeated all {len(self.enemies)} {self.enemies[0].name}s!")
-            return "victory", self.player.current_hp
+            return "victory", self.player.current_hp, self.player.current_mana
         else:
             print("\n=== COMBAT ENDED ===")
-            return "ended", self.player.current_hp
+            return "ended", self.player.current_hp, self.player.current_mana
 
 
 # Helper function to start combat

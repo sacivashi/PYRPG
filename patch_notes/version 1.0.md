@@ -47,6 +47,7 @@ anyhow, yeah:
 - Magical creatures (enemies & roles)
 - Encounter difficulty curve rework (including groups)
 - Implement "fast travel"
+- Harsher death penalties
 
 ## enemies encounter:
 Yes I know previous patch made it so enemies are encountered based on your stats, but I want the "depth" mechanic to contribute more towards what you may encounter.
