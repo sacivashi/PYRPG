@@ -158,8 +158,10 @@ class PYRPG:
 
         self.player_data.gold -= self.REST_COST
         self.player_data.hp = self.player_data.max_hp
-        print(f"\nYou pay {self.REST_COST} gold and rest fully, recovering all your HP.")
+        self.player_data.mana = self._max_mana()
+        print(f"\nYou pay {self.REST_COST} gold and rest fully, recovering all your HP and mana.")
         print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
+        print(f"Mana: {self.player_data.mana}/{self._max_mana()}")
         input("\nPress Enter to continue...")
 
     SHOP_STOCK_SIZE = 4
@@ -364,6 +366,15 @@ class PYRPG:
         """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched against"""
         return sum(abs(int(v)) for v in self._effective_stats().values())
 
+    def _max_mana(self):
+        """Max mana from gear-adjusted stats — never stored, always derived, like max HP in combat"""
+        return Player.calculate_mana(self._effective_stats())
+
+    def _current_mana(self):
+        """Saved mana capped at the current max; None (new character / pre-mana save) means full"""
+        max_mana = self._max_mana()
+        return max_mana if self.player_data.mana is None else min(self.player_data.mana, max_mana)
+
     def _sync_max_hp_after_growth(self):
         """Recompute max HP (gear included) after a permanent stat gain, healing by however much it grew"""
         old_max_hp = self.player_data.max_hp
@@ -372,7 +383,7 @@ class PYRPG:
         self.player_data.max_hp = new_max_hp
 
     def rest(self):
-        """Attempt to rest: Luck-based odds to succeed and heal 30% max HP, otherwise ambushed into combat"""
+        """Attempt to rest: Luck-based odds to succeed and recover 30% max HP and mana, otherwise ambushed into combat"""
         success_chance = self.calculate_rest_chance()
         roll = random.randint(1, 100)
 
@@ -381,8 +392,12 @@ class PYRPG:
         if roll <= success_chance:
             heal_amount = round(self.player_data.max_hp * 0.30)
             self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + heal_amount)
-            print(f"You rest peacefully and recover {heal_amount} HP.")
+            max_mana = self._max_mana()
+            mana_amount = round(max_mana * 0.30)
+            self.player_data.mana = min(max_mana, self._current_mana() + mana_amount)
+            print(f"You rest peacefully and recover {heal_amount} HP and {mana_amount} mana.")
             print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
+            print(f"Mana: {self.player_data.mana}/{max_mana}")
             self._trigger_dice_machine_passive()
             input("\nPress Enter to continue...")
         else:
@@ -505,6 +520,7 @@ class PYRPG:
         print(f"Role: {self.player_data.role.capitalize()}")
         print(f"Level: {self.player_data.level} ({self.player_data.exp:.1f}% to next level)")
         print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
+        print(f"Mana: {self._current_mana()}/{self._max_mana()}")
         print(f"Gold: {self.player_data.gold}")
         print(f"Loot: {self.player_data.loot if self.player_data.loot else 'None'}")
         print(f"Equipped: {self.player_data.equipped or 'Nothing'}")
@@ -588,10 +604,11 @@ class PYRPG:
             print("  No stat data found.")
 
     def _apply_equipment_hp_change(self):
-        """Recompute max HP after equipping/unequipping. Clamp only — no free heal from gear."""
+        """Recompute max HP and mana after equipping/unequipping. Clamp only — no free heal or refill from gear."""
         new_max_hp = Player.calculate_hp(self._effective_stats())
         self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
+        self.player_data.mana = self._current_mana()
 
     def _do_save(self):
         """Shared save logic used by save_game and auto_save"""
