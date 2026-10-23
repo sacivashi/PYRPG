@@ -2,17 +2,25 @@ from items.items_data import get_item_stats, get_item_price, is_item_buyable, is
 
 
 def test_get_item_stats_returns_all_stat_deltas_including_zero():
-    # Iron Sword: Strength 3, Agility 1, Luck 4, everything else 0 — all six
+    # Iron Sword (v1.0): Strength 4, Agility 1, Defence 1, Luck 2, everything else 0 — all six
     # STAT_COLUMNS should come back, not just the non-zero ones.
     stats = get_item_stats("Iron Sword")
     assert stats == {
-        'Strength': 3,
+        'Strength': 4,
         'Agility': 1,
         'Intelligence': 0,
-        'Defence': 0,
+        'Defence': 1,
         'Magic': 0,
-        'Luck': 4,
+        'Luck': 2,
     }
+
+
+def test_price_formula_pivots_on_rarity_65():
+    # max(15, int(abs(65 - rarity) * 0.65)) — a very common item no longer reprices everything
+    assert get_item_price("Wooden sword") == 15   # rarity 80 -> 9 -> floor
+    assert get_item_price("Smart ring") == 21     # rarity 32
+    assert get_item_price("Timer") == 32          # rarity 15
+    assert get_item_price("Berserker armor") == 41  # rarity 1
 
 
 def test_get_item_stats_unknown_item_returns_none():

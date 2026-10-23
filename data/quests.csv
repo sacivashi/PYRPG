@@ -1,0 +1,4 @@
+id,title,type,target,amount,reward,description
+lost_cat,Lost Cat,defeat,Cat,1,30,"A worried townsperson has lost their cat. Defeat a Cat and return here for a reward."
+nasty_thieves,Nasty Thieves,defeat,Thief,2,50,"A local merchant has reported a thief stealing from their shop. Defeat a Thief and return here for a reward."
+fast_travel_system,Fast Travel System,use,Fast travel,1,free_fast_travel,"Use the Fast Travel System to quickly move to a different location, next one is for free!"

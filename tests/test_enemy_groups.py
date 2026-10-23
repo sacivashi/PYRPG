@@ -1,6 +1,6 @@
 import random
 
-from combat.combat import Combat, Enemy, GROUP_CHANCE, GROUP_SIZES, roll_group_size
+from combat.combat import Combat, Enemy, GROUP_SIZES, group_chance, group_size_weights, roll_group_size
 from players.player_data import PlayerData
 
 STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defence': 5, 'Magic': 5, 'Luck': 5}
@@ -19,13 +19,29 @@ def test_roll_group_size_returns_1_or_a_group_size():
         assert size == 1 or size in GROUP_SIZES
 
 
-def test_roll_group_size_respects_the_flat_chance(monkeypatch):
-    monkeypatch.setattr(random, "randint", lambda a, b: GROUP_CHANCE)  # right at the boundary -> triggers (<=)
-    monkeypatch.setattr(random, "choice", lambda seq: seq[0])
-    assert roll_group_size() == GROUP_SIZES[0]
+def test_group_chance_follows_the_depth_tiers():
+    assert group_chance(1) == group_chance(5) == 5
+    assert group_chance(6) == group_chance(10) == 8
+    assert group_chance(11) == group_chance(15) == 15
+    assert group_chance(16) == group_chance(20) == 25
+    assert group_chance(21) == 35
+    assert group_chance(26) == 40
+    assert group_chance(36) == group_chance(500) == 50  # capped
 
-    monkeypatch.setattr(random, "randint", lambda a, b: GROUP_CHANCE + 1)  # just past it -> solo
-    assert roll_group_size() == 1
+
+def test_shallow_groups_are_always_pairs():
+    for depth in (0, 3, 10):
+        assert group_size_weights(depth) == {2: 100}
+    assert group_size_weights(12) == {2: 60, 3: 40}
+    assert group_size_weights(30) == {2: 40, 3: 60}
+
+
+def test_roll_group_size_respects_the_depth_chance(monkeypatch):
+    monkeypatch.setattr(random, "randint", lambda a, b: 5)  # right at the depth-1 boundary -> triggers (<=)
+    assert roll_group_size(1) == 2
+
+    monkeypatch.setattr(random, "randint", lambda a, b: 6)  # just past it -> solo
+    assert roll_group_size(1) == 1
 
 
 def test_enemy_instances_have_independent_stats():
@@ -88,49 +104,28 @@ def test_choose_target_rejects_a_dead_enemys_number_and_retries(monkeypatch):
 
 
 def test_player_attack_never_touches_untargeted_enemies(monkeypatch):
-    # Intelligence 0 -> confusion can never trigger, so a single-target attack should never
-    # touch the other two enemies, hit or miss.
     for _ in range(30):
         combat = make_group_combat(3)
         monkeypatch.setattr("builtins.input", lambda *_: "1")
-        combat.player_attack(is_magic_attack=False)
+        combat.player_attack()
         assert combat.enemies[1].hp == combat.enemies[1].max_hp
         assert combat.enemies[2].hp == combat.enemies[2].max_hp
 
 
-def test_confusion_redirects_with_full_damage_to_a_different_target(monkeypatch):
-    # Confusion no longer zeroes damage — it deals the same damage a normal hit would,
-    # just against a different living target than the one chosen.
+def test_negative_intelligence_no_longer_confuses_physical_attacks(monkeypatch):
+    # v1.0: -Int's debuff moved to wasting mana on spells/abilities — physical attacks always
+    # go where you aim them, even with every random roll forced to its "worst" value.
     pd = PlayerData(name="T", role="warrior", level=1, hp=999,
-                     stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defence': 5,
-                            'Magic': 5, 'Luck': 5}, max_hp=999)
+                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defence': 5,
+                           'Magic': 5, 'Luck': 5}, max_hp=999)
     combat = Combat(pd, "Bandit", group_size=3)
-    monkeypatch.setattr("builtins.input", lambda *_: "1")  # intended target: enemy #1 (index 0)
-    monkeypatch.setattr("random.random", lambda: 0.0)  # guarantees confusion (chance is 35%)
-    monkeypatch.setattr("random.choice", lambda seq: seq[0])  # deterministic redirect pick
+    monkeypatch.setattr("builtins.input", lambda *_: "1")  # target enemy #1 (index 0)
+    monkeypatch.setattr("random.random", lambda: 0.99)  # no dodge
 
-    result = combat.player_attack(is_magic_attack=False)
-
-    assert result is True
-    assert combat.enemies[0].hp == combat.enemies[0].max_hp  # the intended target is untouched
-    hit = [e for e in combat.enemies[1:] if e.hp < e.max_hp]
-    assert len(hit) == 1  # exactly one other enemy actually took the (real) damage
-
-
-def test_confusion_is_a_real_miss_in_a_solo_fight(monkeypatch):
-    # With nobody else to redirect to, confusion has to fall back to a genuine miss —
-    # otherwise -Intelligence would lose its debuff entirely outside of group fights.
-    pd = PlayerData(name="T", role="warrior", level=1, hp=999,
-                     stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defence': 5,
-                            'Magic': 5, 'Luck': 5}, max_hp=999)
-    combat = Combat(pd, "Bandit", group_size=1)
-    monkeypatch.setattr("random.random", lambda: 0.0)  # guarantees confusion
-    hp_before = combat.enemies[0].hp
-
-    result = combat.player_attack(is_magic_attack=False)
-
-    assert result is False
-    assert combat.enemies[0].hp == hp_before
+    assert combat.player_attack() is True
+    assert combat.enemies[0].hp < combat.enemies[0].max_hp
+    assert combat.enemies[1].hp == combat.enemies[1].max_hp
+    assert combat.enemies[2].hp == combat.enemies[2].max_hp
 
 
 def test_bomb_hits_every_alive_enemy(monkeypatch):
@@ -176,8 +171,8 @@ def test_corruption_ticks_only_for_the_acting_enemy():
 
     combat.enemy_turn()
 
-    assert combat.enemies[0].corruption_counter > 0
-    assert combat.enemies[1].corruption_counter == 0
+    assert combat.enemies[0].corruption == 21  # grows by 1 after its own turn
+    assert combat.enemies[1].corruption == 20
     assert combat.enemies[1].hp == combat.enemies[1].max_hp
 
 

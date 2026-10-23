@@ -28,6 +28,7 @@ def put_new_player(new_player_obj):
         "completed_quests": player_data.completed_quests,
         "known_spells": player_data.known_spells,
         "item_state": player_data.item_state,
+        "perks": player_data.perks,
     }
 
     # Find existing player entry (if exists), else append

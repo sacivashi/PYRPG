@@ -13,6 +13,7 @@ from players.save import put_new_player
 from combat.combat_player import Player
 from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
 from spells.spells_data import learning_item_spell, can_learn
+from quests.quests_data import get_quests, quest_progress, describe_reward, FAST_TRAVEL
 
 
 class PYRPG:
@@ -115,6 +116,8 @@ class PYRPG:
         self.player_data.depth_reached = max(self.player_data.depth_reached, self.player_data.distance)
         self.enter_combat()
 
+    FREE_FAST_TRAVEL = "free_fast_travel"
+
     @staticmethod
     def fast_travel_cost(depth):
         """int(5 * depth * 0.5) gold — deeper jumps cost more"""
@@ -130,8 +133,11 @@ class PYRPG:
 
         print(f"\n=== Fast Travel ===")
         print(f"Gold: {self.player_data.gold}")
-        print(f"Deepest depth reached: {reached} "
-              f"(depth 1 costs {self.fast_travel_cost(1)} gold, depth {reached} costs {self.fast_travel_cost(reached)})")
+        if self.FREE_FAST_TRAVEL in self.player_data.perks:
+            print(f"Deepest depth reached: {reached} (your next trip is free!)")
+        else:
+            print(f"Deepest depth reached: {reached} "
+                  f"(depth 1 costs {self.fast_travel_cost(1)} gold, depth {reached} costs {self.fast_travel_cost(reached)})")
         choice = input(f"Travel to which depth? (1-{reached}, 0 to cancel): ").strip()
 
         try:
@@ -145,7 +151,8 @@ class PYRPG:
             input("\nPress Enter to continue...")
             return
 
-        cost = self.fast_travel_cost(depth)
+        free_trip = self.FREE_FAST_TRAVEL in self.player_data.perks
+        cost = 0 if free_trip else self.fast_travel_cost(depth)
         if self.player_data.gold < cost:
             print(f"Traveling to depth {depth} costs {cost} gold, but you only have {self.player_data.gold}.")
             input("\nPress Enter to continue...")
@@ -155,7 +162,12 @@ class PYRPG:
         self.player_data.in_town = False
         self.player_data.distance = depth
         self.player_data.failed_attempts = 0
-        print(f"You pay {cost} gold and arrive at depth {depth}.")
+        if free_trip:
+            self.player_data.perks.remove(self.FREE_FAST_TRAVEL)
+            print(f"Your free trip takes you to depth {depth} at no cost!")
+        else:
+            print(f"You pay {cost} gold and arrive at depth {depth}.")
+        self._record_quest_use(FAST_TRAVEL)
         input("\nPress Enter to continue...")
 
     def return_to_town(self):
@@ -391,7 +403,7 @@ class PYRPG:
             for _ in range(group_size):
                 self._roll_for_loot()
 
-            self._update_quest_progress(enemy_name)
+            self._update_quest_progress(enemy_name, group_size)
             self._sleight_of_stats_progress()
         elif result == "defeat":
             self._apply_death_penalties()
@@ -399,14 +411,6 @@ class PYRPG:
         # "fled": no rewards, no penalty — nothing to do beyond the HP sync already above
 
         input("\nPress Enter to continue...")
-
-    # Quest ids map to (defeat-flag key, enemy name required, gold reward). Only one quest for
-    # now — "Lost Cat" — but this stays a dict so a second quest is a new entry, not new code.
-    QUESTS = {
-        "lost_cat": {"flag": "defeated_cat", "enemy": "cat", "reward": 30,
-                     "title": "Lost Cat",
-                     "description": "A worried townsperson has lost their cat. Defeat a Cat and return here for a reward."},
-    }
 
     SLEIGHT_OF_STATS = "sleight of stats"
     SLEIGHT_WINS_PER_POINT = 3
@@ -458,28 +462,44 @@ class PYRPG:
         self.player_data.loot.remove(item_name)
         return True
 
-    def _update_quest_progress(self, enemy_name):
-        """Called after every victory — flips a quest's progress flag if this fight satisfies it"""
-        for quest in self.QUESTS.values():
-            if enemy_name.lower() == quest["enemy"]:
-                self.player_data.quest_flags[quest["flag"]] = True
+    def _update_quest_progress(self, enemy_name, defeated=1):
+        """Called after every victory — counts the fight toward every unfinished "defeat" quest
+        (data/quests.csv) whose target it was. A group counts every enemy in it."""
+        self._advance_quests("defeat", enemy_name, defeated)
+
+    def _record_quest_use(self, action):
+        """Called when the player does something a "use" quest can ask for (e.g. FAST_TRAVEL)"""
+        self._advance_quests("use", action, 1)
+
+    def _advance_quests(self, quest_type, target, amount):
+        flags = self.player_data.quest_flags
+        for quest_id, quest in get_quests().items():
+            if quest_id in self.player_data.completed_quests or quest["type"] != quest_type:
+                continue
+            if target.lower() == quest["target"].lower():
+                flags[quest_id] = min(quest["amount"], quest_progress(quest_id, quest, flags) + amount)
 
     def quest_board(self):
         """Town quest board — lists every quest, lets you turn in ones that are ready"""
         print("\n=== Quest Board ===")
-        for quest_id, quest in self.QUESTS.items():
+        for quest_id, quest in get_quests().items():
             print(f"\n{quest['title']}: {quest['description']}")
+            progress = quest_progress(quest_id, quest, self.player_data.quest_flags)
 
             if quest_id in self.player_data.completed_quests:
                 print("  Status: Completed.")
-            elif self.player_data.quest_flags.get(quest["flag"]):
-                choice = input(f"  Ready to turn in for {quest['reward']} gold! Claim it now? (yes/no): ").strip().lower()
+            elif progress >= quest["amount"]:
+                reward = quest["reward"]
+                choice = input(f"  Ready to turn in for {describe_reward(reward)}! Claim it now? (yes/no): ").strip().lower()
                 if choice in ("y", "yes"):
-                    self.player_data.gold += quest["reward"]
+                    if isinstance(reward, int):
+                        self.player_data.gold += reward
+                    else:
+                        self.player_data.perks.append(reward)
                     self.player_data.completed_quests.append(quest_id)
-                    print(f"  Quest complete! You received {quest['reward']} gold.")
+                    print(f"  Quest complete! Reward: {describe_reward(reward)}.")
             else:
-                print("  Status: In progress.")
+                print(f"  Status: In progress ({progress}/{quest['amount']}).")
 
         input("\nPress Enter to continue...")
 

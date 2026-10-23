@@ -34,6 +34,7 @@ class Player:
             self.completed_quests = list(player_data.completed_quests)
             self.known_spells = list(player_data.known_spells)
             self.item_state = dict(player_data.item_state)
+            self.perks = list(player_data.perks)
             return
 
         self.name = player_data
@@ -57,6 +58,7 @@ class Player:
         self.completed_quests = []
         self.known_spells = []
         self.item_state = {}
+        self.perks = []
 
     @staticmethod
     def extract_player(player_data):
@@ -103,7 +105,8 @@ class Player:
                            depth_reached=self.depth_reached,
                            failed_attempts=self.failed_attempts,
                            quest_flags=self.quest_flags, completed_quests=self.completed_quests,
-                           known_spells=self.known_spells, item_state=self.item_state)
+                           known_spells=self.known_spells, item_state=self.item_state,
+                           perks=self.perks)
 
     def get_live_stats(self):
         return {

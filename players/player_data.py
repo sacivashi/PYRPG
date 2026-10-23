@@ -22,3 +22,4 @@ class PlayerData:
     completed_quests: list = field(default_factory=list)  # quest ids already turned in — can't reclaim
     known_spells: list = field(default_factory=list)  # learned spells/abilities (spells/spells_data.py names)
     item_state: dict = field(default_factory=dict)  # per-item progress, e.g. Thunder use counts, Sleight of stats wins
+    perks: list = field(default_factory=list)  # unspent quest perks, e.g. "free_fast_travel" (quests/quests_data.py PERKS)

@@ -37,6 +37,7 @@ def _get_config_value(node_name):
         "roles_csv": "data/roles.csv",
         "enemies_csv": "data/enemies.csv",
         "items_csv": "data/items.csv",
+        "quests_csv": "data/quests.csv",
         "players_json": "data/players.json",
     }
     return defaults.get(node_name.lower())
@@ -107,6 +108,7 @@ def get_player(player_name):
                 completed_quests=player.get("completed_quests", []),
                 known_spells=player.get("known_spells", []),
                 item_state=player.get("item_state", {}),
+                perks=player.get("perks", []),
             )
 
     return None
