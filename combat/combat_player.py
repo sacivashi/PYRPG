@@ -6,33 +6,19 @@ from items.items_data import get_item_stats, STAT_COLUMNS
 
 class Player:
     # Player class for combat — handles live HP, damage, healing during a fight
-    DICE_MACHINE = "dice machine"
-
-    @staticmethod
-    def is_dice_machine(item_name):
-        return bool(item_name) and item_name.lower() == Player.DICE_MACHINE
-
-    @staticmethod
-    def roll_dice_machine():
-        """One random -5..5 delta per stat. Rolled once per character, then kept (PlayerData.dice_roll)."""
-        return {stat: random.randint(-5, 5) for stat in STAT_COLUMNS}
-
-    @staticmethod
-    def _keep_or_roll_dice(equipped_name, stored_roll):
-        """Keep a stored Dice machine roll; roll one now only if it's worn without one (older saves)."""
-        if stored_roll:
-            return dict(stored_roll)
-        return Player.roll_dice_machine() if Player.is_dice_machine(equipped_name) else None
 
     def __init__(self, player_data, role=None, level=None, stats=None, hp=None):
+        if isinstance(player_data, tuple):
+            name, role, level, hp, stats = player_data
+            player_data = PlayerData(name=name, role=role, level=level, hp=hp, stats=stats)
+
         if isinstance(player_data, PlayerData):
             self.name = player_data.name
             self.role = player_data.role
             self.level = player_data.level
             self.base_stats = dict(player_data.stats)  # copy — combat mutations must not leak into the caller's PlayerData
             self.equipped = player_data.equipped
-            self.dice_roll = self._keep_or_roll_dice(self.equipped, player_data.dice_roll)
-            self.stats = self.apply_equipment(self.base_stats, self.equipped, self.dice_roll)
+            self.stats = self.apply_equipment(self.base_stats, self.equipped)
             self.max_hp = self.calculate_hp(self.stats)
             self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
             self.max_mana = self.calculate_mana(self.stats)
@@ -42,33 +28,12 @@ class Player:
             self.exp = player_data.exp
             self.in_town = player_data.in_town
             self.distance = player_data.distance
+            self.depth_reached = player_data.depth_reached
             self.failed_attempts = player_data.failed_attempts
             self.quest_flags = dict(player_data.quest_flags)
             self.completed_quests = list(player_data.completed_quests)
-            return
-
-        if isinstance(player_data, tuple):
-            name, role, level, hp, stats = player_data
-            player_data = PlayerData(name=name, role=role, level=level, hp=hp, stats=stats)
-            self.name = player_data.name
-            self.role = player_data.role
-            self.level = player_data.level
-            self.base_stats = dict(player_data.stats)
-            self.equipped = player_data.equipped
-            self.dice_roll = self._keep_or_roll_dice(self.equipped, player_data.dice_roll)
-            self.stats = self.apply_equipment(self.base_stats, self.equipped, self.dice_roll)
-            self.max_hp = self.calculate_hp(self.stats)
-            self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
-            self.max_mana = self.calculate_mana(self.stats)
-            self.current_mana = self.max_mana if player_data.mana is None else min(player_data.mana, self.max_mana)
-            self.gold = player_data.gold
-            self.loot = list(player_data.loot)
-            self.exp = player_data.exp
-            self.in_town = player_data.in_town
-            self.distance = player_data.distance
-            self.failed_attempts = player_data.failed_attempts
-            self.quest_flags = dict(player_data.quest_flags)
-            self.completed_quests = list(player_data.completed_quests)
+            self.known_spells = list(player_data.known_spells)
+            self.item_state = dict(player_data.item_state)
             return
 
         self.name = player_data
@@ -76,8 +41,7 @@ class Player:
         self.level = level if level is not None else 1
         self.base_stats = dict(stats) if stats else {}
         self.equipped = None
-        self.dice_roll = None
-        self.stats = self.apply_equipment(self.base_stats, self.equipped, self.dice_roll)
+        self.stats = self.apply_equipment(self.base_stats, self.equipped)
         self.max_hp = self.calculate_hp(self.stats)
         self.current_hp = min(hp if hp is not None else self.max_hp, self.max_hp)
         self.max_mana = self.calculate_mana(self.stats)
@@ -87,29 +51,26 @@ class Player:
         self.exp = 0
         self.in_town = True
         self.distance = 0
+        self.depth_reached = 0
         self.failed_attempts = 0
         self.quest_flags = {}
         self.completed_quests = []
+        self.known_spells = []
+        self.item_state = {}
 
     @staticmethod
     def extract_player(player_data):
         return Player(player_data)
 
     @staticmethod
-    def apply_equipment(base_stats, equipped_name, dice_roll=None):
+    def apply_equipment(base_stats, equipped_name):
         """Merge the equipped item's stat deltas onto a copy of base_stats. Base stats
-        (and what gets saved) are never mutated — only this derived copy reflects gear.
-        The Dice machine uses its stored dice_roll; without one it rolls fresh (so callers
-        that don't track a roll still work, they just won't get stable numbers)."""
+        (and what gets saved) are never mutated — only this derived copy reflects gear."""
         effective_stats = dict(base_stats)
         if not equipped_name:
             return effective_stats
 
-        if Player.is_dice_machine(equipped_name):
-            item_deltas = dice_roll if dice_roll is not None else Player.roll_dice_machine()
-        else:
-            item_deltas = get_item_stats(equipped_name)
-
+        item_deltas = get_item_stats(equipped_name)
         if item_deltas:
             for stat, delta in item_deltas.items():
                 effective_stats[stat] = effective_stats.get(stat, 0) + delta
@@ -139,8 +100,10 @@ class Player:
         return PlayerData(self.name, self.role, self.level, self.current_hp, self.base_stats,
                            max_hp=self.max_hp, mana=self.current_mana, gold=self.gold, loot=self.loot, equipped=self.equipped,
                            exp=self.exp, in_town=self.in_town, distance=self.distance,
-                           failed_attempts=self.failed_attempts, dice_roll=self.dice_roll,
-                           quest_flags=self.quest_flags, completed_quests=self.completed_quests)
+                           depth_reached=self.depth_reached,
+                           failed_attempts=self.failed_attempts,
+                           quest_flags=self.quest_flags, completed_quests=self.completed_quests,
+                           known_spells=self.known_spells, item_state=self.item_state)
 
     def get_live_stats(self):
         return {

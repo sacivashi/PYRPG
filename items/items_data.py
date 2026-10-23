@@ -76,16 +76,14 @@ def is_item_consumable(name):
     return False
 
 
-def _max_rarity():
-    """Highest Rarity weight across all items — the 'most common' reference point for pricing."""
-    return max((get_item_rarity(name) for name in get_item_names()), default=0)
+PRICE_PIVOT_RARITY = 65  # fixed reference point — adding a very common item no longer reprices the whole shop
 
 
 def get_item_price(name):
     """Gold cost, derived from Rarity so there's one source of truth: rarer (lower weight) items
-    cost more, floored at 15 so even the most common items aren't free: max(15, (max_rarity - rarity) * 0.79)."""
+    cost more, floored at 15 so even the most common items aren't free: max(15, int(abs(65 - rarity) * 0.65))."""
     rarity = get_item_rarity(name)
-    return max(15, round((_max_rarity() - rarity) * 0.79))
+    return max(15, int(abs(PRICE_PIVOT_RARITY - rarity) * 0.65))
 
 
 def get_buyable_items():

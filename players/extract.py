@@ -1,5 +1,6 @@
 from combat.combat_player import Player
 from players.player_data import PlayerData
+from spells.spells_data import STARTING_ITEMS
 
 
 class NewPlayer(Player):
@@ -11,4 +12,5 @@ class NewPlayer(Player):
         role = InputRole.choose_role()
         stats = RolesExtract.get_role_stats_by_name()[role]
         hp = Player.calculate_hp(stats)
-        super().__init__(PlayerData(name.title(), role, 1, hp, stats, max_hp=hp))
+        starting_loot = list(STARTING_ITEMS.get(role.lower(), []))
+        super().__init__(PlayerData(name.title(), role, 1, hp, stats, max_hp=hp, loot=starting_loot))

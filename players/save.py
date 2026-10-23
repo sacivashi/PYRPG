@@ -22,10 +22,12 @@ def put_new_player(new_player_obj):
         "exp": player_data.exp,
         "in_town": player_data.in_town,
         "distance": player_data.distance,
+        "depth_reached": player_data.depth_reached,
         "failed_attempts": player_data.failed_attempts,
-        "dice_roll": player_data.dice_roll,
         "quest_flags": player_data.quest_flags,
         "completed_quests": player_data.completed_quests,
+        "known_spells": player_data.known_spells,
+        "item_state": player_data.item_state,
     }
 
     # Find existing player entry (if exists), else append

@@ -202,8 +202,8 @@ def test_group_victory_calls_reward_calculations_once_per_enemy(monkeypatch):
     game = PYRPG.__new__(PYRPG)
     game.player_data = PlayerData(name="T", role="warrior", level=1, hp=30, stats=dict(STATS), max_hp=30)
 
-    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
-    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda: 3)
+    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power, depth=None: "Bandit")
+    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda depth=0: 3)
     monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30, None))
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr(game, "_process_level_ups", lambda: None)
@@ -230,8 +230,8 @@ def test_solo_victory_still_calls_reward_calculations_exactly_once(monkeypatch):
     game = PYRPG.__new__(PYRPG)
     game.player_data = PlayerData(name="T", role="warrior", level=1, hp=30, stats=dict(STATS), max_hp=30)
 
-    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
-    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda: 1)
+    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power, depth=None: "Bandit")
+    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda depth=0: 1)
     monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30, None))
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr(game, "_process_level_ups", lambda: None)

@@ -101,10 +101,12 @@ def get_player(player_name):
                 exp=player.get("exp", 0),
                 in_town=player.get("in_town", True),
                 distance=player.get("distance", 0),
+                depth_reached=player.get("depth_reached", player.get("distance", 0)),  # older saves: start from where they are
                 failed_attempts=player.get("failed_attempts", 0),
-                dice_roll=player.get("dice_roll"),
                 quest_flags=player.get("quest_flags", {}),
                 completed_quests=player.get("completed_quests", []),
+                known_spells=player.get("known_spells", []),
+                item_state=player.get("item_state", {}),
             )
 
     return None

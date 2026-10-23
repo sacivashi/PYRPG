@@ -96,8 +96,8 @@ def test_board_shows_completed_status(monkeypatch, capsys):
 
 def test_victory_over_a_cat_updates_quest_progress(monkeypatch):
     game = make_game()
-    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Cat")
-    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda: 1)
+    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power, depth=None: "Cat")
+    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda depth=0: 1)
     monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30, None))
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr(game, "_process_level_ups", lambda: None)
@@ -111,8 +111,8 @@ def test_victory_over_a_cat_updates_quest_progress(monkeypatch):
 
 def test_victory_over_something_else_does_not_touch_quest_progress(monkeypatch):
     game = make_game()
-    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
-    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda: 1)
+    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power, depth=None: "Bandit")
+    monkeypatch.setattr("game.pyrpg.roll_group_size", lambda depth=0: 1)
     monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("victory", 30, None))
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr(game, "_process_level_ups", lambda: None)

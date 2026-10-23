@@ -99,7 +99,7 @@ def test_fled_grants_no_gold_exp_or_loot(monkeypatch):
                                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': 0,
                                           'Defence': 5, 'Magic': 5, 'Luck': 5}, max_hp=30)
     monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("fled", 30, None))
-    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power: "Bandit")
+    monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power, depth=None: "Bandit")
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)
     monkeypatch.setattr("builtins.input", lambda *_: "")
 
