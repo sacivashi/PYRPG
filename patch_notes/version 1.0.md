@@ -53,11 +53,11 @@ anyhow, yeah:
 Yes I know previous patch made it so enemies are encountered based on your stats, but I want the "depth" mechanic to contribute more towards what you may encounter.
 
 > **encounter logic:**
->> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on stats), less chances to encounter groups 5% for 2 enemies at once
->> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (stat checks become higher.) 8% groups, always of 2.
->> - depth 11 ~ 15: tougher to medium difficulty enemies. 15% groups 60% 2, 40% 3.
->> - depth 16 ~ 20: medium - hard. 25% groups, 55% 2, 45% 3.
->> - 21 ~ beyond :  hard - insane. min(50,35 + (depth - 21))%  groups, 40% 2, 60% 3. 
+>> - depth 1 ~ 5: encounter easier for you to defeat enemies (based on your stats * 0.25 ~ 0.75), group encounter odds 5%, for 2 enemies at once
+>> - depth 6 ~ 10: encounter a mix of easy and somewhat tougher enemies. (self stats * 0.75 ~ 1.2) 8% groups, always of 2.
+>> - depth 11 ~ 15: tougher to medium difficulty enemies (* 1.2 ~ 2). 15% groups 60% 2, 40% 3.
+>> - depth 16 ~ 20: medium - hard (* 2 ~ 2.5). 25% groups, 55% 2, 45% 3.
+>> - 21 ~ 50:  hard - insane (* 2.5 ~ 3.5). min(50,35 + (depth - 21))%  groups, 40% 2, 60% 3. 
 >> - 50+... somehow?: enemies > 0 stats get buffed for depth - 50.
 >> - 100+?: `min(100, depth - 99)%` Death is coming for you...you can't flee it.
 

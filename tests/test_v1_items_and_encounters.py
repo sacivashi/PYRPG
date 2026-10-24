@@ -132,10 +132,17 @@ def test_potions_are_always_in_the_shop_at_15_gold(monkeypatch):
 
 # --- encounters ----------------------------------------------------------------------------------
 
-def test_depth_tiers_raise_the_target_ratio():
-    ratios = [encounter_target_ratio(d) for d in (1, 5, 6, 10, 11, 15, 16, 20, 21, 80)]
-    assert ratios == sorted(ratios)
-    assert encounter_target_ratio(3) < 2.5 < encounter_target_ratio(25)
+def test_depth_target_ratio_ramps_through_the_tiers():
+    from pytest import approx
+    assert encounter_target_ratio(0) == encounter_target_ratio(1) == 0.25
+    assert encounter_target_ratio(3) == 0.5 and encounter_target_ratio(5) == 0.75
+    assert encounter_target_ratio(6) == 0.75 and encounter_target_ratio(10) == approx(1.2)
+    assert encounter_target_ratio(13) == approx(1.6)            # halfway through 1.2 -> 2.0
+    assert encounter_target_ratio(16) == 2.0 and encounter_target_ratio(20) == 2.5
+    assert encounter_target_ratio(21) == 2.5 and encounter_target_ratio(50) == 3.5
+    assert encounter_target_ratio(500) == 3.5                   # capped past depth 50
+    ratios = [encounter_target_ratio(d) for d in range(0, 60)]
+    assert ratios == sorted(ratios)                             # never gets easier going deeper
 
 
 def test_death_is_never_in_the_regular_pool():

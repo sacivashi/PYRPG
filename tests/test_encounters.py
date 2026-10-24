@@ -85,3 +85,13 @@ def test_goblin_is_now_a_more_common_encounter_than_the_old_difficulty_score_gav
     old_weight = get_encounter_weight(get_enemy_difficulty(goblin), LEVEL_1_POWER)
     new_weight = get_encounter_weight(get_enemy_threat(goblin), LEVEL_1_POWER)
     assert new_weight > old_weight
+
+
+def test_negative_attack_threat_reflects_its_real_damage():
+    # Bat: -5 Attack hits for max(0, 15 - 5) = 10 plus a guaranteed max(5, 2.3) = 5 leech, and the
+    # leech heals it too, so it counts twice -> 20
+    from enemies.enemies_data import effective_attack
+    assert effective_attack(-5) == 20
+    assert effective_attack(-22) == 2 * 22 * 0.46   # Leech: no hit, pure drain
+    assert effective_attack(12) == 12
+    assert get_enemy_threat(get_enemy_stats("Bat")) > get_enemy_threat(get_enemy_stats("Cat"))

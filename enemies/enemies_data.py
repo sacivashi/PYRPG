@@ -15,13 +15,14 @@ MIN_WEAK_WEIGHT = 0.2          # floor for enemies far below the target
 MIN_ENCOUNTER_WEIGHT = 0.001   # floor for everything, so weights never all collapse to 0
 
 # v1.0: depth shifts the target too — shallow trips lean easy, deep ones lean hard.
-# (deepest depth in the tier, target ratio); the last tier covers everything deeper.
+# (first depth, last depth, ratio at first, ratio at last): the ratio ramps linearly across the
+# tier. Past the last tier's end it stays at that tier's final ratio.
 DEPTH_TARGET_RATIOS = [
-    (5, 1.5),     # 1-5: easier for you to defeat
-    (10, 2.25),   # 6-10: a mix of easy and somewhat tougher
-    (15, 3.0),    # 11-15: tougher to medium
-    (20, 4.0),    # 16-20: medium to hard
-    (None, 5.0),  # 21+: hard to insane
+    (1, 5, 0.25, 0.75),    # 1-5: easier for you to defeat
+    (6, 10, 0.75, 1.2),    # 6-10: a mix of easy and somewhat tougher
+    (11, 15, 1.2, 2.0),    # 11-15: tougher to medium
+    (16, 20, 2.0, 2.5),    # 16-20: medium to hard
+    (21, 50, 2.5, 3.5),    # 21+: hard to insane (the depth 50+ stat buff takes over from there)
 ]
 
 DEATH = "Death"
@@ -31,9 +32,13 @@ DEPTH_BUFF_START = 50          # past this, every positive enemy stat gets +(dep
 
 
 def encounter_target_ratio(depth):
-    for deepest, ratio in DEPTH_TARGET_RATIOS:
-        if deepest is None or depth <= deepest:
-            return ratio
+    for first, last, start_ratio, end_ratio in DEPTH_TARGET_RATIOS:
+        if depth <= last:
+            if last == first:
+                return start_ratio
+            progress = max(0, depth - first) / (last - first)
+            return start_ratio + (end_ratio - start_ratio) * progress
+    return DEPTH_TARGET_RATIOS[-1][3]
 
 
 def death_chance(depth):
@@ -78,9 +83,19 @@ def get_enemy_difficulty(enemy_stats):
     return sum(abs(int(v)) for k, v in enemy_stats.items() if k != 'Name')
 
 
+def effective_attack(attack):
+    """What an Attack value is really worth per turn. -Attack enemies deal max(0, 15 + atk) and
+    always leech max(5, abs(atk) * 0.46) on top (DamageCalculator.calculate_enemy_damage) — and the
+    leech heals them by the same amount, so it counts twice. A Bat's -5 Attack is worth 20, not 5."""
+    if attack >= 0:
+        return attack
+    return max(0, 15 + attack) + 2 * max(5, abs(attack) * 0.46)
+
+
 def get_enemy_threat(enemy_stats):
     """Weighted danger score (see THREAT_WEIGHTS above). Drives encounter matching only."""
-    return sum(abs(int(v)) * THREAT_WEIGHTS.get(k, 1.0) for k, v in enemy_stats.items() if k != 'Name')
+    return sum((effective_attack(int(v)) if k == 'Attack' else abs(int(v))) * THREAT_WEIGHTS.get(k, 1.0)
+               for k, v in enemy_stats.items() if k != 'Name')
 
 
 def get_encounter_weight(threat, player_power, target_ratio=ENCOUNTER_TARGET_RATIO):
