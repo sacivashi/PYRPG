@@ -135,8 +135,8 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 ## physical damage:
-> physical damage formula feels too good for certain combatent win rates (cough, warriors, rogues and rangers) so, I feel like a role should benefit from a priority stat only.
->> Physical damage calculation: int(sqrt(max(abs(stat) + 5)) * 3), now also includes defence, if defence is highest abs stat: int(sqrt(abs(def) + 3)* 2.8)  (yeah so what if you hit with your shield?!)
+> physical damage formula feels too good for certain combatant win rates (cough, warriors, rogues and rangers) so, I feel like a roles should benefiet from all none magical stats.
+>> Physical damage calculation: int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2)
 
 ## learning spells/abilities:
 > I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
@@ -188,19 +188,15 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 ## role buffs:
 
-> **forsaken:** The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass. buffing forsaken to see the combat win rate raising.
+> - **forsaken:** The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass. buffing forsaken to see the combat win rate raising.
 >> forsaken stats: ~~-2,3,2,10,-2,2~~ → -1,5,3,9,-4,4
-
-> **Necromancer:** While necros sit high... or should I say low? on -mag getting strong magic attacks this patch, their overall stats however need a little touch up.
+> - **Necromancer:** While necros sit high... or should I say low? on -mag getting strong magic attacks this patch, their overall stats however need a little touch up.
 >> Necromancer stats: ~~1,2,6,4,-8,5~~ → 1,4,6,5,-8,5
 
 ## role nerfs:
-> **Druid:** Druids combat win rates are the high currently, sitting at 90~% early on, while it is satisfying, they could become lower.
+> - **Druid:** Druids combat win rates are the high currently, sitting at 90~% early on, while it is satisfying, they could become lower.
 >> Druid stats: ~~4,5,7,5,8,6~~ → 4,4,6,4,6,4
-
-
-
-> **Warrior:** Warriors are one of the strongest roles (2nd to rangers) on the earlier game, I do want their stats to dish out less power.
+> - **Warrior:** Warriors are one of the strongest roles (2nd to rangers) on the earlier game, I do want their stats to dish out less power.
 >> Warrior stats: ~~9,5,3,8,2,4~~ → 6,4,4,6,3,1
 
 ## new items:
@@ -223,7 +219,8 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 ## other spells & abilities:
-- Backstab: ability, 7 mana, telepor behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage.
+- Arrowshot: ability, 6 mana, shoot a magical arrow on an enemy, dealing int(1 + (agi * 0.6 + abs(mag) * 0.4))
+- Backstab: ability, 7 mana, teleport behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage.
 - Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
 - Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 5 spell damage. Forsakens start with that.
 

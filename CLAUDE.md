@@ -16,7 +16,7 @@ Must be run from the project root — imports are root-relative.
 pytest
 ```
 
-`tests/` holds the automated suite (161 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+`tests/` holds the automated suite (166 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
 
 ## Working with Patch Notes
 
@@ -105,6 +105,8 @@ The core mechanic. Any stat can be negative. Each negative stat gives a debuff +
 | -Luck | `min(35, abs(-lck))%` miss chance | Successful attacks are unavoidable |
 
 +Defence is a flat `min(25, 1 + def*0.9)%` damage reduction (0 or less: none).
+
+Physical attack damage (`DamageCalculator.calculate_base_damage`) = `int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2)` — every physical stat counts by its size (negative stats included), so roles land close together; there's no Strength multiplier or +Luck random bonus anymore.
 
 Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II.md` (Defense/-Defense and Corruption reworked in `version 1.0.md`). **Corruption** (`Enemy.corruption`, the live value, starting at the CSV stat): at the end of its turn the enemy takes `max(current_hp*0.04, corr, 3)` searing damage, then corr grows by 1; and corruption replaces Defense for it entirely (see `_hit_enemy` above).
 

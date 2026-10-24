@@ -87,3 +87,32 @@ def test_strength_curse_heals_after_a_landed_hit(monkeypatch):
     combat.player_attack()
     self_damage = DamageCalculator.strength_self_damage(-10, combat.player.max_hp)
     assert combat.player.current_hp > 15 - self_damage
+
+
+# --- physical damage (v1.0) ----------------------------------------------------------------------
+
+def test_physical_damage_formula():
+    # int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2)
+    stats = {'Strength': 6, 'Agility': 4, 'Intelligence': 4, 'Defence': 6, 'Magic': 3, 'Luck': 1}
+    assert DamageCalculator.calculate_base_damage(stats) == int((17 + 15) ** 0.5 * 2.2) == 12
+
+
+def test_negative_physical_stats_count_by_their_size():
+    monk = {'Strength': 5, 'Agility': 5, 'Defence': -9, 'Luck': 1}
+    mirrored = {'Strength': 5, 'Agility': 5, 'Defence': 9, 'Luck': 1}
+    assert DamageCalculator.calculate_base_damage(monk) == DamageCalculator.calculate_base_damage(mirrored) == 13
+
+
+def test_intelligence_and_magic_dont_add_physical_damage():
+    plain = {'Strength': 5, 'Agility': 5, 'Defence': 5, 'Luck': 5, 'Intelligence': 0, 'Magic': 0}
+    caster = {**plain, 'Intelligence': 50, 'Magic': 50}
+    assert DamageCalculator.calculate_base_damage(plain) == DamageCalculator.calculate_base_damage(caster)
+
+
+def test_zero_stats_still_hit_for_8():
+    assert DamageCalculator.calculate_base_damage({}) == 8
+
+
+def test_positive_luck_adds_no_random_bonus_anymore():
+    stats = {'Strength': 5, 'Agility': 5, 'Defence': 5, 'Luck': 9}
+    assert {DamageCalculator.calculate_player_damage(stats)[0] for _ in range(50)} == {DamageCalculator.calculate_base_damage(stats)}

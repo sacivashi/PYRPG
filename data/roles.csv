@@ -1,5 +1,5 @@
 Class,Strength,Agility,Intelligence,Defence,Magic,Luck
-druid,4,5,7,5,8,6
+druid,4,4,6,4,6,4
 dwarf,7,3,5,7,3,0
 elf,4,7,6,4,5,2
 forsaken,-1,5,3,9,-4,4
@@ -10,4 +10,4 @@ ranger,3,11,6,2,2,9
 rogue,5,9,5,4,2,9
 satyr,2,7,9,3,4,4
 tank,0,-5,2,12,1,5
-warrior,9,5,3,8,2,4
+warrior,6,4,4,6,3,1

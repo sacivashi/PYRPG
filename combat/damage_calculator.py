@@ -5,7 +5,7 @@ import math
 class DamageCalculator:
     """Damage calculation system — v1.0 patch notes formulas (physical/magic split)"""
 
-    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck']
+    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck', 'Defence']
 
     # No source of evasion can push a dodge chance past this. Anything that adds evasion later
     # (e.g. gear) should be summed into calculate_evasion_chance so this cap covers it too.
@@ -35,19 +35,13 @@ class DamageCalculator:
 
     @staticmethod
     def calculate_base_damage(attacker_stats, weapon_bonus=0):
-        """Physical base damage is the highest of Strength/Agility/Luck"""
+        """v1.0 physical damage: int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2).
+        Every physical stat counts (Defence too — you can hit with your shield), each by its size,
+        so a negative stat adds as much as a positive one. The square root keeps high-stat roles
+        from running away with it; the +15 gives everyone a floor of 8."""
         stats = {k: int(v) for k, v in attacker_stats.items()}
-        physical_stats = {k: v for k, v in stats.items() if k in DamageCalculator.PHYSICAL_STATS}
-        base_damage = max(physical_stats.values()) if physical_stats else 0
-        return max(0, base_damage + weapon_bonus)
-
-    @staticmethod
-    def apply_strength_modifier(base_damage, strength):
-        """+Strength multiplies physical damage by 1 + str * 0.15. -Strength doesn't touch damage —
-        its self-damage and heal are applied by combat.py after the attack resolves."""
-        if strength > 0:
-            return base_damage * (1 + strength * 0.15)
-        return base_damage
+        total = sum(abs(stats.get(stat, 0)) for stat in DamageCalculator.PHYSICAL_STATS)
+        return max(0, int(math.sqrt(total + 15) * 2.2) + weapon_bonus)
 
     @staticmethod
     def strength_self_damage(strength, max_hp):
@@ -77,27 +71,22 @@ class DamageCalculator:
 
     @staticmethod
     def apply_luck_modifier(damage, luck_stat):
+        """-Luck: min(35, abs(-lck))% miss chance, but hits that land are unavoidable.
+        (+Luck no longer adds a random bonus — it counts through calculate_base_damage instead.)"""
         if luck_stat < 0:
-            # Debuff: min(35, abs(-lck))% miss chance
-            # Benefit: successful attacks are unavoidable
             miss_chance = min(35, abs(luck_stat)) / 100
             if random.random() < miss_chance:
                 return 0, False
-            else:
-                return damage, True  # unavoidable
-        else:
-            luck_roll = random.randint(0, 5)
-            luck_bonus = luck_roll * (luck_stat / 10)
-            return damage + luck_bonus, False
+            return damage, True  # unavoidable
+        return damage, False
 
     @staticmethod
     def calculate_player_damage(player_stats, weapon_bonus=0):
         """Physical attack: (damage, unavoidable). Damage 0 means the attack missed (-Luck)."""
         stats = {k: int(v) for k, v in player_stats.items()}
         damage = DamageCalculator.calculate_base_damage(stats, weapon_bonus)
-        damage = DamageCalculator.apply_strength_modifier(damage, stats.get('Strength', 0))
         damage, unavoidable = DamageCalculator.apply_luck_modifier(damage, stats.get('Luck', 0))
-        return round(max(0, damage), 2), unavoidable
+        return max(0, damage), unavoidable
 
     # --- Spells -----------------------------------------------------------------------------
 
