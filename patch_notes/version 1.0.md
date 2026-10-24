@@ -134,6 +134,10 @@ fast travel cost: `int(5 * depth * 0.5)`
 >>>> *searing damage = damage that cannot be blocked or reduced.*
 
 
+## physical damage:
+> physical damage formula feels too good for certain win rates (cough, warriors, rogues and rangers) so, I feel like a role should benefit from a priority stat only.
+>> Physical damage calculation: int(sqrt(max(abs(stat) + 5)) * 3)
+
 ## learning spells/abilities:
 > I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
 
@@ -197,7 +201,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 > **Warrior:** Warriors are one of the strongest roles (2nd to rangers) on the earlier game, I do want their stats to dish out less power.
->> Warrior stats: ~~9,5,3,8,2,4~~ → 6,5,3,6,1,1
+>> Warrior stats: ~~9,5,3,8,2,4~~ → 6,4,4,6,3,1
 
 ## new items:
 
