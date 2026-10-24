@@ -167,7 +167,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 |----|----|----|----|----|----|----|
 |Cursed Human|15|40|9|~~-5~~ → 0|10|-5|
 |Jester|20|35|4|~~10~~ → 0|15|22|
-|Plague Rat|~~12~~ → 3|10|5|~~2~~ → 0|15|-6|
+|Plague Rat|~~12~~ → 0|10|~~5~~ → 2 |~~2~~ → 3|~~15~~ → 10|-6|
 |Zombie|8|20|3|~~-10~~ → 0|-2|-2|
 
 ## new roles:
@@ -182,11 +182,16 @@ fast travel cost: `int(5 * depth * 0.5)`
 |Satyr|2|7|9|3|4|4|
 |Tank|0|-5|2|12|1|5|
 
+## buffing the forsaken:
+> The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass.
+>> forsaken stats: ~~-2,3,2,10,-2,2~~ → -1,4,2,10,-4,4
+
 ## new items:
 
 - Beam staff: equipment, 0,0,3,0,3,1, special equipment passive: While equipped; spell "hyper beam" enters your spells/abilities tab automatically, spell mana cost: 100% of your mana, spell base damage: `int(max(5, mana * 0.40))`, can be cast once a combat. single target, rarity 12, purchase-able
 - Berserker's armor: equipment, 2,0,0,4,0,0, equipment passive: when you take a hit that would lower your HP to half while in combat, each turn; gain 1 strength, until the combat ends. resets when combat ends. undroppable, rarity 1, purchasable, healing to > half HP stops the passive too.
 - Blade rush: consumable, on usage, learn blade rush ability, 22 mana cost, for 4 turns deal `max(4, int(str * 0.8 + abs(mag) * 0.4))` physical AOE damage, you cannot make any other actions during those 4 turns. rarity 22, undroppable, purchaseable.
+- Diamond sword: equipment, 8,-3,0,2,1,3,15,yes,yes.
 - Health potion: consumable, upon usage, heal for 20 HP, costs 15 gold, always available and doesn't go out of stock.
 - Mana potion: consumable, upon usage, gain 20 mana, costs 15 gold, always available and doesn't go out of stock.
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5. buyable droppable
@@ -198,7 +203,13 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Thunder disciple: consumable in combat, once per combat, on usage, call an AOE thunder that deal 12 damage, non droppable, 0 rarity, not purchase-able. Special consumable quest; use Thunder disciple 6 times, becomes to Thunder master.
 - Thunder master: consumable in combat, once per combat, on usage, call an AOE storm that deal 18 damage, non droppable, 0 rarity, not purchase-able.
 - Wooden sword: equipment, 2,1,0,1,0,1,80,yes,yes.
-- Diamond sword: equipment, 8,-3,0,2,1,3,15,yes,yes.
+
+
+## other spells & abilities:
+Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
+Cursed strike: cursed spell, 3 HP, strike an enemy with your cursed soul for 3 spell damage. Forsakens learn this ability at level 2.
+
+
 
 ## items adjustment (and filling out last patch added ones):
 
