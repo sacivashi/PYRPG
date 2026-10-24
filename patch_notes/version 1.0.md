@@ -182,9 +182,10 @@ fast travel cost: `int(5 * depth * 0.5)`
 |Satyr|2|7|9|3|4|4|
 |Tank|0|-5|2|12|1|5|
 
-## buffing the forsaken:
-> The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass.
->> forsaken stats: ~~-2,3,2,10,-2,2~~ → -1,4,2,10,-4,4
+## role buffs:
+
+> The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass. buffing forsaken to see the combat win rate raising.
+>> forsaken stats: ~~-2,3,2,10,-2,2~~ → -1,5,3,9,-4,4
 
 ## new items:
 
@@ -208,7 +209,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 ## other spells & abilities:
 - Backstab: ability, 7 mana, telepor behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage.
 - Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
-- Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 3 spell damage. Forsakens learn this at level 2.
+- Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 5 spell damage. Forsakens start with that.
 
 
 
