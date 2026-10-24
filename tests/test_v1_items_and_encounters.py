@@ -180,3 +180,19 @@ def test_past_depth_50_positive_enemy_stats_grow():
 def test_combat_uses_the_players_depth_for_enemy_buffs():
     combat = Combat(make_pd(distance=70), "Bandit")
     assert combat.enemies[0].max_hp == get_enemy_stats("Bandit")["HP"] + 20
+
+
+# --- Manage Loot menu ----------------------------------------------------------------------------
+
+def test_zero_backs_out_of_the_loot_menu_without_unequipping(monkeypatch):
+    game = make_game(loot=["Dagger"], equipped="Dagger")
+    monkeypatch.setattr("builtins.input", lambda *_: "0")
+    game.manage_loot()
+    assert game.player_data.equipped == "Dagger"
+
+
+def test_u_unequips(monkeypatch):
+    game = make_game(loot=["Dagger"], equipped="Dagger")
+    answer(monkeypatch, "u", "")
+    game.manage_loot()
+    assert game.player_data.equipped is None

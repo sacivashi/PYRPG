@@ -694,15 +694,20 @@ class PYRPG:
             print("Inventory:")
             for i, item_name in enumerate(self.player_data.loot, 1):
                 print(f"  [{i}] {item_name}")
-            print("  [0] Unequip / Cancel")
+            if self.player_data.equipped:
+                print(f"  [u] Unequip {self.player_data.equipped}")
+            print("  [0] Back")
 
-            choice = input("\nChoose an item to equip or use, 'c' + number to check its stats (e.g. c1), or 0 to unequip/cancel: ").strip()
+            choice = input("\nChoose an item to equip or use, 'c' + number to check its stats (e.g. c1), "
+                           f"{'u to unequip, ' if self.player_data.equipped else ''}or 0 to go back: ").strip()
 
             if choice == "0":
-                if self.player_data.equipped:
-                    self.player_data.equipped = None
-                    print("Unequipped.")
-                    self._apply_equipment_hp_change()
+                return
+
+            if choice.lower() == "u" and self.player_data.equipped:
+                print(f"Unequipped {self.player_data.equipped}.")
+                self.player_data.equipped = None
+                self._apply_equipment_hp_change()
                 input("\nPress Enter to continue...")
                 return
 
