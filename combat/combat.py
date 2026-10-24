@@ -481,6 +481,8 @@ class Combat:
         elif name == "Nature's gift":
             self.heal_over_time_turns = spell["heal_turns"]
             self._tick_heal_over_time()
+        elif name == "Arrowshot":
+            self._cast_arrowshot()
         else:
             self._cast_damage_spell(name, spell, casts, cost, magic, intelligence)
         return "end_turn"
@@ -498,6 +500,17 @@ class Combat:
 
         if cursed and target.is_alive() and random.randint(1, 100) <= DamageCalculator.cursed_debuff_chance(magic):
             self.apply_debuff_to_enemy(target, DamageCalculator.cursed_debuff_amount(magic))
+
+    def _cast_arrowshot(self):
+        """Arrowshot: one magical arrow — its own Agility/Magic formula, dealt as magic damage. It's an
+        ability, so spell boosts don't apply, but the -Strength curse does."""
+        target_index = self._choose_target()
+        if target_index is None:
+            return
+        print("You loose a magical arrow!")
+        dealt = self._hit_enemy(self.enemies[target_index], DamageCalculator.arrowshot_damage(self._live_stats()), "spell")
+        if self.player.is_alive():
+            self._apply_strength_curse(True, dealt)
 
     def _continue_channel(self):
         """One turn of Blade rush: physical damage to every living enemy, then the -Strength curse"""

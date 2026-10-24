@@ -219,7 +219,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 ## other spells & abilities:
-- Arrowshot: ability, 6 mana, shoot a magical arrow on an enemy, dealing int(1 + (agi * 0.6 + abs(mag) * 0.4))
+- Arrowshot: ability, 5 mana, shoot a magical arrow on an enemy, dealing int((agi * 0.7 + abs(mag) * 0.3)) magic damage. rangers start with that.
 - Backstab: ability, 7 mana, teleport behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage.
 - Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
 - Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 5 spell damage. Forsakens start with that.

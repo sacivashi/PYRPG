@@ -19,6 +19,7 @@ SPELLS = {
     "Hyper beam": {"kind": "spell", "target": "single", "cost": "all", "once_per_combat": True},
     "Blade rush": {"kind": "ability", "target": "aoe", "cost": 22, "channel_turns": 4},
     "Nature's gift": {"kind": "ability", "target": "self", "cost": 25, "heal_per_turn": 5, "heal_turns": 3},
+    "Arrowshot": {"kind": "ability", "target": "single", "cost": 5},  # magic damage, see DamageCalculator.arrowshot_damage
 }
 
 # Consumable item -> the spell/ability it teaches. Using the item learns it and uses the item up.
@@ -47,6 +48,7 @@ STARTING_ITEMS = {
 # picked up later if it becomes learnable.
 LEVEL_UP_SPELLS = {
     "forsaken": {1: ["Cursed strike"]},  # starting spell
+    "ranger": {1: ["Arrowshot"]},  # starting ability
 }
 
 

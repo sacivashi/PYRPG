@@ -116,3 +116,31 @@ def test_zero_stats_still_hit_for_8():
 def test_positive_luck_adds_no_random_bonus_anymore():
     stats = {'Strength': 5, 'Agility': 5, 'Defence': 5, 'Luck': 9}
     assert {DamageCalculator.calculate_player_damage(stats)[0] for _ in range(50)} == {DamageCalculator.calculate_base_damage(stats)}
+
+
+# --- Arrowshot (Ranger's basic attack) -----------------------------------------------------------
+
+RANGER = {'Strength': 3, 'Agility': 11, 'Intelligence': 6, 'Defence': 2, 'Magic': 2, 'Luck': 9}
+
+
+def test_arrowshot_formula():
+    assert DamageCalculator.arrowshot_damage(RANGER) == int(2 + 11 * 0.85 + 2 * 0.5) == 12
+    assert DamageCalculator.arrowshot_damage({**RANGER, 'Agility': 30, 'Magic': -6}) == int(2 + 25.5 + 3) == 30
+
+
+def test_arrowshot_is_a_5_mana_ability_dealt_as_magic_damage(monkeypatch):
+    monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)   # no mana waste
+    combat = make_combat(RANGER, enemy="Skeleton", role="ranger", known_spells=["Arrowshot"])   # Defense 14
+    hp_before, mana_before = combat.enemies[0].hp, combat.player.current_mana
+    combat.cast("Arrowshot")
+    spell_hit = DamageCalculator.enemy_defence_adjustment(12, 14, "spell")[0]
+    assert combat.enemies[0].hp == max(0, round(hp_before - spell_hit))
+    assert combat.player.current_mana == mana_before - 5
+
+
+def test_rangers_start_knowing_arrowshot():
+    from game.pyrpg import PYRPG
+    game = PYRPG.__new__(PYRPG)
+    game.player_data = PlayerData(name="T", role="ranger", level=1, hp=22, stats=dict(RANGER), max_hp=22)
+    game._learn_level_up_spells()
+    assert game.player_data.known_spells == ["Arrowshot"]

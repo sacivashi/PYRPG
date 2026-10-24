@@ -70,6 +70,12 @@ class DamageCalculator:
             return agility + random.randint(0, 5), 0
 
     @staticmethod
+    def arrowshot_damage(attacker_stats):
+        """Arrowshot ability (Rangers start with it): int(2 + agi * 0.85 + abs(mag) * 0.5), dealt as magic damage"""
+        stats = {k: int(v) for k, v in attacker_stats.items()}
+        return max(0, int(2 + stats.get('Agility', 0) * 0.85 + abs(stats.get('Magic', 0)) * 0.5))
+
+    @staticmethod
     def apply_luck_modifier(damage, luck_stat):
         """-Luck: min(35, abs(-lck))% miss chance, but hits that land are unavoidable.
         (+Luck no longer adds a random bonus — it counts through calculate_base_damage instead.)"""
