@@ -107,7 +107,8 @@ fast travel cost: `int(5 * depth * 0.5)`
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
 
->> def: You take `min(25, 1 + def * 0.9)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction. 
+>> def: You take `min(25, 1 + def * 0.9)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction.
+>>> choosing to defend in combat, you take max(10, max(0,def * 0.75)) less damage
 
 
 > **Enemy Defense:**
@@ -297,3 +298,4 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Sort roles alphabetically
 - Sort descriptions alphabetically (by roles)
 - Add new roles descriptions
+- Fix inventory bug where 0 always unequips your equipment. (replaced by u).
