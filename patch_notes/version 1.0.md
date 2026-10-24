@@ -107,13 +107,13 @@ fast travel cost: `int(5 * depth * 0.5)`
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
 
->> def: You take `min(25, 1 + def * 0.9)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction.
->>> choosing to defend in combat, you take max(10, max(0,def * 0.75)) less damage
+>> def: You take `min(25, 2 + def * 0.7)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction.
+>>> choosing to defend in combat, you take `def% + min(10, max(0,def * 0.75))` damage ignorance. this doesn't have any effect vs sear.
 
 
 > **Enemy Defense:**
 >> Same as players defence, 8 points gave enemies 80% damage reduction quietly.
->> Enemy defense: take `min(20, 2 + def * 0.6)%` less physical damage, 
+>> Enemy defense: take `min(20, 2 + def * 0.9)%` less physical damage, 
 >> take `min(15, 1 + def * 0.2)%` less magic damage
 >>> -def and def 0 have 0% damage defence!
 >>> Damage reductions do not affect corruption
