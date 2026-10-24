@@ -184,3 +184,41 @@ def test_positive_magic_cant_learn_cursed_spells():
 def test_starting_items_belong_to_real_roles():
     roles = {role.lower() for role in RolesExtract.get_role_stats_by_name()}
     assert set(STARTING_ITEMS) <= roles
+
+
+# --- level-up learning (Cursed strike) ---------------------------------------------------------
+
+FORSAKEN = {'Strength': -1, 'Agility': 4, 'Intelligence': 2, 'Defence': 10, 'Magic': -4, 'Luck': 4}
+
+
+def test_forsaken_learns_cursed_strike_on_reaching_level_2(monkeypatch):
+    game = make_game(FORSAKEN, role="forsaken", exp=100)
+    monkeypatch.setattr(game, "_allocate_level_up_points", lambda points: None)
+    game._process_level_ups()
+    assert game.player_data.level == 2
+    assert game.player_data.known_spells == ["Cursed strike"]
+
+
+def test_level_1_forsaken_doesnt_know_it_yet_and_it_isnt_learned_twice():
+    game = make_game(FORSAKEN, role="forsaken")
+    game._learn_level_up_spells()
+    assert game.player_data.known_spells == []
+    game.player_data.level = 5
+    game._learn_level_up_spells()
+    game._learn_level_up_spells()
+    assert game.player_data.known_spells == ["Cursed strike"]
+
+
+def test_a_forsaken_who_raised_magic_to_positive_cant_learn_it():
+    game = make_game({**FORSAKEN, 'Magic': 1}, role="forsaken", level=2)
+    game._learn_level_up_spells()
+    assert game.player_data.known_spells == []
+
+
+def test_cursed_strike_costs_3_hp_and_hits_for_3_times_the_cursed_multiplier(monkeypatch):
+    no_waste(monkeypatch)
+    combat = make_combat(FORSAKEN, enemy="Dragon", known_spells=["Cursed strike"])
+    hp_before, dragon_before = combat.player.current_hp, combat.enemies[0].hp
+    combat.cast("Cursed strike")
+    assert combat.player.current_hp == hp_before - 3              # round(min(4, 3 * 0.88))
+    assert combat.enemies[0].hp < dragon_before

@@ -12,7 +12,7 @@ from enemies.enemies_data import get_encounter_enemy, get_enemy_difficulty, get_
 from players.save import put_new_player
 from combat.combat_player import Player
 from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
-from spells.spells_data import learning_item_spell, can_learn
+from spells.spells_data import learning_item_spell, can_learn, level_up_spells
 from quests.quests_data import get_quests, quest_progress, describe_reward, FAST_TRAVEL
 
 
@@ -23,6 +23,8 @@ class PYRPG:
 
         # Older saves may have an item equipped that's now a consumable (the Dice machine)
         self._unequip_consumable()
+        # Characters already past a level-up spell's level (saves from before it existed) still get it
+        self._learn_level_up_spells()
 
         # Main game loop
         self.main_menu()
@@ -596,6 +598,16 @@ class PYRPG:
             self.player_data.level += 1
             print(f"\n*** LEVEL UP! You are now level {self.player_data.level}! ***")
             self._allocate_level_up_points(self.LEVEL_UP_POINTS)
+            self._learn_level_up_spells()
+
+    def _learn_level_up_spells(self):
+        """Learn every LEVEL_UP_SPELLS entry the role has reached and can learn. Safe to call any
+        time — it's also run on load, so characters already past the level still get theirs."""
+        magic = self._effective_stats().get('Magic', 0)
+        for spell in level_up_spells(self.player_data.role, self.player_data.level):
+            if spell not in self.player_data.known_spells and can_learn(spell, magic):
+                self.player_data.known_spells.append(spell)
+                print(f"You learned {spell}!")
 
     def _allocate_level_up_points(self, points):
         """Let the player spend ability points one at a time, raising or lowering any of the

@@ -16,7 +16,7 @@ Must be run from the project root — imports are root-relative.
 pytest
 ```
 
-`tests/` holds the automated suite (156 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+`tests/` holds the automated suite (161 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
 
 ## Working with Patch Notes
 
@@ -85,7 +85,7 @@ Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not somethi
 
 ### Spells & Abilities
 
-`spells/spells_data.py` — `SPELLS` defines every spell (`kind`: `"spell"`, `"cursed"` (-Magic only, costs HP), `"ability"`), plus `LEARNING_ITEMS` (consumable -> spell it teaches), `EQUIPMENT_SPELLS` (gear -> spell granted while worn, e.g. Beam staff -> Hyper beam), and `STARTING_ITEMS` (role -> starting learning item, given in `NewPlayer`). Behaviour specific to one spell (Mana surge's per-cast scaling, Hyper beam's all-mana cost, Blade rush channelling, Nature's gift heal-over-time) is keyed off those definitions in `Combat.cast()`. The old "Magic Attack" is gone — combat option 2 is Spells & Abilities, and with nothing learned it just says so without using the turn.
+`spells/spells_data.py` — `SPELLS` defines every spell (`kind`: `"spell"`, `"cursed"` (-Magic only, costs HP), `"ability"`), plus `LEARNING_ITEMS` (consumable -> spell it teaches), `EQUIPMENT_SPELLS` (gear -> spell granted while worn, e.g. Beam staff -> Hyper beam), `STARTING_ITEMS` (role -> starting learning item, given in `NewPlayer`), and `LEVEL_UP_SPELLS` (role -> {level: spells}, learned by `PYRPG._learn_level_up_spells()` after each level-up and on load, skipping anything not learnable yet). Behaviour specific to one spell (Mana surge's per-cast scaling, Hyper beam's all-mana cost, Blade rush channelling, Nature's gift heal-over-time) is keyed off those definitions in `Combat.cast()`. The old "Magic Attack" is gone — combat option 2 is Spells & Abilities, and with nothing learned it just says so without using the turn.
 
 ### Encounters & Depth
 

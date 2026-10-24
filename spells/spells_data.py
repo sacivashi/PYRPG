@@ -15,6 +15,7 @@ SPELLS = {
     "Mana surge": {"kind": "spell", "target": "single", "cost": 5, "cost_step": 3,
                    "base_damage": 2, "damage_step": 2},
     "DOOM": {"kind": "cursed", "target": "single", "cost": 8, "base_damage": 10},
+    "Cursed strike": {"kind": "cursed", "target": "single", "cost": 3, "base_damage": 3},
     "Hyper beam": {"kind": "spell", "target": "single", "cost": "all", "once_per_combat": True},
     "Blade rush": {"kind": "ability", "target": "aoe", "cost": 22, "channel_turns": 4},
     "Nature's gift": {"kind": "ability", "target": "self", "cost": 25, "heal_per_turn": 5, "heal_turns": 3},
@@ -39,6 +40,20 @@ STARTING_ITEMS = {
     "monk": ["Nature's codex"],
     "necromancer": ["Scroll of doom"],
 }
+
+
+# Role -> {level: [spells learned on reaching that level]}. Natural level-up learning — anything
+# the character can't learn (e.g. a cursed spell while Magic isn't negative) is skipped, and
+# picked up later if it becomes learnable.
+LEVEL_UP_SPELLS = {
+    "forsaken": {2: ["Cursed strike"]},
+}
+
+
+def level_up_spells(role, level):
+    """Every spell a role should know by this level, lowest level first"""
+    by_level = LEVEL_UP_SPELLS.get(role.lower(), {})
+    return [spell for lvl in sorted(by_level) if lvl <= level for spell in by_level[lvl]]
 
 
 def get_spell(name):

@@ -2,7 +2,7 @@ Class,Strength,Agility,Intelligence,Defence,Magic,Luck
 druid,4,5,7,5,8,6
 dwarf,7,3,5,7,3,0
 elf,4,7,6,4,5,2
-forsaken,-2,3,2,10,-2,2
+forsaken,-1,4,2,10,-4,4
 mage,3,4,10,3,9,5
 monk,5,5,8,-9,3,1
 necromancer,1,2,6,4,-8,5
