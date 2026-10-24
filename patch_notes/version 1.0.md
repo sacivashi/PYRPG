@@ -135,8 +135,8 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 
 ## physical damage:
-> physical damage formula feels too good for certain win rates (cough, warriors, rogues and rangers) so, I feel like a role should benefit from a priority stat only.
->> Physical damage calculation: int(sqrt(max(abs(stat) + 5)) * 3)
+> physical damage formula feels too good for certain combatent win rates (cough, warriors, rogues and rangers) so, I feel like a role should benefit from a priority stat only.
+>> Physical damage calculation: int(sqrt(max(abs(stat) + 5)) * 3), now also includes defence (yeah so what if you hit with your shield?!)
 
 ## learning spells/abilities:
 > I will add new consumable loot drops/shop items (like TMs) that teach you spells and abilities, natural level up spell learning (again... pokemon who?), and give some roles starting spells (looking at you mages and necros).
