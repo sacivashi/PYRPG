@@ -184,8 +184,20 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 ## role buffs:
 
-> The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass. buffing forsaken to see the combat win rate raising.
+> **forsaken:** The forsaken class is the weakest of the bunch, while making them a double edged sword was the intended route, their play routh feels more like a shattering glass. buffing forsaken to see the combat win rate raising.
 >> forsaken stats: ~~-2,3,2,10,-2,2~~ → -1,5,3,9,-4,4
+
+> **Necromancer:** While necros sit high... or should I say low? on -mag getting strong magic attacks this patch, their overall stats however need a little touch up.
+>> Necromancer stats: ~~1,2,6,4,-8,5~~ → 1,4,6,5,-8,5
+
+## role nerfs:
+> **Druid:** Druids combat win rates are the high currently, sitting at 90~% early on, while it is satisfying, they could become lower.
+>> Druid stats: ~~4,5,7,5,8,6~~ → 4,4,6,4,6,4
+
+
+
+> **Warrior:** Warriors are one of the strongest roles (2nd to rangers) on the earlier game, I do want their stats to dish out less power.
+>> Warrior stats: ~~9,5,3,8,2,4~~ → 6,5,3,6,1,1
 
 ## new items:
 

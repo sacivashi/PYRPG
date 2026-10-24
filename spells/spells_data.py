@@ -15,7 +15,7 @@ SPELLS = {
     "Mana surge": {"kind": "spell", "target": "single", "cost": 5, "cost_step": 3,
                    "base_damage": 2, "damage_step": 2},
     "DOOM": {"kind": "cursed", "target": "single", "cost": 8, "base_damage": 10},
-    "Cursed strike": {"kind": "cursed", "target": "single", "cost": 3, "base_damage": 3},
+    "Cursed strike": {"kind": "cursed", "target": "single", "cost": 3, "base_damage": 5},
     "Hyper beam": {"kind": "spell", "target": "single", "cost": "all", "once_per_combat": True},
     "Blade rush": {"kind": "ability", "target": "aoe", "cost": 22, "channel_turns": 4},
     "Nature's gift": {"kind": "ability", "target": "self", "cost": 25, "heal_per_turn": 5, "heal_turns": 3},
@@ -46,7 +46,7 @@ STARTING_ITEMS = {
 # the character can't learn (e.g. a cursed spell while Magic isn't negative) is skipped, and
 # picked up later if it becomes learnable.
 LEVEL_UP_SPELLS = {
-    "forsaken": {2: ["Cursed strike"]},
+    "forsaken": {1: ["Cursed strike"]},  # starting spell
 }
 
 
