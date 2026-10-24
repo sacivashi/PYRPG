@@ -159,9 +159,10 @@ fast travel cost: `int(5 * depth * 0.5)`
 |Death|0|9999|9999|9999|9999|-9999|
 |Elf|0|13|8|0|11|7|
 |Fairy|0|12|3|11|25|7|
-|Living armor|0|200|0|100|0|0|
+|Living armor|0|200|2|100|0|0|
 |Unicorn|0|20|8|2|15|10|
 |Vampire|0|9|-15|2|6|0|
+|Weakling|0|12|2|2|1|1|
 |Werewolf|1|23|13|0|20|4|
 
 
@@ -220,7 +221,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 
 ## other spells & abilities:
 - Arrowshot: ability, 5 mana, shoot a magical arrow on an enemy, dealing int((agi * 0.7 + abs(mag) * 0.3)) magic damage. rangers start with that.
-- Backstab: ability, 7 mana, teleport behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage.
+- Backstab: ability, 11 mana, teleport behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage. Rogue learn this at level 5. 
 - Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
 - Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 5 spell damage. Forsakens start with that.
 
