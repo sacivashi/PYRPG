@@ -72,6 +72,15 @@ Following the solutions enemies encountered now have their nuggings installed to
 >> - 45% and less:
 >>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 40/50% attack/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but woun't give exp.
 
+> enemy thought process, but it's groups:
+>> -any 100% ~ 80% of HP, one of the group will priorities attacking
+>>> 2nd and 3d may support attack, or brace themselves (70 fight/30 brace/defend)
+>> - any 80% ~ 45% of HP, choose between attempting to defend and attacking,
+>>> 2nd and third might attack, defend, or attemt to heal the most injured memeber (45/35/30), can't heal selves.
+>>>> succesful heal attempts heal the injured enemy for 12% missing HP.
+>> - any 45% and less:
+>>> Same as above, just if one flees, the rest that didn't do so stay.
+
 ## introducing a new player stat:
 
 I think it is prime time for charisma to be added. Well hello there handsomes.
