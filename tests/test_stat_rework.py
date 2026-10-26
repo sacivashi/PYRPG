@@ -14,16 +14,17 @@ def make_combat(stats=STATS, enemy="Bandit", **overrides):
 # --- defence -----------------------------------------------------------------------------------
 
 def test_player_defence_reduction_is_capped_at_25_percent():
-    assert DamageCalculator.player_damage_reduction(8) == (1 + 8 * 0.9) / 100   # was 80% before v1.0
-    assert DamageCalculator.player_damage_reduction(30) == 0.25
+    assert DamageCalculator.player_damage_reduction(8) == (2 + 8 * 0.7) / 100   # was 80% before v1.0
+    assert DamageCalculator.player_damage_reduction(12) == (2 + 12 * 0.7) / 100
+    assert DamageCalculator.player_damage_reduction(33) == 0.25
     assert DamageCalculator.player_damage_reduction(0) == 0
     assert DamageCalculator.player_damage_reduction(-5) == 0
 
 
 def test_enemy_defense_reduces_physical_more_than_spells():
-    physical, _ = DamageCalculator.enemy_defence_adjustment(100, 13, "physical")   # min(20, 9.8)%
+    physical, _ = DamageCalculator.enemy_defence_adjustment(100, 13, "physical")   # min(20, 13.7)%
     spell, _ = DamageCalculator.enemy_defence_adjustment(100, 13, "spell")         # min(15, 3.6)%
-    assert round(physical, 2) == 90.2
+    assert round(physical, 2) == 86.3
     assert round(spell, 2) == 96.4
     assert DamageCalculator.enemy_defence_adjustment(100, 200, "physical")[0] == 80  # capped
     assert DamageCalculator.enemy_defence_adjustment(100, 200, "spell")[0] == 85
@@ -124,8 +125,8 @@ RANGER = {'Strength': 3, 'Agility': 11, 'Intelligence': 6, 'Defence': 2, 'Magic'
 
 
 def test_arrowshot_formula():
-    assert DamageCalculator.arrowshot_damage(RANGER) == int(2 + 11 * 0.85 + 2 * 0.5) == 12
-    assert DamageCalculator.arrowshot_damage({**RANGER, 'Agility': 30, 'Magic': -6}) == int(2 + 25.5 + 3) == 30
+    assert DamageCalculator.ability_damage("Arrowshot", RANGER) == int(11 * 0.7 + 2 * 0.3) == 8
+    assert DamageCalculator.ability_damage("Arrowshot", {**RANGER, 'Agility': 30, 'Magic': -6}) == int(21 + 1.8) == 22
 
 
 def test_arrowshot_is_a_5_mana_ability_dealt_as_magic_damage(monkeypatch):
@@ -133,7 +134,7 @@ def test_arrowshot_is_a_5_mana_ability_dealt_as_magic_damage(monkeypatch):
     combat = make_combat(RANGER, enemy="Skeleton", role="ranger", known_spells=["Arrowshot"])   # Defense 14
     hp_before, mana_before = combat.enemies[0].hp, combat.player.current_mana
     combat.cast("Arrowshot")
-    spell_hit = DamageCalculator.enemy_defence_adjustment(12, 14, "spell")[0]
+    spell_hit = DamageCalculator.enemy_defence_adjustment(8, 14, "spell")[0]
     assert combat.enemies[0].hp == max(0, round(hp_before - spell_hit))
     assert combat.player.current_mana == mana_before - 5
 
@@ -144,3 +145,85 @@ def test_rangers_start_knowing_arrowshot():
     game.player_data = PlayerData(name="T", role="ranger", level=1, hp=22, stats=dict(RANGER), max_hp=22)
     game._learn_level_up_spells()
     assert game.player_data.known_spells == ["Arrowshot"]
+
+
+
+# --- v1.0 abilities ------------------------------------------------------------------------------
+
+def test_ability_formulas():
+    stats = {'Strength': 6, 'Agility': 9, 'Intelligence': 4, 'Defence': 12, 'Magic': 3, 'Luck': 1}
+    assert DamageCalculator.ability_damage("Backstab", stats) == int(15 + 9 * 0.8) == 22
+    assert DamageCalculator.ability_damage("Blade bonk", stats) == int(5 + 6 * 0.55) == 8
+    assert DamageCalculator.ability_damage("Shield bash", stats) == int(12 * 1.5) == 18
+    assert DamageCalculator.ability_damage("Shield bash", {**stats, 'Defence': -9}) == 0   # no negative hits
+
+
+def test_backstab_searing_ignores_defense_and_corruption(monkeypatch):
+    monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)
+    rogue = {'Strength': 5, 'Agility': 9, 'Intelligence': 5, 'Defence': 4, 'Magic': 2, 'Luck': 9}
+    combat = make_combat(rogue, enemy="Dragon", role="rogue", known_spells=["Backstab"])
+    dragon = combat.enemies[0]
+    dragon.corruption = 50                                   # would swallow any normal hit
+    before = dragon.hp
+    combat.cast("Backstab")
+    assert dragon.hp == before - 22
+
+
+def test_shield_bash_is_physical(monkeypatch):
+    monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)
+    tank = {'Strength': 0, 'Agility': -5, 'Intelligence': 2, 'Defence': 12, 'Magic': 1, 'Luck': 5}
+    combat = make_combat(tank, enemy="Skeleton", role="tank", known_spells=["Shield bash"])   # Defense 14
+    before = combat.enemies[0].hp
+    combat.cast("Shield bash")
+    expected = DamageCalculator.enemy_defence_adjustment(18, 14, "physical")[0]
+    assert combat.enemies[0].hp == max(0, round(before - expected))
+
+
+def test_berserk_scream_boosts_physical_hits_and_drains_intelligence(monkeypatch):
+    monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)
+    dwarf = {'Strength': 7, 'Agility': 3, 'Intelligence': 5, 'Defence': 7, 'Magic': 3, 'Luck': 0}
+    combat = make_combat(dwarf, enemy="Dragon", role="dwarf", known_spells=["Berserk scream"])
+    combat.cast("Berserk scream")
+    assert combat.berserk_bonus == int(max(1, 7 * 0.45)) == 3
+    assert combat.player.stats['Intelligence'] == 5 - int(combat.player.max_hp * 0.80)
+    assert combat.cast("Berserk scream") is None                  # once per combat
+    monkeypatch.setattr(DamageCalculator, "calculate_player_damage", staticmethod(lambda stats: (12, True)))
+    before = combat.enemies[0].hp
+    combat.player_attack()
+    expected = DamageCalculator.enemy_defence_adjustment(12 + 3, combat.enemies[0].stats['Defense'], "physical")[0]
+    assert combat.enemies[0].hp == round(before - expected)
+
+
+def test_berserk_bonus_has_a_floor_of_1():
+    assert DamageCalculator.berserk_bonus(-10) == 1
+    assert DamageCalculator.berserk_bonus(22) == 9
+
+
+# --- Defend --------------------------------------------------------------------------------------
+
+def test_defend_block_formula():
+    assert DamageCalculator.defend_block(12) == 9
+    assert DamageCalculator.defend_block(20) == 10          # capped
+    assert DamageCalculator.defend_block(-9) == 0           # -Defence blocks nothing
+
+
+def test_defending_blocks_every_hit_until_your_next_turn(monkeypatch):
+    tank = {'Strength': 0, 'Agility': 5, 'Intelligence': 2, 'Defence': 12, 'Magic': 1, 'Luck': 5}
+    combat = make_combat(tank, enemy="Bear")
+    monkeypatch.setattr(DamageCalculator, "calculate_enemy_damage", staticmethod(lambda stats, name: (20, [])))
+    monkeypatch.setattr(DamageCalculator, "roll_dodge", staticmethod(lambda bonus, agility=0: (False, False)))
+    combat.player_defend()
+    hp = combat.player.current_hp
+    combat.enemy_attack(combat.enemies[0])
+    combat.enemy_attack(combat.enemies[0])                 # a second hit is still blocked
+    one_hit = round(20 * (1 - DamageCalculator.player_damage_reduction(12)) - 9, 2)   # % first, then the 9 block
+    assert combat.player.current_hp == round(round(hp - one_hit) - one_hit)
+
+
+def test_defend_ends_when_your_turn_comes_back(monkeypatch):
+    combat = make_combat()
+    combat.player_defend()
+    monkeypatch.setattr("builtins.input", lambda *_: "4")   # skip
+    combat.current_turn = "player"
+    combat.player_turn()
+    assert combat.defending is False

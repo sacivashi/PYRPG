@@ -77,7 +77,8 @@ class Combat:
         "thunder disciple": (12, "Thunder master"),
         "thunder master": (18, None),
     }
-    COMBAT_USABLE_ITEMS = ["bomb", "timer", "health potion", "mana potion", "dice machine", *THUNDER_ITEMS]
+    NUTS_HEAL = 5
+    COMBAT_USABLE_ITEMS = ["bomb", "timer", "health potion", "mana potion", "nuts", "dice machine", *THUNDER_ITEMS]
     BERSERKER_ARMOR = "berserker armor"
 
     def __init__(self, player_data, enemy_name, group_size=1):
@@ -106,6 +107,8 @@ class Combat:
         self.items_used = {}  # lowercased item name -> uses this combat (Thunder once, Dice machine 6x)
         self.channel = None  # {"name": ..., "turns_left": n} while a channelled ability (Blade rush) runs
         self.heal_over_time_turns = 0  # Nature's gift ticks remaining
+        self.berserk_bonus = 0  # Berserk scream's flat physical damage bonus, once screamed
+        self.defending = False  # set by Defend, lasts until the player's next turn
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
         self.original_player_max_hp = self.player.max_hp
@@ -170,6 +173,7 @@ class Combat:
 
     def player_turn(self):
         """Handle player's turn with menu options"""
+        self.defending = False  # a Defend from last turn ends now
         if self.bonus_turn:
             self.bonus_turn = False
         elif self.timer_cooldown > 0:
@@ -312,8 +316,13 @@ class Combat:
         """Land damage on an enemy and return how much it actually took. Corrupted enemies ignore
         their Defense entirely — corruption is their only protection, and a hit that doesn't clear
         it heals them. Everyone else goes through Defense (physical/spell/item, see
-        DamageCalculator.enemy_defence_adjustment), and -Defense can reflect physical hits."""
-        if target.corruption > 0:
+        DamageCalculator.enemy_defence_adjustment), and -Defense can reflect physical hits.
+        Searing damage (Backstab) can't be blocked or reduced at all — not by Defense, not by corruption."""
+        if damage_type == "searing":
+            target.hp = max(0, round(target.hp - damage))
+            print(f"You deal {round(damage)} searing damage to the {target.name}!")
+            dealt = damage
+        elif target.corruption > 0:
             dealt, heal = DamageCalculator.corruption_hit(damage, target.corruption)
             if heal > 0:
                 target.hp = min(target.max_hp, round(target.hp + heal))
@@ -366,6 +375,7 @@ class Combat:
         if damage <= 0:
             print("Your attack completely misses!")
         else:
+            damage += self.berserk_bonus  # Berserk scream: flat bonus on physical attacks until combat ends
             dodged, countered = (False, False) if unavoidable else DamageCalculator.roll_dodge(target.dodge_bonus)
             if dodged:
                 print(f"The {target.name} dodges your attack!")
@@ -481,16 +491,29 @@ class Combat:
         elif name == "Nature's gift":
             self.heal_over_time_turns = spell["heal_turns"]
             self._tick_heal_over_time()
-        elif name == "Arrowshot":
-            self._cast_arrowshot()
+        elif name == "Berserk scream":
+            self._berserk_scream()
+        elif spell["kind"] == "ability":
+            self._cast_ability_hit(name, spell)
         else:
             self._cast_damage_spell(name, spell, casts, cost, magic, intelligence)
         return "end_turn"
 
+    def _spell_hit_damage(self, base, magic, intelligence, cursed):
+        damage = base * DamageCalculator.spell_multiplier(magic, cursed)
+        return damage + DamageCalculator.intelligence_spell_bonus(damage, intelligence, magic)
+
     def _cast_damage_spell(self, name, spell, casts, mana_spent, magic, intelligence):
+        """Spells and cursed spells: Magic-scaled damage (+ the -Int bonus) to one target, or to every
+        enemy for "aoe" spells. A splash_damage spell then hits every living enemy, the target too."""
         cursed = spell["kind"] == "cursed"
-        damage = spell_base_damage(name, casts, mana_spent) * DamageCalculator.spell_multiplier(magic, cursed)
-        damage += DamageCalculator.intelligence_spell_bonus(damage, intelligence, magic)
+        damage = self._spell_hit_damage(spell_base_damage(name, casts, mana_spent), magic, intelligence, cursed)
+
+        if spell["target"] == "aoe":
+            for enemy in self.enemies:
+                if enemy.is_alive():
+                    self._hit_enemy(enemy, damage, "spell")
+            return
 
         target_index = self._choose_target()
         if target_index is None:
@@ -498,19 +521,37 @@ class Combat:
         target = self.enemies[target_index]
         self._hit_enemy(target, damage, "spell")
 
+        if spell.get("splash_damage"):
+            splash = self._spell_hit_damage(spell["splash_damage"], magic, intelligence, cursed)
+            print(f"The {name.lower()} explodes!")
+            for enemy in self.enemies:
+                if enemy.is_alive():
+                    self._hit_enemy(enemy, splash, "spell")
+
         if cursed and target.is_alive() and random.randint(1, 100) <= DamageCalculator.cursed_debuff_chance(magic):
             self.apply_debuff_to_enemy(target, DamageCalculator.cursed_debuff_amount(magic))
 
-    def _cast_arrowshot(self):
-        """Arrowshot: one magical arrow — its own Agility/Magic formula, dealt as magic damage. It's an
-        ability, so spell boosts don't apply, but the -Strength curse does."""
+    def _cast_ability_hit(self, name, spell):
+        """Single-target damage abilities (Arrowshot, Backstab, Blade bonk, Shield bash): their own
+        formula (DamageCalculator.ability_damage), no spell boosts, can't miss or be dodged. Being
+        abilities, they still trigger the -Strength curse."""
         target_index = self._choose_target()
         if target_index is None:
             return
-        print("You loose a magical arrow!")
-        dealt = self._hit_enemy(self.enemies[target_index], DamageCalculator.arrowshot_damage(self._live_stats()), "spell")
+        damage = DamageCalculator.ability_damage(name, self._live_stats())
+        dealt = self._hit_enemy(self.enemies[target_index], damage, spell["damage_type"])
         if self.player.is_alive():
             self._apply_strength_curse(True, dealt)
+
+    def _berserk_scream(self):
+        """Physical attacks deal +int(max(1, str * 0.45)) until combat ends; Intelligence drops by
+        int(max_hp * 0.80), possibly below 0. Both reset when the fight ends (stat snapshot)."""
+        stats = self._live_stats()
+        self.berserk_bonus = DamageCalculator.berserk_bonus(stats.get('Strength', 0))
+        int_loss = int(self.player.max_hp * 0.80)
+        self.player.stats['Intelligence'] = stats.get('Intelligence', 0) - int_loss
+        print(f"You let out a berserk scream! Physical attacks deal +{self.berserk_bonus} damage, "
+              f"but your Intelligence drops to {self.player.stats['Intelligence']}.")
 
     def _continue_channel(self):
         """One turn of Blade rush: physical damage to every living enemy, then the -Strength curse"""
@@ -574,6 +615,12 @@ class Combat:
             self.timer_cooldown = self.TIMER_COOLDOWN
             return "repeat_turn"
 
+        if key == "nuts":
+            self.player.loot.remove(item)
+            self.player.heal(self.NUTS_HEAL)
+            print(f"You munch some Nuts. HP: {self.player.current_hp}/{self.player.max_hp}")
+            return "end_turn"
+
         if key == "health potion":
             self.player.loot.remove(item)
             self.player.heal(self.POTION_AMOUNT)
@@ -630,11 +677,11 @@ class Combat:
     # --- Defend / enemy turn ------------------------------------------------------------------------
 
     def player_defend(self):
-        """Handle player defending"""
-        defence_bonus = random.randint(1, 3)
-        print(f"You take a defensive stance, reducing incoming damage by {defence_bonus} for this turn.")
-        # Store defence bonus for enemy's attack calculation
-        self.temp_defence_bonus = defence_bonus
+        """Defend until your next turn: every enemy hit takes your usual Defence % and then a flat
+        min(10, max(0, def * 0.75)) less. Searing damage isn't blocked."""
+        self.defending = True
+        block = DamageCalculator.defend_block(self._live_stats().get('Defence', 0))
+        print(f"You take a defensive stance, blocking {round(block, 1)} damage from each hit until your next turn.")
 
     def enemy_turn(self):
         """Handle the currently-acting enemy's turn"""
@@ -683,17 +730,18 @@ class Combat:
                 print(f"The {enemy.name} fails to attack effectively!")
             return
 
-        # Apply temporary defence bonus if player defended
-        if hasattr(self, 'temp_defence_bonus'):
-            damage = max(1, damage - self.temp_defence_bonus)
-            print(f"Your defence reduces the damage by {self.temp_defence_bonus}!")
-            delattr(self, 'temp_defence_bonus')
-
         # Apply damage to player using their defensive stats
         final_damage, counter_effects = DamageCalculator.calculate_damage_taken(
             damage, self._live_stats(), self.player_dodge_bonus,
             unavoidable=enemy_unavoidable, max_hp=self.player.max_hp
         )
+
+        # Defending: a flat block on top of the Defence % already applied above
+        if self.defending and final_damage > 0:
+            block = DamageCalculator.defend_block(self._live_stats().get('Defence', 0))
+            if block > 0:
+                final_damage = round(max(0, final_damage - block), 2)
+                print(f"Your guard blocks {round(block, 1)} damage!")
 
         # Dodge means no damage occurs at all — it's mutually exclusive with counter/reflect
         # (calculate_damage_taken returns early on dodge, so it's never combined with them)

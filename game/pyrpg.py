@@ -438,6 +438,7 @@ class PYRPG:
         self._sync_max_hp_after_growth()
 
     POTION_AMOUNT = 20
+    NUTS_HEAL = 5
 
     def use_item_outside_combat(self, item_name):
         """Potions and spell-learning items work outside combat. Returns True if the item was used up."""
@@ -448,6 +449,9 @@ class PYRPG:
         elif key == "mana potion":
             self.player_data.mana = min(self._max_mana(), self._current_mana() + self.POTION_AMOUNT)
             print(f"You drink a Mana potion. Mana: {self.player_data.mana}/{self._max_mana()}")
+        elif key == "nuts":
+            self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + self.NUTS_HEAL)
+            print(f"You munch some Nuts. HP: {self.player_data.hp}/{self.player_data.max_hp}")
         elif learning_item_spell(item_name):
             spell = learning_item_spell(item_name)
             if spell in self.player_data.known_spells:
@@ -645,6 +649,8 @@ class PYRPG:
         luck = self._effective_stats().get('Luck', 0)
         return max(5, min(60, 20 + luck * 1.5))
 
+    DROP_STACK_SIZES = {"nuts": 4}  # items that drop as a stack instead of one copy
+
     def _roll_for_loot(self):
         """On a successful roll, award one item drawn from the droppable pool, weighted by Rarity"""
         droppable = get_droppable_items()
@@ -657,8 +663,9 @@ class PYRPG:
 
         names, weights = zip(*droppable)
         item_name = random.choices(names, weights=weights, k=1)[0]
-        self.player_data.loot.append(item_name)
-        print(f"The enemy dropped {item_name}!")
+        amount = self.DROP_STACK_SIZES.get(item_name.lower(), 1)
+        self.player_data.loot.extend([item_name] * amount)
+        print(f"The enemy dropped {item_name}{f' (x{amount})' if amount > 1 else ''}!")
 
     def view_stats(self):
         """Display player stats"""

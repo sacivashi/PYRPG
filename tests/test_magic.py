@@ -217,3 +217,54 @@ def test_cursed_strike_costs_3_hp_and_hits_for_5_times_the_cursed_multiplier(mon
     combat.cast("Cursed strike")
     assert combat.player.current_hp == hp_before - 3              # round(min(4, 3 * 0.88))
     assert combat.enemies[0].hp < dragon_before
+
+
+# --- v1.0 spells: AOE, splash, shocks -----------------------------------------------------------
+
+def test_ice_shower_hits_every_enemy(monkeypatch):
+    no_waste(monkeypatch)
+    combat = make_combat(MAGE, enemy="Dragon", size=3, known_spells=["Ice shower"])
+    combat.cast("Ice shower")
+    assert all(e.hp < e.max_hp for e in combat.enemies)
+    assert combat.player.current_mana == 45 - 20
+
+
+def test_lava_bomb_hits_its_target_harder_and_splashes_everyone(monkeypatch):
+    no_waste(monkeypatch)
+    druid = {'Strength': 4, 'Agility': 4, 'Intelligence': 6, 'Defence': 4, 'Magic': 6, 'Luck': 4}
+    combat = make_combat(druid, enemy="Dragon", size=3, known_spells=["Lava bomb"])
+    monkeypatch.setattr("builtins.input", lambda *_: "1")      # target enemy #1
+    combat.cast("Lava bomb")
+    lost = [e.max_hp - e.hp for e in combat.enemies]
+    assert lost[0] > lost[1] > 0 and lost[1] == lost[2]
+
+
+def test_shocks_cost_and_damage(monkeypatch):
+    no_waste(monkeypatch)
+    elf = {'Strength': 4, 'Agility': 7, 'Intelligence': 6, 'Defence': 4, 'Magic': 5, 'Luck': 2}
+    combat = make_combat(elf, enemy="Dragon", known_spells=["Light shock"])
+    combat.cast("Light shock")
+    assert combat.player.current_mana == 27 - 12
+
+    combat = make_combat(NECRO, enemy="Dragon", known_spells=["Dark shock"])
+    hp = combat.player.current_hp
+    combat.cast("Dark shock")
+    assert combat.player.current_hp == hp - round(min(8, 2 * 0.88))      # 2 HP
+
+
+def test_every_level_up_spell_exists_and_its_role_is_real():
+    from spells.spells_data import LEVEL_UP_SPELLS, SPELLS
+    roles = {role.lower() for role in RolesExtract.get_role_stats_by_name()}
+    for role, by_level in LEVEL_UP_SPELLS.items():
+        assert role in roles
+        for spells in by_level.values():
+            assert all(spell in SPELLS for spell in spells)
+
+
+def test_level_up_spells_arrive_on_time():
+    game = make_game(MAGE, role="mage", level=2)
+    game._learn_level_up_spells()
+    assert "Ice shower" not in game.player_data.known_spells
+    game.player_data.level = 3
+    game._learn_level_up_spells()
+    assert "Ice shower" in game.player_data.known_spells

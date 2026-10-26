@@ -16,7 +16,7 @@ Must be run from the project root — imports are root-relative.
 pytest
 ```
 
-`tests/` holds the automated suite (166 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+`tests/` holds the automated suite (189 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
 
 ## Working with Patch Notes
 
@@ -71,7 +71,7 @@ Quests live in `data/quests.csv` — columns: `id, title, type, target, amount, 
 
 `PlayerData.equipped` holds at most one item name (single-slot, no weapon/armor split yet) or `None`. `Player` keeps two stat dicts: `base_stats` (pure copy of `player_data.stats`, what actually gets saved — never mutated by gear) and `stats` (the equipped-adjusted copy used for HP and all combat calculations, built by `Player.apply_equipment(base_stats, equipped_name)`). This split matters because gear can push a stat across zero in either direction — the existing negative-stat combat formulas already handle that fine (same as the curse mechanic crossing a stat through 0), so equipment needed no new combat logic, just the stat-layering.
 
-Rarity is both the drop weight (higher = more common) and the price: `get_item_price()` = `max(15, int(abs(65 - rarity) * 0.65))` — the pivot is a fixed 65, not the highest rarity in the file, so adding a very common item doesn't reprice the shop. Consumables (`Consumable = Yes`) can't be equipped; `manage_loot()` uses them instead (`use_item_outside_combat()`: potions and spell-learning items), and combat-only ones are refused there. Health/Mana potions sit outside the rotating shop stock as always-stocked slots (`PYRPG.ALWAYS_STOCKED`).
+Rarity is both the drop weight (higher = more common) and the price: `get_item_price()` = `max(15, int(abs(65 - rarity) * 0.65))` — the pivot is a fixed 65, not the highest rarity in the file, so adding a very common item doesn't reprice the shop. Consumables (`Consumable = Yes`) can't be equipped; `manage_loot()` uses them instead (`use_item_outside_combat()`: potions and spell-learning items), and combat-only ones are refused there. Health/Mana potions sit outside the rotating shop stock as always-stocked slots (`PYRPG.ALWAYS_STOCKED`). Some items drop as a stack (`PYRPG.DROP_STACK_SIZES`, e.g. Nuts x4); loot stays a flat list either way, and menus group duplicates for display (`_stacked_loot()`).
 
 Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not something that happens mid-combat. Since max HP derives from Strength+Defence, changing gear changes max HP (and Intelligence gear changes max mana) — `PYRPG._apply_equipment_hp_change()` recomputes both and clamps current HP/mana to the new caps with no free heal on the way up. Level-up points and Sleight of stats work the same way (`_sync_max_hp_after_growth()`: the cap moves, current only clamps). This is deliberately different from `Player._resolve_current_hp()`'s heal-the-gap behavior on load, which is only for HP formula changes between game versions.
 
@@ -85,7 +85,7 @@ Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not somethi
 
 ### Spells & Abilities
 
-`spells/spells_data.py` — `SPELLS` defines every spell (`kind`: `"spell"`, `"cursed"` (-Magic only, costs HP), `"ability"`), plus `LEARNING_ITEMS` (consumable -> spell it teaches), `EQUIPMENT_SPELLS` (gear -> spell granted while worn, e.g. Beam staff -> Hyper beam), `STARTING_ITEMS` (role -> starting learning item, given in `NewPlayer`), and `LEVEL_UP_SPELLS` (role -> {level: spells}, learned by `PYRPG._learn_level_up_spells()` after each level-up and on load, skipping anything not learnable yet). Behaviour specific to one spell (Mana surge's per-cast scaling, Hyper beam's all-mana cost, Blade rush channelling, Nature's gift heal-over-time) is keyed off those definitions in `Combat.cast()`. The old "Magic Attack" is gone — combat option 2 is Spells & Abilities, and with nothing learned it just says so without using the turn.
+`spells/spells_data.py` — `SPELLS` defines every spell (`kind`: `"spell"`, `"cursed"` (-Magic only, costs HP), `"ability"`), plus `LEARNING_ITEMS` (consumable -> spell it teaches), `EQUIPMENT_SPELLS` (gear -> spell granted while worn, e.g. Beam staff -> Hyper beam), `STARTING_ITEMS` (role -> starting learning item, given in `NewPlayer`), and `LEVEL_UP_SPELLS` (role -> {level: spells}, learned by `PYRPG._learn_level_up_spells()` after each level-up and on load, skipping anything not learnable yet). Behaviour specific to one spell (Mana surge's per-cast scaling, Hyper beam's all-mana cost, Blade rush channelling, Nature's gift heal-over-time, Berserk scream's `Combat.berserk_bonus`) is keyed off those definitions in `Combat.cast()`. Spells can be `"aoe"` (Ice shower) or carry `splash_damage` (Lava bomb); single-target abilities take their damage from `DamageCalculator.ABILITY_FORMULAS` and their type from `damage_type` — `"searing"` (Backstab) skips both Defense and corruption in `_hit_enemy`. The old "Magic Attack" is gone — combat option 2 is Spells & Abilities, and with nothing learned it just says so without using the turn.
 
 ### Encounters & Depth
 
@@ -104,7 +104,7 @@ The core mechanic. Any stat can be negative. Each negative stat gives a debuff +
 | -Magic | 15% less EXP; normal spells weak (`max(0.1, 1+mag*0.1)`) | Cursed spells: cost `min(abs(mag), cost*0.88)` HP, scale with `abs(mag)`, `min(65, int(sqrt(abs(mag))*10))%` to debuff the target |
 | -Luck | `min(35, abs(-lck))%` miss chance | Successful attacks are unavoidable |
 
-+Defence is a flat `min(25, 1 + def*0.9)%` damage reduction (0 or less: none).
++Defence is a flat `min(25, 2 + def*0.7)%` damage reduction (0 or less: none). Defending adds a flat `min(10, max(0, def*0.75))` block on top, to every enemy hit until the player's next turn (`Combat.defending`).
 
 Physical attack damage (`DamageCalculator.calculate_base_damage`) = `int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2)` — every physical stat counts by its size (negative stats included), so roles land close together; there's no Strength multiplier or +Luck random bonus anymore.
 

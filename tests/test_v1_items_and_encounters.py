@@ -221,3 +221,25 @@ def test_stack_numbers_pick_the_right_item_to_equip(monkeypatch):
     answer(monkeypatch, "2", "")                   # [1] Bomb (x2), [2] Iron sword
     game.manage_loot()
     assert game.player_data.equipped == "Iron sword"
+
+
+# --- Nuts ----------------------------------------------------------------------------------------
+
+def test_nuts_drop_as_a_stack_of_4(monkeypatch):
+    game = make_game()
+    monkeypatch.setattr("game.pyrpg.get_droppable_items", lambda: [("Nuts", 45)])
+    monkeypatch.setattr("game.pyrpg.random.randint", lambda a, b: 1)
+    game._roll_for_loot()
+    assert game.player_data.loot == ["Nuts"] * 4
+
+
+def test_nuts_heal_5_in_and_out_of_combat(monkeypatch):
+    game = make_game(loot=["Nuts", "Nuts"], hp=10)
+    game.use_item_outside_combat("Nuts")
+    assert game.player_data.hp == 15 and game.player_data.loot == ["Nuts"]
+
+    combat = Combat(make_pd(loot=["Nuts"]), "Bandit")
+    combat.player.current_hp = 10
+    answer(monkeypatch, "1")
+    assert combat.use_item() == "end_turn"
+    assert combat.player.current_hp == 15 and combat.player.loot == []
