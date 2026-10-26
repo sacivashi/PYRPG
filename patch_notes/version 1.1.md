@@ -65,9 +65,15 @@ Following the solutions enemies encountered now have their nuggings installed to
 >> - on 100% ~ 80% of HP, priorities dishing out attacks
 >>> New attack types:
 >>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
->>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same).
+>>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a 25% chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
 >> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
 >>> 50/50 odds of attacking or defending; if defending and player physically attacks, enemy has a channce to counter attack
 >>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
 >> - 45% and less:
->>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 40/50 attack/defend.
+>>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 40/50% attack/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but woun't give exp.
+
+## introducing a new player stat:
+
+I think it is prime time for charisma to be added. Well hello the handsomes.
+
+> Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountring bad encounter types. +int(max(0,min(20, cha * 0.25)))%
