@@ -54,3 +54,20 @@ Adding some more encounters rather than just enemies:
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
 - Random event(s): Can be "encountered", giving you a choice to proceed by... choose cautiously.
 - Changing "enemies.csv" into "encounters.csv" and having a new "type" value.
+
+And now for the main event:
+
+## enemies move logic:
+
+Following the solutions enemies encountered now have their nuggings installed to them:
+
+> enemy thought process:
+>> - on 100% ~ 80% of HP, priorities dishing out attacks
+>>> New attack types:
+>>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
+>>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same).
+>> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
+>>> 50/50 odds of attacking or defending; if defending and player physically attacks, enemy has a channce to counter attack
+>>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
+>> - 45% and less:
+>>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 40/50 attack/defend.
