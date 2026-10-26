@@ -99,3 +99,8 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 |warrior|6|4|4|**4**|6|3|1|
 
 aren't the pretty? c:
+
+## More flavorful fighting:
+
+- slaying an enemy with 1 hit now says: "you brutally slayed (enemy) in 1 hit" or "You sure you aren't too strong for this area? Becuase you just took that x in 1 hit". Or "One punch man is you!" Or "Dayum their HP is just gone, poof.".
+- Enemy fleeing a battle gives out some flavor: like "x was too afraid to keep facing you, so it fled {on dropping stuff:} and at with that it lost ...". "The cowardous x fled battle {on dropping stuff:} luckily, they dropped ....". "Can't believe x fled this fight, {on drops:} atleast I can find victory on ....". "x fled, {drops:} and dropped ...". "Well didn't anticipate x to just run, {drops:} oh well let's take the .... and leave then.".
