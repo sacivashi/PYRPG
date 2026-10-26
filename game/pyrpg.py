@@ -670,7 +670,7 @@ class PYRPG:
         print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
         print(f"Mana: {self._current_mana()}/{self._max_mana()}")
         print(f"Gold: {self.player_data.gold}")
-        print(f"Loot: {self.player_data.loot if self.player_data.loot else 'None'}")
+        print(f"Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")
         print(f"Equipped: {self.player_data.equipped or 'Nothing'}")
         print(f"Spells & Abilities: {', '.join(self.player_data.known_spells) or 'None'}")
         print("Stats:")
@@ -691,9 +691,10 @@ class PYRPG:
                 input("\nPress Enter to continue...")
                 return
 
+            stacks = self._stacked_loot()
             print("Inventory:")
-            for i, item_name in enumerate(self.player_data.loot, 1):
-                print(f"  [{i}] {item_name}")
+            for i, (item_name, count) in enumerate(stacks, 1):
+                print(f"  [{i}] {self._stack_label(item_name, count)}")
             if self.player_data.equipped:
                 print(f"  [u] Unequip {self.player_data.equipped}")
             print("  [0] Back")
@@ -717,14 +718,14 @@ class PYRPG:
 
             try:
                 index = int(choice) - 1
-                if index < 0 or index >= len(self.player_data.loot):
+                if index < 0 or index >= len(stacks):
                     raise ValueError
             except ValueError:
                 print("Invalid choice.")
                 input("\nPress Enter to continue...")
                 continue
 
-            item_name = self.player_data.loot[index]
+            item_name = stacks[index][0]
             if is_item_consumable(item_name):
                 self.use_item_outside_combat(item_name)
                 input("\nPress Enter to continue...")
@@ -736,18 +737,31 @@ class PYRPG:
             input("\nPress Enter to continue...")
             return
 
+    def _stacked_loot(self):
+        """[(item_name, count), ...] — duplicates grouped, in first-picked-up order. Loot itself stays
+        a flat list (one entry per copy), so saves and everything that adds/removes items are unchanged."""
+        counts = {}
+        for item_name in self.player_data.loot:
+            counts[item_name] = counts.get(item_name, 0) + 1
+        return list(counts.items())
+
+    def _stack_label(self, item_name, count):
+        label = f"{item_name} (x{count})" if count > 1 else item_name
+        return f"{label} [equipped]" if item_name == self.player_data.equipped else label
+
     def _check_loot_stats(self, index_str):
         """Show the stat deltas for one item in loot, without equipping it"""
+        stacks = self._stacked_loot()
         try:
             index = int(index_str) - 1
-            if index < 0 or index >= len(self.player_data.loot):
+            if index < 0 or index >= len(stacks):
                 raise ValueError
         except ValueError:
             print("Invalid item number.")
             input("\nPress Enter to continue...")
             return
 
-        self._print_item_stats(self.player_data.loot[index])
+        self._print_item_stats(stacks[index][0])
         input("\nPress Enter to continue...")
 
     def _print_item_stats(self, item_name):

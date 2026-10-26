@@ -212,6 +212,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Mana rod: equipment, 0,0,15,0,0,0, rarity: 5. buyable droppable
 - Mana surge book: consumable, on use learn the spell mana surge, spell mana; 5, +3 each cast in combat, spell damage: 2, +2 each cast in combat. undroppable, not purchase-able, mages start with this consumable in their inventory.
 - Nature's codex: consumable, on use learn the ability nature's gift, 25 mana, ability effect: for 3 turns heal 5 HP. Monks start out with this in their inventory, 17 rarity, droppable, purchaseable
+- Nuts: consumable, on use heal 5 HP, you a stack of 4 whenever you find them. rarity 45, droppable, not purchasable.
 - Scroll of doom: consumable, upon usage learn the cursed spell 'DOOM', spell base damage: 10, single target, costs 8 mana, necros start with the consumable in their inventory.
 - Sleight of stats: equippable, 0,0,0,0,0,0, special passive: each time you win 3 combats, raise one random stat by 1, max 10 each permanently. undroppable, purchaseable, rarity 6.
 - Thunder apprentice: consumable in combat, once per combat,on usage, call an AOE lightning that deals 6 damage. non droppable, rarity 25 purchase-able. Special consumable quest; use Thunder apprentice 6 times, becomes to Thunder disciple.
@@ -229,7 +230,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Light shock: Spell, 12 mana, shock an enemy for 8 spell damage, elves learn that at level 2.
 - Dark shock: Cursed spell, 2 mana, shock an enemy for 6 spell damage, necros learn that at level 2.
 - Lava bomb: Spell, 22 mana, throw a lava boulder at an enemy, deal 12 spell damage, the boulder explodes and deals extra 5 AOE spell damage. Druids learn this at level 3.
-- Berserk scream: Ability, 15 mana, one use per combat. Go berserk with a scream. your physical attacks deal extra (damage formula) + int(str * 0.7) damage on till combat's end, but lower your intellect by int(max_hp * 0.80), this ability can make intellect reach < 0 numbers. your stats reset at combat's end. Dwarves learn this at level 4.
+- Berserk scream: Ability, 15 mana, one use per combat. Go berserk with a scream. your physical attacks deal extra (damage formula) + int(max(1,str * 0.45)) damage on till combat's end, but lower your intellect by int(max_hp * 0.80), this ability can make intellect reach < 0 numbers. your stats reset at combat's end. Dwarves learn this at level 4.
 - Shield bash: Ability, 13 mana, Bash an enemy with your shield (no you don't need to have a shield equipped). dealing int(def * 1.5) physical damage. Tanks & Dwarves learn that at level 2.
 
 ## items adjustment (and filling out last patch added ones):

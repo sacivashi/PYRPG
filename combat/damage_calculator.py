@@ -69,11 +69,28 @@ class DamageCalculator:
         else:
             return agility + random.randint(0, 5), 0
 
+    # Single-target ability damage (v1.0 "other spells & abilities"). Damage type lives in SPELLS.
+    ABILITY_FORMULAS = {
+        "Arrowshot": lambda s: int(s.get('Agility', 0) * 0.7 + abs(s.get('Magic', 0)) * 0.3),
+        "Backstab": lambda s: int(15 + s.get('Agility', 0) * 0.8),
+        "Blade bonk": lambda s: int(5 + s.get('Strength', 0) * 0.55),
+        "Shield bash": lambda s: int(s.get('Defence', 0) * 1.5),
+    }
+
     @staticmethod
-    def arrowshot_damage(attacker_stats):
-        """Arrowshot ability (Rangers start with it): int(2 + agi * 0.85 + abs(mag) * 0.5), dealt as magic damage"""
+    def ability_damage(name, attacker_stats):
         stats = {k: int(v) for k, v in attacker_stats.items()}
-        return max(0, int(2 + stats.get('Agility', 0) * 0.85 + abs(stats.get('Magic', 0)) * 0.5))
+        return max(0, DamageCalculator.ABILITY_FORMULAS[name](stats))
+
+    @staticmethod
+    def berserk_bonus(strength):
+        """Berserk scream: physical attacks deal +int(max(1, str * 0.45)) until combat ends"""
+        return int(max(1, strength * 0.45))
+
+    @staticmethod
+    def defend_block(defence):
+        """Defending: on top of the usual Defence %, block a flat min(10, max(0, def * 0.75))"""
+        return min(10, max(0, defence * 0.75))
 
     @staticmethod
     def apply_luck_modifier(damage, luck_stat):
@@ -133,18 +150,18 @@ class DamageCalculator:
     @staticmethod
     def enemy_defence_adjustment(damage, defence, damage_type):
         """Enemy Defense vs a player hit. damage_type: 'physical' (attacks + abilities), 'spell', or
-        'item' (unaffected). Returns (damage, reflected_back_to_player).
-          +Def: physical takes min(20, 2 + def * 0.6)% less, spells min(15, 1 + def * 0.2)% less
+        'item' / 'searing' (unaffected). Returns (damage, reflected_back_to_player).
+          +Def: physical takes min(20, 2 + def * 0.9)% less, spells min(15, 1 + def * 0.2)% less
           -Def: physical takes +max(3, abs(def) * 0.75) and reflects min(11, abs(def) * 0.4)% of
                 the flat (pre-bonus) damage; spells take +max(7, abs(def) * 0.82), no reflect
           0 Def: no change"""
-        if damage_type == "item" or defence == 0:
+        if damage_type in ("item", "searing") or defence == 0:
             return damage, 0
         if defence > 0:
             if damage_type == "spell":
                 reduction = min(15, 1 + defence * 0.2)
             else:
-                reduction = min(20, 2 + defence * 0.6)
+                reduction = min(20, 2 + defence * 0.9)
             return damage * (1 - reduction / 100), 0
         if damage_type == "spell":
             return damage + max(7, abs(defence) * 0.82), 0
@@ -169,8 +186,8 @@ class DamageCalculator:
 
     @staticmethod
     def player_damage_reduction(defence):
-        """+Defence: take min(25, 1 + def * 0.9)% less damage. 0 or -Defence: no reduction."""
-        return min(25, 1 + defence * 0.9) / 100 if defence > 0 else 0
+        """+Defence: take min(25, 2 + def * 0.7)% less damage. 0 or -Defence: no reduction."""
+        return min(25, 2 + defence * 0.7) / 100 if defence > 0 else 0
 
     @staticmethod
     def apply_defence_modifier(incoming_damage, defence, is_enemy=False, max_hp=0):

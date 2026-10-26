@@ -196,3 +196,28 @@ def test_u_unequips(monkeypatch):
     answer(monkeypatch, "u", "")
     game.manage_loot()
     assert game.player_data.equipped is None
+
+
+def test_identical_items_stack_in_the_loot_menu(monkeypatch, capsys):
+    game = make_game(loot=["Health potion", "Dagger", "Health potion", "Health potion"], equipped="Dagger")
+    monkeypatch.setattr("builtins.input", lambda *_: "0")
+    game.manage_loot()
+    out = capsys.readouterr().out
+    assert "[1] Health potion (x3)" in out
+    assert "[2] Dagger [equipped]" in out
+    assert "[3]" not in out
+
+
+def test_picking_a_stack_uses_one_copy(monkeypatch):
+    game = make_game(loot=["Health potion", "Dagger", "Health potion"], hp=50)
+    answer(monkeypatch, "1", "", "0")              # drink one potion, then back out
+    game.manage_loot()
+    assert game.player_data.loot.count("Health potion") == 1
+    assert game.player_data.loot.count("Dagger") == 1
+
+
+def test_stack_numbers_pick_the_right_item_to_equip(monkeypatch):
+    game = make_game(loot=["Bomb", "Bomb", "Iron sword"])
+    answer(monkeypatch, "2", "")                   # [1] Bomb (x2), [2] Iron sword
+    game.manage_loot()
+    assert game.player_data.equipped == "Iron sword"

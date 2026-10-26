@@ -11,15 +11,27 @@
 # channel_turns: the ability keeps firing automatically on that many of the caster's turns
 #   (the cast turn included) and the caster can't take other actions meanwhile (Blade rush)
 # heal_per_turn / heal_turns: a heal-over-time on the caster, first tick on the cast turn (Nature's gift)
+# splash_damage: spells only — after the main hit, every living enemy (the target too) takes this
+#   much more, also scaled by the Magic multiplier (Lava bomb)
+# damage_type: abilities only — "physical", "spell" (magic damage) or "searing" (ignores Defense and
+#   corruption); the damage itself comes from DamageCalculator.ability_damage(name, stats)
 SPELLS = {
     "Mana surge": {"kind": "spell", "target": "single", "cost": 5, "cost_step": 3,
                    "base_damage": 2, "damage_step": 2},
+    "Light shock": {"kind": "spell", "target": "single", "cost": 12, "base_damage": 8},
+    "Ice shower": {"kind": "spell", "target": "aoe", "cost": 20, "base_damage": 9},
+    "Lava bomb": {"kind": "spell", "target": "single", "cost": 22, "base_damage": 12, "splash_damage": 5},
+    "Hyper beam": {"kind": "spell", "target": "single", "cost": "all", "once_per_combat": True},
     "DOOM": {"kind": "cursed", "target": "single", "cost": 8, "base_damage": 10},
     "Cursed strike": {"kind": "cursed", "target": "single", "cost": 3, "base_damage": 5},
-    "Hyper beam": {"kind": "spell", "target": "single", "cost": "all", "once_per_combat": True},
+    "Dark shock": {"kind": "cursed", "target": "single", "cost": 2, "base_damage": 6},
     "Blade rush": {"kind": "ability", "target": "aoe", "cost": 22, "channel_turns": 4},
     "Nature's gift": {"kind": "ability", "target": "self", "cost": 25, "heal_per_turn": 5, "heal_turns": 3},
-    "Arrowshot": {"kind": "ability", "target": "single", "cost": 5},  # magic damage, see DamageCalculator.arrowshot_damage
+    "Berserk scream": {"kind": "ability", "target": "self", "cost": 15, "once_per_combat": True},
+    "Arrowshot": {"kind": "ability", "target": "single", "cost": 5, "damage_type": "spell"},
+    "Backstab": {"kind": "ability", "target": "single", "cost": 11, "damage_type": "searing"},
+    "Blade bonk": {"kind": "ability", "target": "single", "cost": 5, "damage_type": "physical"},
+    "Shield bash": {"kind": "ability", "target": "single", "cost": 13, "damage_type": "physical"},
 }
 
 # Consumable item -> the spell/ability it teaches. Using the item learns it and uses the item up.
@@ -49,6 +61,14 @@ STARTING_ITEMS = {
 LEVEL_UP_SPELLS = {
     "forsaken": {1: ["Cursed strike"]},  # starting spell
     "ranger": {1: ["Arrowshot"]},  # starting ability
+    "elf": {2: ["Light shock"]},
+    "necromancer": {2: ["Dark shock"]},
+    "tank": {2: ["Shield bash"]},
+    "warrior": {2: ["Blade bonk"]},
+    "dwarf": {2: ["Shield bash"], 4: ["Berserk scream"]},
+    "mage": {3: ["Ice shower"]},
+    "druid": {3: ["Lava bomb"]},
+    "rogue": {5: ["Backstab"]},
 }
 
 
