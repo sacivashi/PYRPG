@@ -81,3 +81,21 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 > - Benefeit..?: You are so darn ugly, enemies intend to flee from you all the time (100 to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
 > - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
 >> charisma stat doesn't benefit combat damage, or encounter calculations
+
+## here are some numbers! (charisma to roles):
+|Class|Strength|Agility|Intelligence|**Charisma**|Defence|Magic|Luck|
+|---|---|---|---|---|---|---|---|
+|druid|4|4|6|**3**|4|6|4|
+|dwarf|7|3|5|**1**|7|3|0|
+|elf|4|7|6|**7**|4|5|2|
+|forsaken|-1|5|3|**-7**|9|-4|4|
+|mage|3|4|10|**2**|3|9|5|
+|monk|5|5|8|**4**|-9|3|1|
+|necromancer|1|4|6|**-5**|5|-8|5|
+|ranger|3|11|6|**5**|2|2|9|
+|rogue|5|9|5|**7**|4|2|9|
+|satyr|2|7|9|**6**|3|4|4|
+|tank|0|-5|2|**0**|12|1|5
+|warrior|6|4|4|**4**|6|3|1|
+
+aren't the pretty? c:
