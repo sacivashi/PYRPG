@@ -38,7 +38,7 @@ This enemy's behaviour dishes out few problems:
 ### The fixes:
 Adding some more encounters rather than just enemies:
 - Wandering merchant(s): Can be "encountered" by depth 11+, they sell you items for `(base store cost * 1.3)` the cost, but have a chance to have rarer unpurchaseable loot on them `(still cost * 1.3)`. They also accept to take loot for `int(35% of item's price)` sell value. Has a chance to be thief merchant.
-- Thief merchant(s): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). theif merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
+- Thief merchant(s): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
 - Treasure chest(s): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic
 - Mimic chest(s): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
 - Healer(s): (debating to call those cooks) Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
@@ -48,7 +48,7 @@ Adding some more encounters rather than just enemies:
     - Of Prosperity: Some more gold income (+12% on next win)
     - Of Intellect: A boost of exp (+30% on next win)
     - Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
-    - Of fear: Entering combat, your charisma* stat is multiplied by -1, clears at combat's end.
+    - Of fear: Entering combat, your **charisma** (coming up) stat is multiplied by -1, clears at combat's end.
 
 
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
@@ -104,3 +104,5 @@ aren't the pretty? c:
 
 - slaying an enemy with 1 hit now says: "you brutally slayed (enemy) in 1 hit" or "You sure you aren't too strong for this area? Becuase you just took that x in 1 hit". Or "One punch man is you!" Or "Dayum their HP is just gone, poof.".
 - Enemy fleeing a battle gives out some flavor: like "x was too afraid to keep facing you, so it fled {on dropping stuff:} and at with that it lost ...". "The cowardous x fled battle {on dropping stuff:} luckily, they dropped ....". "Can't believe x fled this fight, {on drops:} atleast I can find victory on ....". "x fled, {drops:} and dropped ...". "Well didn't anticipate x to just run, {drops:} oh well let's take the .... and leave then.".
+    - On -cha: "You were so ugly, x couldn't hold it any longer so it fled. {drops:} just take the .... and don't make me look at you too please.". "No wonder x chose to give up, your face is a puke fest... {drops:} still some .... left though..". "Your vile aura made x run to their momma. {drops:} joy on their ... drops.
+    - On high end cha: "Don't blame me I am unsure why would x go away either {drops:} oh hey shiny ....! .". "I guess they were taken breathless by your handsome self that x decided to not fight any longer.. {drops:} oh well, stuff!". "x ran off... so what?! just sway your hair be pretty {drops:} and take the remnance!"
