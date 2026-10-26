@@ -1,5 +1,5 @@
 # PYRPG v 1.1:
-## Enemies but with brains!
+## Enemies but with brains and different encounters!
 
 > Taking off from version 1.0, we now can do some magical stuff!
 
@@ -33,3 +33,9 @@ This enemy's behaviour dishes out few problems:
 
 1. It gives the player an aggressive behaviour restriction as well, a "kill or die" sort of system.
 2. It makes the game be mostly a "sit there and spam number 1 till enemy dies" game... which becomes hectic and boring (from tests too it feels like so). 
+3. Enemies have no... flavor, each enemy is like the last one all that matter are the stats, a name doesn't make something unique if it acts similarly.
+
+### The fixes:
+Adding some more encounters rather than just enemies:
+- Wandering merchant(s): Can be "encountered" by depth 11+, they sell you items for `(base store cost * 1.3)` the cost, but have a chance to have rarer unpurchaseable loot on them `(still cost * 1.3)`. They also accept to take loot for `int(item_rarity * 0.4)` gold back.
+- Thief merchant: Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item.
