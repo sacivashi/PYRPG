@@ -107,7 +107,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 > **Player Defence:**
 >> Defence had a hidden logic to damage reduction until now, which at +8 points you take 80% less damage, that is pretty crazy! This is a whole new property so this is also a defence rework:
 
->> def: You take `min(25, 2 + def * 0.7)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction.
+>> def: You take `min(25,  2 + def * 0.7)%` less damage as long as your defence is > 0. at 0 and <= 0 defence, you get 0% damage reduction.
 >>> choosing to defend in combat, you take `def% + min(10, max(0,def * 0.75))` damage ignorance. this doesn't have any effect vs sear.
 
 
@@ -225,7 +225,8 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Backstab: ability, 11 mana, teleport behind an enemmie's back and stab it, dealing int(15 + agi * 0.8) searing damage. Rogue learn this at level 5. 
 - Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
 - Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 5 spell damage. Forsakens start with that.
-
+- Ice shower: Spell, 20 mana, summon a shower of sharp ice from the sky, dealing AOE 9 spell damage. Mages learn this at level 3.
+- Dark shock: Spell, 15 mana, shock an enemy for 6 spell damage, elves learn that at level 2.
 
 
 ## items adjustment (and filling out last patch added ones):
