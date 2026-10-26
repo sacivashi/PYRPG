@@ -229,7 +229,8 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Light shock: Spell, 12 mana, shock an enemy for 8 spell damage, elves learn that at level 2.
 - Dark shock: Cursed spell, 2 mana, shock an enemy for 6 spell damage, necros learn that at level 2.
 - Lava bomb: Spell, 22 mana, throw a lava boulder at an enemy, deal 12 spell damage, the boulder explodes and deals extra 5 AOE spell damage. Druids learn this at level 3.
-- Berserk scream: Ability, 15 mana, one use per combat. Go berserk with a scream, raise you strength by int(max_hp * 0.20) but lower your intellect by int(max_hp * 0.20), this ability can make intellect reach < 0 numbers. your stats reset at combat's end. Dwarves learn this at level 4.
+- Berserk scream: Ability, 15 mana, one use per combat. Go berserk with a scream. your physical attacks deal extra (damage formula) + int(str * 0.7) damage on till combat's end, but lower your intellect by int(max_hp * 0.80), this ability can make intellect reach < 0 numbers. your stats reset at combat's end. Dwarves learn this at level 4.
+- Shield bash: Ability, 13 mana, Bash an enemy with your shield (no you don't need to have a shield equipped). dealing int(def * 1.5) physical damage. Tanks & Dwarves learn that at level 2.
 
 ## items adjustment (and filling out last patch added ones):
 
