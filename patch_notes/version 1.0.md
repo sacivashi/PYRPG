@@ -116,7 +116,7 @@ fast travel cost: `int(5 * depth * 0.5)`
 >> Enemy defense: take `min(20, 2 + def * 0.9)%` less physical damage, 
 >> take `min(15, 1 + def * 0.2)%` less magic damage
 >>> -def and def 0 have 0% damage defence!
->>> Damage reductions do not affect corruption
+>>> Damage reductions do not affect corruption & sear
 
 > **Enemy -defense:**
 >>Enemies -defense is pretty satisfying, yet physical & magic split should treat them as well, adjustments:

@@ -14,10 +14,11 @@ class InputName:
 
 		while True:
 			your_name = input(
-				"""Welcome to PyRPG.
-	This project is a text based RPG game.
-	Please look at patch notes files to see new patches or features.\n
-	To start you off, please input your name: """).strip()
+				"""PyRPG v1.0 — welcome (back?) to the age of magic.
+New here? Pick a role, learn a spell, try not to die.
+Been here before? Type your name to load your save.
+
+Name:""").strip()
 
 			player_info = get_player(your_name)
 			if player_info is not None:
