@@ -10,10 +10,10 @@ quite allot really:
 - magic/spells
 - spells and abilities learning
 - difficulty curve balanced to be more satisfying with:
-- - Better physical damage system, which brought all roles so far into the early game combat win percentages to 80+%. 
-- - Better enemies difficulty encounters logic which goes up with in game depth.
-- - Spell & ability damage seperate from physical.
-- - New damage type "searing" which bypasses every kind of defense/defence/corruption.
+    - Better physical damage system, which brought all roles so far into the early game combat win percentages to 80+%. 
+    - Better enemies difficulty encounters logic which goes up with in game depth.
+    - Spell & ability damage seperate from physical.
+    - New damage type "searing" which bypasses every kind of defense/defence/corruption.
 - Allot more items and consumables
 - New unique roles.
 - spell/ability learning with level or by consumable usage.
@@ -42,3 +42,10 @@ Adding some more encounters rather than just enemies:
 - Treasure chest(s): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic
 - Mimic chest(s): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
 - Healer(s): (debating to call those cooks) Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
+- Sculptures: Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
+    - Of resting: better rest odd for three time
+    - Of survival: higher rest heal for three time (only on success).
+    - Of income: Some more gold income (+12% on next win)
+    - Of intellect: A boost of exp (+30% on next win)
+    
+    Any of those sculptures have a chance to fail.. The gods have their own reasons.
