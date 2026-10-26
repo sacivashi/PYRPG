@@ -79,5 +79,5 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 > - Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountring bad encounter types. +int(max(0,min(20, cha * 0.25)))%
 > - -Charisma: 
 > - Benefeit..?: You are so darn ugly, enemies intend to flee from you all the time (100 to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
-> - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha)
->> charisma stat doesn't benefit combat damage
+> - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
+>> charisma stat doesn't benefit combat damage, or encounter calculations
