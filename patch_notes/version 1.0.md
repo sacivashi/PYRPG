@@ -226,8 +226,10 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Blade bonk: ability, 5 mana, bonk an enemy with your weapon, deal int(5 + str * 0.55) damage. Warriors learn this ability at level 2.
 - Cursed strike: cursed spell, 3 mana, strike an enemy with your cursed soul for 5 spell damage. Forsakens start with that.
 - Ice shower: Spell, 20 mana, summon a shower of sharp ice from the sky, dealing AOE 9 spell damage. Mages learn this at level 3.
-- Dark shock: Spell, 15 mana, shock an enemy for 6 spell damage, elves learn that at level 2.
-
+- Light shock: Spell, 12 mana, shock an enemy for 8 spell damage, elves learn that at level 2.
+- Dark shock: Cursed spell, 2 mana, shock an enemy for 6 spell damage, necros learn that at level 2.
+- Lava bomb: Spell, 22 mana, throw a lava boulder at an enemy, deal 12 spell damage, the boulder explodes and deals extra 5 AOE spell damage. Druids learn this at level 3.
+- Berserk scream: Ability, 15 mana, one use per combat. Go berserk with a scream, raise you strength by int(max_hp * 0.20) but lower your intellect by int(max_hp * 0.20), this ability can make intellect reach < 0 numbers. your stats reset at combat's end. Dwarves learn this at level 4.
 
 ## items adjustment (and filling out last patch added ones):
 
