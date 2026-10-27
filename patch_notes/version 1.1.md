@@ -44,7 +44,7 @@ Adding some more encounters rather than just enemies:
 - Healer(s): (debating to call those cooks) Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
 - Sculptures (or boons): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
     - Of resting: better rest odd for three time (+15%)
-    - Of survival: higher rest heal for three time (only on success).
+    - Of survival: higher rest heal for three time (only on success) (+15% missing HP).
     - Of Prosperity: Some more gold income (+12% on next win)
     - Of Intellect: A boost of exp (+30% on next win)
     - Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
@@ -140,7 +140,7 @@ aren't the pretty? c:
 
 ## Some more:
 
-So yeah, there are bad passive encounters. But no worries, your brain can check these encounters periodically to see, if they are indeed bad.
+So yeah, there are bad passive encounters. But no worries, your brain can sometimes tell these encounters, if they are indeed bad.
 
 > Have a int(max(0,min(45,intel * 1.7)))% chance to notice bad passive encounter.
 
@@ -162,7 +162,7 @@ So yeah, there are bad passive encounters. But no worries, your brain can check 
     "This chest has a soul to it, I know it."
     "I know a Mimic when I see it!"
     "This one, don't open it."
-    "Oh beleive me this chest has no gold or items..."
+    "Oh believe me this chest has no gold or items..."
 
 > Bad failed to notice or fine passive encounter flavor(s) (25%):
 >
@@ -173,12 +173,14 @@ So yeah, there are bad passive encounters. But no worries, your brain can check 
     "Something with the script tells me, this one is good."
 
 > Not hitting any of those flavors:
->
-    "you found a (encounter)"
+
+    Passive encounters choices:
+    "As you walk by there seem to be a (chest/merchant), (flavor if hit it). {do you open it? y\n} or {buy\sell\leave}."
 
 ## Mimic added:
 
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|
 |---|---|---|---|---|---|---|
 |Mimic|0|20|5|8|12|0|
-> Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1), past depth 50 buff are also included.
+> Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1)`, past depth 50 buff are also included. Enemy encounter calculations do not affect Mimics.
+>> Same goes for thief merchant, only if it is a thief merchant
