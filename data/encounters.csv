@@ -1,2 +1,7 @@
-Type,Description,Depth,Effect,Duration,Odds,Enemy_spawn
-Boon,Of rest,5,rest chance +15%,3,20,No
+Type,Description,Depth,Effect,Value,Duration,Odds,Enemy_spawn
+Boon,Of resting,5,rest_chance,*=1.5,3,20,No
+Boon,Of survival,5,rest_restoration,+=15,3,20,No
+Boon,Of prosperity,5,gold,*=1.12,1,20,No
+Boon,Of intellect,5,EXP,*=1.3,1,20,No
+Boon,Of growth,5,max_hp,+=15,1,20,No
+Boon,Of fear,5,Charisma,*=(-1),1,20,No

@@ -45,7 +45,7 @@ Adding some more encounters rather than just enemies:
 > Sculptures (or boons): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
 >
     Of resting: better rest odd for three time (+15%)
-    Of survival: higher rest heal for three time (only on success) (+15% missing HP).
+    Of survival: higher rest heal for three time (only on success) (+15% missing HP & mana).
     Of Prosperity: Some more gold income (+12% on next win)
     Of Intellect: A boost of exp (+30% on next win)
     Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
@@ -54,7 +54,7 @@ Adding some more encounters rather than just enemies:
 
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
 - Random event(s): Can be "encountered", giving you a choice to proceed by... choose cautiously.
-- Changing "enemies.csv" into "encounters.csv" and having a new "type" value.
+- Add new "encounters.csv"
 
 And now for the main event:
 
