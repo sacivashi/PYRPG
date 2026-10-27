@@ -42,13 +42,14 @@ Adding some more encounters rather than just enemies:
 - Treasure chest(s): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic
 - Mimic chest(s): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
 - Healer(s): (debating to call those cooks) Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
-- Sculptures (or boons): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
-    - Of resting: better rest odd for three time (+15%)
-    - Of survival: higher rest heal for three time (only on success) (+15% missing HP).
-    - Of Prosperity: Some more gold income (+12% on next win)
-    - Of Intellect: A boost of exp (+30% on next win)
-    - Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
-    - Of fear: Entering combat, your **charisma** (coming up) stat is multiplied by -1, clears at combat's end.
+> Sculptures (or boons): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
+>
+    Of resting: better rest odd for three time (+15%)
+    Of survival: higher rest heal for three time (only on success) (+15% missing HP).
+    Of Prosperity: Some more gold income (+12% on next win)
+    Of Intellect: A boost of exp (+30% on next win)
+    Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
+    Of fear: Entering combat, your **charisma** (coming up) stat is multiplied by -1, clears at combat's end.
 
 
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
