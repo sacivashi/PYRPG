@@ -137,3 +137,41 @@ aren't the pretty? c:
 - Fleeing fail (35%): "You ran away... in a circle!", "You tried to run, but your feet won't co-op", "It's seems as though, you are grounded", "You go for a sprint, but x held the tip of your... outfit?", "Guess we cannot run away now Scoobs", "Sir [player] can't bravely run away", "Mysterious powers teleport you back into combat as you distance yourself", "You run, but as you do, you notice only the combat area is loading, you are screwed.", "You trip on a teeny tiny rock, baka. Good thing fall damage doesn't exist."
 - Attempting to flee death encounter (100%): "What'd you expect?", "Not this time....", "Death is undeniable...", "You chose this....", "I told you....", "You asked, didn't you?", "You reached so far, let it end.", "No.", "This is basically god, running expands your doom", "Nope.", "Tick, tock", "I AM HERE, JUST FOR YOU.
 ".
+
+## Some more:
+
+So yeah, there are bad passive encounters. But no worries, your brain can check these encounters periodically to see, if they are indeed bad.
+
+> Have a int(max(0,min(45,intel * 1.7)))% chance to notice bad passive encounter.
+
+- Noticing flavor(s):
+> thief merchant:
+
+    "This merchant seems cheeky to me.."
+    "I got that gut feeling I shouldn't trust this one."
+    "This merchant's eyes seem to glint towards my pockets..."
+    "I feel malicious intent.."
+    "I don't like this one's face."
+    "Maybe, better not."
+    "With a squint of an eye, looks suspicious"
+
+> Mimic:
+        
+    "I think I just seen it lick its lid."
+    "I can hear a heartbeat."
+    "This chest has a soul to it, I know it."
+    "I know a Mimic when I see it!"
+    "This one, don't open it."
+    "Oh beleive me this chest has no gold or items..."
+
+> Empty head or fine passive encounter flavor(s) (25%):
+>
+    "Seems fine to me."
+    "Let's have a gander."
+    "Looks okay."
+    "Please be fine."
+    "Something with the script tells me, this one is good."
+
+> not hitting those flavors:
+>
+    "you found a (encounter)"
