@@ -76,7 +76,7 @@ Following the solutions enemies encountered now have their nuggings installed to
 >> -any 100% ~ 80% of HP, one of the group will priorities attacking
 >>> 2nd and 3d may support attack, or brace themselves (70 fight/30 brace/defend)
 >> - any 80% ~ 45% of HP, choose between attempting to defend and attacking,
->>> 2nd and third might attack, defend, or attemt to heal the most injured memeber (45/35/30), can't heal selves.
+>>> 2nd and third might attack, defend, or attemt to heal the most injured, non -attack memeber (45/35/30), can't heal selves.
 >>>> succesful heal attempts heal the injured enemy for 12% missing HP.
 >> - any 45% and less:
 >>> Same as above, just if one flees, the rest that didn't do so stay.
