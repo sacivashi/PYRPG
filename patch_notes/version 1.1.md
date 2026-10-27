@@ -164,7 +164,7 @@ So yeah, there are bad passive encounters. But no worries, your brain can check 
     "This one, don't open it."
     "Oh beleive me this chest has no gold or items..."
 
-> Empty head or fine passive encounter flavor(s) (25%):
+> Bad failed to notice or fine passive encounter flavor(s) (25%):
 >
     "Seems fine to me."
     "Let's have a gander."
@@ -172,6 +172,12 @@ So yeah, there are bad passive encounters. But no worries, your brain can check 
     "Please be fine."
     "Something with the script tells me, this one is good."
 
-> not hitting those flavors:
+> Not hitting any of those flavors:
 >
     "you found a (encounter)"
+
+## Mimic added:
+
+|Name|Corruption|HP|Attack|Defense|Speed|Luck|
+|---|---|---|---|---|---|---|
+|Mimic|0|20|5|8|12|0|
