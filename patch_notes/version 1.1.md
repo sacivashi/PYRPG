@@ -181,3 +181,4 @@ So yeah, there are bad passive encounters. But no worries, your brain can check 
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|
 |---|---|---|---|---|---|---|
 |Mimic|0|20|5|8|12|0|
+> Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1), past depth 50 buff are also included.
