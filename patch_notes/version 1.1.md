@@ -41,7 +41,7 @@ Adding some more encounters rather than just enemies:
 - Thief merchant(s): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
 - Treasure chest(s): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic
 - Mimic chest(s): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
-- Healer(s): (debating to call those cooks) Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
+- Cook(s): Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
 > Sculptures (or boons): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
 >
     Of resting: better rest odd for three time (+15%)
