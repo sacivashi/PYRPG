@@ -6,7 +6,7 @@ Boon,Of intellect,5,EXP,*=1.3,1,20,
 Boon,Of growth,5,max_hp,+=15,1,20,
 Boon,Of fear,5,Charisma,*=(-1),1,20,
 Merchant,Merchant,1,,,,25,
-Merchant,Thief merchant,3,,,,15,Thief
-Chest,Chest,1,,,,15,
-Chest,Mimic,1,,,,10,Mimic
-Healer,Cook,5,,,,22,
+Merchant,Thief merchant,3,,,,7,Thief
+Chest,Chest,1,,,,25,
+Chest,Mimic,1,,,,5,Mimic
+Healer,Cook,5,HP,+=v,,22,
