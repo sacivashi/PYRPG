@@ -37,12 +37,12 @@ This enemy's behaviour dishes out few problems:
 
 ### The fixes:
 Adding some more encounters rather than just enemies:
-- Wandering merchant(s): Can be "encountered" by depth 11+, they sell you items for `(base store cost * 1.3)` the cost, but have a chance to have rarer unpurchaseable loot on them `(still cost * 1.3)`. They also accept to take loot for `int(35% of item's price)` sell value. Has a chance to be thief merchant.
-- Thief merchant(s): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
-- Treasure chest(s): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
-- Mimic chest(s): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
-- Cook(s): Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
-> Sculptures (or boons): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
+- Wandering merchant(s)(25% rate): Can be "encountered" by depth 11+, they sell you items for `(base store cost * 1.3)` the cost, but have a chance to have rarer unpurchaseable loot on them `(still cost * 1.3)`. They also accept to take loot for `int(35% of item's price)` sell value. Has a chance to be thief merchant.
+- Thief merchant(s) (11% rate): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
+- Treasure chest(s) (25% rate): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
+- Mimic chest(s) (5% rate): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
+- Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
+> Sculptures (or boons) (20% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
 >
     Of resting: better rest odd for three time (+15%)
     Of survival: higher rest heal for three time (only on success) (+15% missing HP & mana).
@@ -53,7 +53,7 @@ Adding some more encounters rather than just enemies:
 
 
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
-- Random event(s)/ adventure(s): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
+- Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
 - Add new "encounters.csv"
 
 And now for the main event:
@@ -67,20 +67,24 @@ Following the solutions enemies encountered now have their nuggings installed to
 >>> New attack types:
 >>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
 >>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a 25% chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
+>>>> odds: 60 normal, 20 charged, 20 defend
 >> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
->>> 50/50 odds of attacking or defending; if defending and player physically attacks, enemy has a channce to counter attack
+>>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a chance to counter attack
 >>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
 >> - 45% and less:
->>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 40/50% attack/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but woun't give exp.
+>>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp.
 
 > enemy thought process, but it's groups:
->> -any 100% ~ 80% of HP, one of the group will priorities attacking
->>> 2nd and 3d may support attack, or brace themselves (70 fight/30 brace/defend)
+>> -any 100% ~ 80% of HP, one of the group will priorities attacking same logic as charging
+>>> 2nd and 3rd may support attack, or brace themselves (70 fight/30 brace/defend)
 >> - any 80% ~ 45% of HP, choose between attempting to defend and attacking,
 >>> 2nd and third might attack, defend, or attemt to heal the most injured, non -attack memeber (45/35/30), can't heal selves.
 >>>> succesful heal attempts heal the injured enemy for 12% missing HP.
 >> - any 45% and less:
 >>> Same as above, just if one flees, the rest that didn't do so stay.
+
+> With that, adding some more to enemy def:
+>> Enemies choosing to defend, will block; `def% + min(8, max(0,def * 0.65))` physical damage
 
 ## introducing a new player stat:
 
