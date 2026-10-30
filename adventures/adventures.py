@@ -1,12 +1,26 @@
 import random
+from enemies.enemies_data import get_encounter_enemy, DEATH
 
 
 def parse_spawn(cell):
-    """'Bear *2' -> ('Bear', 2), 'Mimic' -> ('Mimic', 1), '' -> None"""
+    """'Bear *2' -> ('Bear', 2), 'Mimic' -> ('Mimic', 1), '?x2' -> ('?x2', 1), '' -> None"""
     if not cell or not cell.strip():
         return None
     name, _, count = cell.partition("*")
     return name.strip(), int(count) if count.strip() else 1
+
+
+def roll_spawn(game, cell):
+    """Turn an Enemy_spawn cell into (enemy, size). A named enemy is used as-is; '?xN' rolls one
+    the normal way, but against N times the usual target for this depth — N times stronger than
+    what you'd normally meet here, wherever "here" is."""
+    spawn = parse_spawn(cell)
+    if spawn is None:
+        return None
+    name, size = spawn
+    if name.startswith("?x"):
+        name = get_encounter_enemy(game._player_power() * float(name[2:]), game.player_data.distance)
+    return name, 1 if name == DEATH else size
 
 
 # What's waiting inside — weights, same as encounter Odds
@@ -35,35 +49,34 @@ def cave_entrance(game, row):
     game.open_chest()
     return "chest"
 
+
+OBELISK_OUTCOMES = {"exp": 50, "enemy": 50}
+OBELISK_EXP = 100                          # % EXP — always exactly one level
+
+
 def strange_obelisk(game, row):
-    """A strange obelisk. The player can choose to touch it or not. Touching it gives a random effect."""
+    """Touch it or walk on. Touching it either grants a full level's worth of EXP or wakes up
+    something far stronger than usual (the row's Enemy_spawn, e.g. '?x2'). Returns "exp", the
+    fight's result, or None if the player walked on."""
     print("\nYou come across a strange obelisk. It hums with energy.")
     if input("Touch the obelisk? (y/n) ").strip().lower() != "y":
         print("You keep walking. Probably for the best.")
         return None
 
-    # Random effect: either gain EXP, lose HP, or get a random item
-    effects = ["gain_exp", "lose_hp", "random_item"]
-    effect = random.choice(effects)
+    outcome = random.choices(list(OBELISK_OUTCOMES), weights=list(OBELISK_OUTCOMES.values()))[0]
+    spawn = roll_spawn(game, row.get("Enemy_spawn", "")) if outcome == "enemy" else None
 
-    if effect == "gain_exp":
-        exp_gain = 100
-        game.player.gain_exp(exp_gain)
-        print(f"You feel a surge of knowledge! You gain {exp_gain} EXP.")
-        return "gain_exp"
+    if spawn:                              # an obelisk row with no Enemy_spawn only ever grants EXP
+        enemy, size = spawn
+        print(f"\nThe obelisk goes dark... and {size} {enemy}s step out of its shadow!" if size > 1
+              else f"\nThe obelisk goes dark... and a {enemy} steps out of its shadow!")
+        return game.fight(enemy, size)
 
-    elif effect == "lose_hp":
-        hp_loss = 20
-        game.player.take_damage(hp_loss)
-        print(f"A sharp pain courses through your body! You lose {hp_loss} HP.")
-        return "lose_hp"
-
-    elif effect == "random_item":
-        item = game.get_random_item()
-        game.player.add_item(item)
-        print(f"A mysterious item appears in your hands: {item.name}.")
-        return "random_item"
+    game.player_data.exp += OBELISK_EXP
+    print(f"\nKnowledge floods your mind! You gain {OBELISK_EXP}% EXP.")
+    game._process_level_ups()
+    return "exp"
 
 
 # Encounter Description -> the function that runs it
-ADVENTURES = {"Cave entrance": cave_entrance,"A strange obelisk": strange_obelisk,}
+ADVENTURES = {"Cave entrance": cave_entrance, "A strange obelisk": strange_obelisk}

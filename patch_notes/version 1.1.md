@@ -53,7 +53,7 @@ Adding some more encounters rather than just enemies:
 
 
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
-- Random event(s)/ adventure(s): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.
+- Random event(s)/ adventure(s): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
 - Add new "encounters.csv"
 
 And now for the main event:
