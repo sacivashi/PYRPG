@@ -66,25 +66,27 @@ Following the solutions enemies encountered now have their nuggings installed to
 >> - on 100% ~ 80% of HP, priorities dishing out attacks
 >>> New attack types:
 >>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
->>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a 25% chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
+>>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
 >>>> odds: 60 normal, 20 charged, 20 defend
 >> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
->>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a chance to counter attack
+>>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a 15% chance to counter attack
 >>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
 >> - 45% and less:
 >>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp.
 
 > enemy thought process, but it's groups:
->> -any 100% ~ 80% of HP, one of the group will priorities attacking same logic as charging
->>> 2nd and 3rd may support attack, or brace themselves (70 fight/30 brace/defend)
->> - any 80% ~ 45% of HP, choose between attempting to defend and attacking,
->>> 2nd and third might attack, defend, or attemt to heal the most injured, non -attack memeber (45/35/30), can't heal selves.
+>> - all members at 100% ~ 80% of HP, the group will priorities attacking same logic as charging
+>>> other member or 2 members may support attack, or defend themselves (60 norm/30 charge/10 def)
+>> - any single member at 80% ~ 45% of HP, choose between attempting to defend and attacking
+>>> other member or 2 members might attack, defend, or attemt to heal the most injured, non -attack memeber (45 atk/15 chrg/20 def/20 heal), can't heal selves.
 >>>> succesful heal attempts heal the injured enemy for 12% missing HP.
->> - any 45% and less:
->>> Same as above, just if one flees, the rest that didn't do so stay.
+>> - single member at 45% and less:
+>>> Same as singular, just if that one flees, the rest stay. The others use the phase 2 support odds, so they may still heal it.
+
+**those nuggings don't affect any special encounters (eg; mimics, death)** 
 
 > With that, adding some more to enemy def:
->> Enemies choosing to defend, will block; `def% + min(8, max(0,def * 0.65))` physical damage
+>> Enemies choosing to defend, will block; `def% + min(10, max(0,def * 0.65))` physical damage
 
 ## introducing a new player stat:
 
