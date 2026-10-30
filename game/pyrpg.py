@@ -381,7 +381,11 @@ class PYRPG:
             print(f"\nA group of {group_size} {enemy_name}s appears!")
         else:
             print(f"\nA wild {enemy_name} appears!")
+        return self.fight(enemy_name, group_size)
 
+    def fight(self, enemy_name, group_size=1):
+        """Run one fight and settle it: rewards on a win, death penalties on a loss. Shared by
+        random encounters and adventures, so a fight pays out the same wherever it happens."""
         # Auto-save before risky combat
         print("💾 Auto-saving before combat...")
         self.auto_save_player_state()
@@ -413,6 +417,7 @@ class PYRPG:
         # "fled": no rewards, no penalty — nothing to do beyond the HP sync already above
 
         input("\nPress Enter to continue...")
+        return result
 
     SLEIGHT_OF_STATS = "sleight of stats"
     SLEIGHT_WINS_PER_POINT = 3
@@ -651,7 +656,17 @@ class PYRPG:
 
     DROP_STACK_SIZES = {"nuts": 4}  # items that drop as a stack instead of one copy
 
-    def _roll_for_loot(self):
+    CHEST_GOLD = (5, 13)
+
+    def open_chest(self):
+        """A real treasure chest: 5 ~ 13 gold and a loot roll. Whether a chest is a Mimic is
+        decided before this — by the encounter roll — so anything that calls this is safe."""
+        gold = random.randint(*self.CHEST_GOLD)
+        self.player_data.gold += gold
+        print(f"You open the chest and find {gold} gold!")
+        self._roll_for_loot(source="The chest held")
+
+    def _roll_for_loot(self, source="The enemy dropped"):
         """On a successful roll, award one item drawn from the droppable pool, weighted by Rarity"""
         droppable = get_droppable_items()
         if not droppable:
@@ -665,7 +680,7 @@ class PYRPG:
         item_name = random.choices(names, weights=weights, k=1)[0]
         amount = self.DROP_STACK_SIZES.get(item_name.lower(), 1)
         self.player_data.loot.extend([item_name] * amount)
-        print(f"The enemy dropped {item_name}{f' (x{amount})' if amount > 1 else ''}!")
+        print(f"{source} {item_name}{f' (x{amount})' if amount > 1 else ''}!")
 
     def view_stats(self):
         """Display player stats"""

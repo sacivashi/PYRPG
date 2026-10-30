@@ -5,8 +5,9 @@ Boon,Of prosperity,5,gold,*=1.12,1,,20,
 Boon,Of intellect,5,EXP,*=1.3,1,,20,
 Boon,Of growth,5,max_hp,+=15,1,,20,
 Boon,Of fear,5,Charisma,*=(-1),1,,20,
-Merchant,Merchant,1,,,,*=1.3,25,
-Merchant,Thief merchant,3,,,,*=1.3,7,Thief
+Merchant,Merchant,11,,,,*=1.3,25,
+Merchant,Thief merchant,11,,,,*=1.3,7,Thief
 Chest,Chest,1,,,,,25,
 Chest,Mimic,1,,,,,5,Mimic
 Healer,Cook,5,HP,+=v,,v*2.3,22,
+Adventure,Cave entrance,6,adventure,,,,10,Bear *2

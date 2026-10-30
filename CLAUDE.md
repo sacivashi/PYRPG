@@ -16,7 +16,7 @@ Must be run from the project root — imports are root-relative.
 pytest
 ```
 
-`tests/` holds the automated suite (189 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+`tests/` holds the automated suite (194 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
 
 ## Working with Patch Notes
 
@@ -90,6 +90,10 @@ Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not somethi
 ### Encounters & Depth
 
 `enemies/enemies_data.py` — `get_encounter_enemy(player_power, depth)` weights enemies by threat vs a target of `player_power * encounter_target_ratio(depth)` (`DEPTH_TARGET_RATIOS`; with no depth, the flat 2.5). From depth 100, Death can claim the encounter first (`death_chance()`); Death is in `NEVER_RANDOM_ENEMIES`, so it's never in the weighted pool, always solo, and can't be fled. `apply_depth_buff()` adds `depth - 50` to every positive enemy stat past depth 50.
+
+### Adventures (v1.1, in progress)
+
+`data/encounters.csv` (`get_data("encounters_csv")`) lists passive encounters — `Type, Description, Depth, Effect, Value, Duration, Cost, Odds, Enemy_spawn` — but nothing rolls from it yet. `Adventure` rows only trigger; the steps live in code, in `adventures/adventures.py`'s `ADVENTURES` (Description -> function taking `(game, row)`). `Enemy_spawn` is `Name *N` (`parse_spawn()`). Adventure fights go through `PYRPG.fight(enemy, size)` (split out of `enter_combat()`, so rewards/death penalties match a random fight), and chests through `PYRPG.open_chest()` (5 ~ 13 gold + a loot roll). `open_chest()` is always a real chest — Mimics are their own encounter row, decided before it's called — which is why adventure chests are always safe.
 
 ### Negative Stat System
 
