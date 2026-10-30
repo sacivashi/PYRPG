@@ -53,7 +53,7 @@ Adding some more encounters rather than just enemies:
 
 
     Any of those sculptures have a chance to fail.. The gods have their own reasons.
-- Random event(s): Can be "encountered", giving you a choice to proceed by... choose cautiously.
+- Random event(s)/ adventure(s): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.
 - Add new "encounters.csv"
 
 And now for the main event:
@@ -88,7 +88,7 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 
 > - Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountring bad encounter types. +int(max(0,min(20, cha * 0.25)))%
 > - -Charisma: 
-> - Benefeit..?: You are so darn ugly, enemies intend to flee from you all the time (100 to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
+> - Benefeit..?: You are so darn ugly, enemies intend to flee from you all the time (100% to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
 > - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
 >> charisma stat doesn't benefit combat damage, or encounter calculations
 
@@ -110,7 +110,7 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 
 aren't the pretty? c:
 
-## More flavorful fighting:
+## Encounters but tastier:
 
 - slaying an enemy with 1 hit now says: "you brutally slayed (enemy) in 1 hit" or "You sure you aren't too strong for this area? Becuase you just took that x in 1 hit". Or "One punch man is you!" Or "Dayum their HP is just gone, poof.".
 - Enemy fleeing a battle gives out some flavor: like "x was too afraid to keep facing you, so it fled {on dropping stuff:} and at with that it lost ...". "The cowardous x fled battle {on dropping stuff:} luckily, they dropped ....". "Can't believe x fled this fight, {on drops:} atleast I can find victory on ....". "x fled, {drops:} and dropped ...". "Well didn't anticipate x to just run, {drops:} oh well let's take the .... and leave then.".

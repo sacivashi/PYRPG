@@ -35,6 +35,35 @@ def cave_entrance(game, row):
     game.open_chest()
     return "chest"
 
+def strange_obelisk(game, row):
+    """A strange obelisk. The player can choose to touch it or not. Touching it gives a random effect."""
+    print("\nYou come across a strange obelisk. It hums with energy.")
+    if input("Touch the obelisk? (y/n) ").strip().lower() != "y":
+        print("You keep walking. Probably for the best.")
+        return None
+
+    # Random effect: either gain EXP, lose HP, or get a random item
+    effects = ["gain_exp", "lose_hp", "random_item"]
+    effect = random.choice(effects)
+
+    if effect == "gain_exp":
+        exp_gain = 100
+        game.player.gain_exp(exp_gain)
+        print(f"You feel a surge of knowledge! You gain {exp_gain} EXP.")
+        return "gain_exp"
+
+    elif effect == "lose_hp":
+        hp_loss = 20
+        game.player.take_damage(hp_loss)
+        print(f"A sharp pain courses through your body! You lose {hp_loss} HP.")
+        return "lose_hp"
+
+    elif effect == "random_item":
+        item = game.get_random_item()
+        game.player.add_item(item)
+        print(f"A mysterious item appears in your hands: {item.name}.")
+        return "random_item"
+
 
 # Encounter Description -> the function that runs it
-ADVENTURES = {"Cave entrance": cave_entrance}
+ADVENTURES = {"Cave entrance": cave_entrance,"A strange obelisk": strange_obelisk,}

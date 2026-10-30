@@ -11,3 +11,4 @@ Chest,Chest,1,,,,,25,
 Chest,Mimic,1,,,,,5,Mimic
 Healer,Cook,5,HP,+=v,,v*2.3,22,
 Adventure,Cave entrance,6,adventure,,,,10,Bear *2
+Event,A strange obelisk,8,EXP,+=100,,,3,?x2
