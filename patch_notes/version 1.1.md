@@ -36,25 +36,26 @@ This enemy's behaviour dishes out few problems:
 3. Enemies have no... flavor, each enemy is like the last one all that matter are the stats, a name doesn't make something unique if it acts similarly.
 
 ### The fixes:
+- Have a 25% to get a passive encounter when you press explore.
+- Add new "encounters.csv"
 Adding some more encounters rather than just enemies:
 - Wandering merchant(s)(25% rate): Can be "encountered" by depth 11+, they sell you items for `(base store cost * 1.3)` the cost, but have a chance to have rarer unpurchaseable loot on them `(still cost * 1.3)`. They also accept to take loot for `int(35% of item's price)` sell value. Has a chance to be thief merchant.
 - Thief merchant(s) (11% rate): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
 - Treasure chest(s) (25% rate): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
 - Mimic chest(s) (5% rate): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
 - Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
-> Sculptures (or boons) (20% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
+> Sculptures (or boons) (18% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
 >
     Of resting: better rest odd for three time (+15%)
-    Of survival: higher rest heal for three time (only on success) (+15% missing HP & mana).
+    Of survival: higher rest heal for three time (only on success) (+15% of max HP & mana, so 45% per rest).
     Of Prosperity: Some more gold income (+12% on next win)
     Of Intellect: A boost of exp (+30% on next win)
     Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
     Of fear: Entering combat, your **charisma** (coming up) stat is multiplied by -1, clears at combat's end.
 
 
-    Any of those sculptures have a chance to fail.. The gods have their own reasons.
+    Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
 - Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
-- Add new "encounters.csv"
 
 And now for the main event:
 
@@ -72,14 +73,14 @@ Following the solutions enemies encountered now have their nuggings installed to
 >>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a 15% chance to counter attack
 >>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
 >> - 45% and less:
->>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp.
+>>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp. nor count towards a defeat x number quest
 
 > enemy thought process, but it's groups:
->> - all members at 100% ~ 80% of HP, the group will priorities attacking same logic as charging
+>> - all members at 100% ~ 80% of HP, the one member uses the solo phase 1 odds (60/20/20)
 >>> other member or 2 members may support attack, or defend themselves (60 norm/30 charge/10 def)
 >> - any single member at 80% ~ 45% of HP, choose between attempting to defend and attacking
->>> other member or 2 members might attack, defend, or attemt to heal the most injured, non -attack memeber (45 atk/15 chrg/20 def/20 heal), can't heal selves.
->>>> succesful heal attempts heal the injured enemy for 12% missing HP.
+>>> other member or 2 members might attack, defend, or attempt to heal the most injured, non -attack member (45 atk/15 chrg/20 def/20 heal), can't heal selves.
+>>>> successful heal attempts heal the injured enemy for 12% missing HP.
 >> - single member at 45% and less:
 >>> Same as singular, just if that one flees, the rest stay. The others use the phase 2 support odds, so they may still heal it.
 
