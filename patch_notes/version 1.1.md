@@ -228,7 +228,7 @@ Coming through like a truck, here are current specific unlockables;
 |Lucky clover|No|0|0|0|**2**|0|0|15|12|Yes|Yes|
 |Magic mushroom|No|3|3|3|**3**|3|3|3|5|No|Yes|
 |Mana potion|Yes|0|0|0|**0**|0|0|0|0|No|No|
-|Mana rock|No|0|0|2|0|**0**|6|1|35|Yes|No|
+|Mana rock|No|0|0|2|**0**|0|6|1|35|Yes|No|
 |Mana rod|No|0|0|15|**0**|0|0|0|5|Yes|Yes|
 |Mana surge book|Yes|0|0|0|**0**|0|0|0|0|No|No|
 |Mind Shocker|No|10|5|-10|**-6**|4|0|4|7|No|Yes|
@@ -239,7 +239,7 @@ Coming through like a truck, here are current specific unlockables;
 |Power ring|No|5|0|0|**-1**|2|0|0|32|Yes|Yes|
 |Scroll|No|0|0|7|**0**|0|3|0|25|Yes|Yes|
 |Scroll of doom|Yes|0|0|0|**0**|0|0|0|0|No|No|
-|Sleight of stats|No|0|0|0|**0**|**0|0|0|6|Yes|No|
+|Sleight of stats|No|0|0|0|**0**|0|0|0|6|Yes|No|
 |Smart ring|No|0|0|5|**3**|2|0|0|32|Yes|Yes|
 |Speed ring|No|0|5|0|**0**|2|0|0|32|Yes|Yes|
 |Spiked gloves|No|6|-2|0|**-2**|0|0|2|22|Yes|Yes|
