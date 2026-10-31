@@ -56,6 +56,7 @@ Adding some more encounters rather than just enemies:
 
     Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
 - Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
+- Unlockables: While Pyrpg stayed an open book, tasks which unlock content fill the game's replayability. 
 
 And now for the main event:
 
