@@ -206,3 +206,51 @@ Coming through like a truck, here are current specific unlockables;
 |Class|Strength|Agility|Intelligence|Charisma|Defence|Magic|Luck|
 |---|---|---|---|---|---|---|---|
 |knight|8|5|4|10|8|3|8|
+
+## Items.
+|Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defence|Magic|Luck|Rarity|Buyable|Droppable|
+|------|-----|----|----|----|----|----|---|---|---|---|---|
+|Arcane ring|No|0|0|3|**0**|2|5|0|32|Yes|Yes|
+|Beam staff|No|0|0|3|**0**|0|3|1|12|Yes|No|
+|Berserker armor|No|2|0|0|**-2**|4|0|0|1|Yes|No|
+|Blade rush|Yes|0|0|0|**0**|0|0|0|22|Yes|No|
+|Bloody crown|No|-6|2|9|**1**|-7|4|-1|6|No|Yes|
+|Bomb|Yes|0|0|0|**0**|0|0|0|50|Yes|No|
+|Cursed blade|No|6|0|0|**-1**|-3|0|-2|14|No|Yes|
+|Dagger|No|1|3|0|**3**|0|0|1|30|Yes|Yes|
+|Diamond sword|No|8|-3|0|**1**|2|1|3|15|Yes|Yes|
+|Dice machine|Yes|0|0|0|**0**|0|0|0|20|Yes|No|
+|Golden ring|No|0|0|0|**5**|2|0|5|32|No|Yes|
+|Hard ring|No|0|0|0|**0**|7|0|0|32|Yes|Yes|
+|Health potion|Yes|0|0|0|**0**|0|0|0|0|No|No|
+|Hexing amulet|No|0|0|0|**0**|0|3|-9|10|No|Yes|
+|Iron sword|No|4|1|0|**0**|1|0|2|30|Yes|No|
+|Lucky clover|No|0|0|0|**2**|0|0|15|12|Yes|Yes|
+|Magic mushroom|No|3|3|3|**3**|3|3|3|5|No|Yes|
+|Mana potion|Yes|0|0|0|**0**|0|0|0|0|No|No|
+|Mana rock|No|0|0|2|0|**0**|6|1|35|Yes|No|
+|Mana rod|No|0|0|15|**0**|0|0|0|5|Yes|Yes|
+|Mana surge book|Yes|0|0|0|**0**|0|0|0|0|No|No|
+|Mind Shocker|No|10|5|-10|**-6**|4|0|4|7|No|Yes|
+|Nature's codex|Yes|0|0|0|**0**|0|0|0|17|Yes|Yes|
+|Necronomicon|No|0|0|10|**-4**|0|-10|2|10|Yes|Yes|
+|Nullifier|No|8|-5|-4|**-3**|-2|-1|0|9|No|Yes|
+|Nuts|Yes|0|0|0|**0**|0|0|0|45|No|Yes|
+|Power ring|No|5|0|0|**-1**|2|0|0|32|Yes|Yes|
+|Scroll|No|0|0|7|**0**|0|3|0|25|Yes|Yes|
+|Scroll of doom|Yes|0|0|0|**0**|0|0|0|0|No|No|
+|Sleight of stats|No|0|0|0|**0**|**0|0|0|6|Yes|No|
+|Smart ring|No|0|0|5|**3**|2|0|0|32|Yes|Yes|
+|Speed ring|No|0|5|0|**0**|2|0|0|32|Yes|Yes|
+|Spiked gloves|No|6|-2|0|**-2**|0|0|2|22|Yes|Yes|
+|Starter gear|No|1|1|1|**1**|1|1|1|60|Yes|No|
+|Steel shield|No|0|-1|0|**2**|7|0|0|30|Yes|Yes|
+|Swift coat|No|0|7|2|**6**|3|0|1|18|Yes|No|
+|Thunder apprentice|Yes|0|0|0|**0**|0|0|0|25|Yes|No|
+|Thunder disciple|Yes|0|0|0|**0**|0|0|0|0|No|No|
+|Thunder master|Yes|0|0|0|**0**|0|0|0|0|No|No|
+|Timer|Yes|0|0|0|**0**|0|0|0|15|Yes|No|
+|Turtle shell|No|0|-7|2|**2**|12|0|0|14|Yes|No|
+|Voodoo doll|No|2|0|3|**-3**|0|-1|-10|10|No|Yes|
+|Voucher|Yes|0|0|0|**0**|0|0|0|15|No|Yes|
+|Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
