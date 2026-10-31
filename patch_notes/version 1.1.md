@@ -56,7 +56,7 @@ Adding some more encounters rather than just enemies:
 
     Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
 - Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
-- Unlockables: While Pyrpg stayed an open book, tasks which unlock content fill the game's replayability. 
+- Unlockables: PYRPG has always been an open book, but content you unlock through tasks adds replayability, and it's satisfying to earn.
 
 And now for the main event:
 
@@ -193,3 +193,11 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 |Mimic|0|20|5|8|12|0|
 > Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1)`, past depth 50 buff are also included. Enemy encounter calculations do not affect Mimics.
 >> Same goes for thief merchant, only if it is a thief merchant
+
+## Unlockables:
+Coming through like a truck, here are current specific unlockables;
+
+- Necromancer unlock: As a mage, defeat 15 enemies with -lck stats, or as a mage, buy/get and equip the Necronomicon item.
+- Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
+- Tank unlock: With any class, block at least 80 physical damage, or with any class, raise your defence stat to be > 10
+- Monk unlock: With any class, pray to a sculpture 20 times.
