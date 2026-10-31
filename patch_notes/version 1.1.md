@@ -197,7 +197,8 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 ## Unlockables:
 Coming through like a truck, here are current specific unlockables;
 
-- Necromancer unlock: As a mage, defeat 15 enemies with -lck stats, or as a mage, buy/get and equip the Necronomicon item.
+- Necromancer unlock: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip the Necronomicon item.
 - Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
 - Tank unlock: With any class, block at least 80 physical damage, or with any class, raise your defence stat to be > 10
 - Monk unlock: With any class, pray to a sculpture 20 times.
+- Knight* unlock: With any class, complete 5 quests.
