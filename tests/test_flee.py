@@ -49,7 +49,7 @@ def test_stock_roles_land_between_the_floor_and_cap():
         assert 20 <= chance <= 60, f"{role}: {chance}%"
 
 
-STATS = {'Strength': 2, 'Agility': 0, 'Intelligence': 2, 'Defence': 2, 'Magic': 2, 'Luck': 2}
+STATS = {'Strength': 2, 'Agility': 0, 'Intelligence': 2, 'Defense': 2, 'Magic': 2, 'Luck': 2}
 NATURAL_MAX_HP = 22  # what calculate_hp gives for STATS regardless of Agility
 
 
@@ -97,7 +97,7 @@ def test_fled_grants_no_gold_exp_or_loot(monkeypatch):
     game = PYRPG.__new__(PYRPG)
     game.player_data = PlayerData(name="T", role="warrior", level=1, hp=30,
                                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': 0,
-                                          'Defence': 5, 'Magic': 5, 'Luck': 5}, max_hp=30)
+                                          'Defense': 5, 'Magic': 5, 'Luck': 5}, max_hp=30)
     monkeypatch.setattr("game.pyrpg.start_combat", lambda player_data, enemy_name, group_size: ("fled", 30, None))
     monkeypatch.setattr("game.pyrpg.get_encounter_enemy", lambda power, depth=None: "Bandit")
     monkeypatch.setattr(game, "auto_save_player_state", lambda: None)

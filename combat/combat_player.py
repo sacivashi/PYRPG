@@ -80,8 +80,8 @@ class Player:
 
     @staticmethod
     def calculate_hp(stats):
-        # max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)
-        return int(max(22, abs(int(stats['Strength'])) * 0.95 + abs(int(stats['Defence'])) * 2.3))
+        # max(22, abs(Strength) * 0.95 + abs(Defense) * 2.3)
+        return int(max(22, abs(int(stats['Strength'])) * 0.95 + abs(int(stats['Defense'])) * 2.3))
 
 
     @staticmethod
@@ -131,7 +131,7 @@ class Player:
     def calculate_damage(self, str_percent=0.5, luck_range=(0, 5)):
         stats = {k: int(v) for k, v in self.stats.items()}
 
-        offensive_stats = {k: v for k, v in stats.items() if k != 'Defence'}
+        offensive_stats = {k: v for k, v in stats.items() if k != 'Defense'}
         highest_stat_value = max(offensive_stats.values())
 
         strength_bonus = stats.get('Strength', 0) * str_percent

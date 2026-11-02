@@ -4,7 +4,7 @@ from players.player_data import PlayerData
 from players.save import put_new_player
 from util.file_io import get_player
 
-STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defence': 5, 'Magic': 5, 'Luck': 5}
+STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defense': 5, 'Magic': 5, 'Luck': 5}
 
 
 def make_game(**overrides):

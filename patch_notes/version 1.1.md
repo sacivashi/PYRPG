@@ -13,7 +13,7 @@ quite allot really:
     - Better physical damage system, which brought all roles so far into the early game combat win percentages to 80+%. 
     - Better enemies difficulty encounters logic which goes up with in game depth.
     - Spell & ability damage seperate from physical.
-    - New damage type "searing" which bypasses every kind of defense/defence/corruption.
+    - New damage type "searing" which bypasses every kind of defense/defense/corruption.
 - Allot more items and consumables
 - New unique roles.
 - spell/ability learning with level or by consumable usage.
@@ -101,7 +101,7 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 >> charisma stat doesn't benefit combat damage, or encounter calculations
 
 ## here are some numbers! (charisma to roles):
-|Class|Strength|Agility|Intelligence|**Charisma**|Defence|Magic|Luck|
+|Class|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
 |druid|4|4|6|**3**|4|6|4|
 |dwarf|7|3|5|**1**|7|3|0|
@@ -193,22 +193,22 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 > Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1)`, past depth 50 buff are also included. Enemy encounter calculations do not affect Mimics.
 >> Same goes for thief merchant, only if it is a thief merchant
 
-## Unlockables:
-Coming through like a truck, here are current specific unlockables;
+## Unlock-ables:
+Coming through like a truck, here are current specific unlock-ables;
 
 - Necromancer unlock: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip the Necronomicon item.
 - Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
-- Tank unlock: With any class, block at least 80 physical damage, or with any class, raise your defence stat to be > 10
+- Tank unlock: With any class, block at least 80 physical damage, or with any class, raise your defense stat to be > 10
 - Monk unlock: With any class, prey to a sculpture 20 times.
 - **Knight** unlock: With any class, complete 5 quests.
 
 ## knight.
-|Class|Strength|Agility|Intelligence|Charisma|Defence|Magic|Luck|
+|Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
 |knight|8|5|4|10|8|3|8|
 
 ## Items.
-|Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defence|Magic|Luck|Rarity|Buyable|Droppable|
+|Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
 |------|-----|----|----|----|----|----|---|---|---|---|---|
 |Arcane ring|No|0|0|3|**0**|2|5|0|32|Yes|Yes|
 |Beam staff|No|0|0|3|**0**|0|3|1|12|Yes|No|
@@ -254,3 +254,6 @@ Coming through like a truck, here are current specific unlockables;
 |Voodoo doll|No|2|0|3|**-3**|0|-1|-10|10|No|Yes|
 |Voucher|Yes|0|0|0|**0**|0|0|0|15|No|Yes|
 |Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
+
+Miscellaneous updates:
+- Change player "Defence" to "Defense" (yes finally).

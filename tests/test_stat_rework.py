@@ -2,7 +2,7 @@ from combat.combat import Combat
 from combat.damage_calculator import DamageCalculator
 from players.player_data import PlayerData
 
-STATS = {'Strength': 5, 'Agility': 0, 'Intelligence': 0, 'Defence': 5, 'Magic': 0, 'Luck': 0}
+STATS = {'Strength': 5, 'Agility': 0, 'Intelligence': 0, 'Defense': 5, 'Magic': 0, 'Luck': 0}
 
 
 def make_combat(stats=STATS, enemy="Bandit", **overrides):
@@ -94,18 +94,18 @@ def test_strength_curse_heals_after_a_landed_hit(monkeypatch):
 
 def test_physical_damage_formula():
     # int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2)
-    stats = {'Strength': 6, 'Agility': 4, 'Intelligence': 4, 'Defence': 6, 'Magic': 3, 'Luck': 1}
+    stats = {'Strength': 6, 'Agility': 4, 'Intelligence': 4, 'Defense': 6, 'Magic': 3, 'Luck': 1}
     assert DamageCalculator.calculate_base_damage(stats) == int((17 + 15) ** 0.5 * 2.2) == 12
 
 
 def test_negative_physical_stats_count_by_their_size():
-    monk = {'Strength': 5, 'Agility': 5, 'Defence': -9, 'Luck': 1}
-    mirrored = {'Strength': 5, 'Agility': 5, 'Defence': 9, 'Luck': 1}
+    monk = {'Strength': 5, 'Agility': 5, 'Defense': -9, 'Luck': 1}
+    mirrored = {'Strength': 5, 'Agility': 5, 'Defense': 9, 'Luck': 1}
     assert DamageCalculator.calculate_base_damage(monk) == DamageCalculator.calculate_base_damage(mirrored) == 13
 
 
 def test_intelligence_and_magic_dont_add_physical_damage():
-    plain = {'Strength': 5, 'Agility': 5, 'Defence': 5, 'Luck': 5, 'Intelligence': 0, 'Magic': 0}
+    plain = {'Strength': 5, 'Agility': 5, 'Defense': 5, 'Luck': 5, 'Intelligence': 0, 'Magic': 0}
     caster = {**plain, 'Intelligence': 50, 'Magic': 50}
     assert DamageCalculator.calculate_base_damage(plain) == DamageCalculator.calculate_base_damage(caster)
 
@@ -115,13 +115,13 @@ def test_zero_stats_still_hit_for_8():
 
 
 def test_positive_luck_adds_no_random_bonus_anymore():
-    stats = {'Strength': 5, 'Agility': 5, 'Defence': 5, 'Luck': 9}
+    stats = {'Strength': 5, 'Agility': 5, 'Defense': 5, 'Luck': 9}
     assert {DamageCalculator.calculate_player_damage(stats)[0] for _ in range(50)} == {DamageCalculator.calculate_base_damage(stats)}
 
 
 # --- Arrowshot (Ranger's basic attack) -----------------------------------------------------------
 
-RANGER = {'Strength': 3, 'Agility': 11, 'Intelligence': 6, 'Defence': 2, 'Magic': 2, 'Luck': 9}
+RANGER = {'Strength': 3, 'Agility': 11, 'Intelligence': 6, 'Defense': 2, 'Magic': 2, 'Luck': 9}
 
 
 def test_arrowshot_formula():
@@ -151,16 +151,16 @@ def test_rangers_start_knowing_arrowshot():
 # --- v1.0 abilities ------------------------------------------------------------------------------
 
 def test_ability_formulas():
-    stats = {'Strength': 6, 'Agility': 9, 'Intelligence': 4, 'Defence': 12, 'Magic': 3, 'Luck': 1}
+    stats = {'Strength': 6, 'Agility': 9, 'Intelligence': 4, 'Defense': 12, 'Magic': 3, 'Luck': 1}
     assert DamageCalculator.ability_damage("Backstab", stats) == int(15 + 9 * 0.8) == 22
     assert DamageCalculator.ability_damage("Blade bonk", stats) == int(5 + 6 * 0.55) == 8
     assert DamageCalculator.ability_damage("Shield bash", stats) == int(12 * 1.5) == 18
-    assert DamageCalculator.ability_damage("Shield bash", {**stats, 'Defence': -9}) == 0   # no negative hits
+    assert DamageCalculator.ability_damage("Shield bash", {**stats, 'Defense': -9}) == 0   # no negative hits
 
 
 def test_backstab_searing_ignores_defense_and_corruption(monkeypatch):
     monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)
-    rogue = {'Strength': 5, 'Agility': 9, 'Intelligence': 5, 'Defence': 4, 'Magic': 2, 'Luck': 9}
+    rogue = {'Strength': 5, 'Agility': 9, 'Intelligence': 5, 'Defense': 4, 'Magic': 2, 'Luck': 9}
     combat = make_combat(rogue, enemy="Dragon", role="rogue", known_spells=["Backstab"])
     dragon = combat.enemies[0]
     dragon.corruption = 50                                   # would swallow any normal hit
@@ -171,7 +171,7 @@ def test_backstab_searing_ignores_defense_and_corruption(monkeypatch):
 
 def test_shield_bash_is_physical(monkeypatch):
     monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)
-    tank = {'Strength': 0, 'Agility': -5, 'Intelligence': 2, 'Defence': 12, 'Magic': 1, 'Luck': 5}
+    tank = {'Strength': 0, 'Agility': -5, 'Intelligence': 2, 'Defense': 12, 'Magic': 1, 'Luck': 5}
     combat = make_combat(tank, enemy="Skeleton", role="tank", known_spells=["Shield bash"])   # Defense 14
     before = combat.enemies[0].hp
     combat.cast("Shield bash")
@@ -181,7 +181,7 @@ def test_shield_bash_is_physical(monkeypatch):
 
 def test_berserk_scream_boosts_physical_hits_and_drains_intelligence(monkeypatch):
     monkeypatch.setattr("combat.combat.random.randint", lambda a, b: b)
-    dwarf = {'Strength': 7, 'Agility': 3, 'Intelligence': 5, 'Defence': 7, 'Magic': 3, 'Luck': 0}
+    dwarf = {'Strength': 7, 'Agility': 3, 'Intelligence': 5, 'Defense': 7, 'Magic': 3, 'Luck': 0}
     combat = make_combat(dwarf, enemy="Dragon", role="dwarf", known_spells=["Berserk scream"])
     combat.cast("Berserk scream")
     assert combat.berserk_bonus == int(max(1, 7 * 0.45)) == 3
@@ -204,11 +204,11 @@ def test_berserk_bonus_has_a_floor_of_1():
 def test_defend_block_formula():
     assert DamageCalculator.defend_block(12) == 9
     assert DamageCalculator.defend_block(20) == 10          # capped
-    assert DamageCalculator.defend_block(-9) == 0           # -Defence blocks nothing
+    assert DamageCalculator.defend_block(-9) == 0           # -Defense blocks nothing
 
 
 def test_defending_blocks_every_hit_until_your_next_turn(monkeypatch):
-    tank = {'Strength': 0, 'Agility': 5, 'Intelligence': 2, 'Defence': 12, 'Magic': 1, 'Luck': 5}
+    tank = {'Strength': 0, 'Agility': 5, 'Intelligence': 2, 'Defense': 12, 'Magic': 1, 'Luck': 5}
     combat = make_combat(tank, enemy="Bear")
     monkeypatch.setattr(DamageCalculator, "calculate_enemy_damage", staticmethod(lambda stats, name: (20, [])))
     monkeypatch.setattr(DamageCalculator, "roll_dodge", staticmethod(lambda bonus, agility=0: (False, False)))
@@ -227,3 +227,8 @@ def test_defend_ends_when_your_turn_comes_back(monkeypatch):
     combat.current_turn = "player"
     combat.player_turn()
     assert combat.defending is False
+
+
+def test_old_saves_read_defence_as_defense():
+    from util.file_io import _migrate_stats
+    assert _migrate_stats({'Strength': 3, 'Defence': 7}) == {'Strength': 3, 'Defense': 7}

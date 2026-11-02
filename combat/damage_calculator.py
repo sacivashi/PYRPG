@@ -5,7 +5,7 @@ import math
 class DamageCalculator:
     """Damage calculation system — v1.0 patch notes formulas (physical/magic split)"""
 
-    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck', 'Defence']
+    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck', 'Defense']
 
     # No source of evasion can push a dodge chance past this. Anything that adds evasion later
     # (e.g. gear) should be summed into calculate_evasion_chance so this cap covers it too.
@@ -36,7 +36,7 @@ class DamageCalculator:
     @staticmethod
     def calculate_base_damage(attacker_stats, weapon_bonus=0):
         """v1.0 physical damage: int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2).
-        Every physical stat counts (Defence too — you can hit with your shield), each by its size,
+        Every physical stat counts (Defense too — you can hit with your shield), each by its size,
         so a negative stat adds as much as a positive one. The square root keeps high-stat roles
         from running away with it; the +15 gives everyone a floor of 8."""
         stats = {k: int(v) for k, v in attacker_stats.items()}
@@ -74,7 +74,7 @@ class DamageCalculator:
         "Arrowshot": lambda s: int(s.get('Agility', 0) * 0.7 + abs(s.get('Magic', 0)) * 0.3),
         "Backstab": lambda s: int(15 + s.get('Agility', 0) * 0.8),
         "Blade bonk": lambda s: int(5 + s.get('Strength', 0) * 0.55),
-        "Shield bash": lambda s: int(s.get('Defence', 0) * 1.5),
+        "Shield bash": lambda s: int(s.get('Defense', 0) * 1.5),
     }
 
     @staticmethod
@@ -89,7 +89,7 @@ class DamageCalculator:
 
     @staticmethod
     def defend_block(defence):
-        """Defending: on top of the usual Defence %, block a flat min(10, max(0, def * 0.75))"""
+        """Defending: on top of the usual Defense %, block a flat min(10, max(0, def * 0.75))"""
         return min(10, max(0, defence * 0.75))
 
     @staticmethod
@@ -186,7 +186,7 @@ class DamageCalculator:
 
     @staticmethod
     def player_damage_reduction(defence):
-        """+Defence: take min(25, 2 + def * 0.7)% less damage. 0 or -Defence: no reduction."""
+        """+Defense: take min(25, 2 + def * 0.7)% less damage. 0 or -Defense: no reduction."""
         return min(25, 2 + defence * 0.7) / 100 if defence > 0 else 0
 
     @staticmethod
@@ -195,9 +195,9 @@ class DamageCalculator:
             if is_enemy:
                 final_damage, reflected = DamageCalculator.enemy_defence_adjustment(incoming_damage, defence, "physical")
                 return final_damage, ("reflect_damage", reflected)
-            # Player -Defence: max(max_hp * 0.05, abs(-def)) bonus damage taken
+            # Player -Defense: max(max_hp * 0.05, abs(-def)) bonus damage taken
             extra_damage = max(max_hp * 0.05, abs(defence))
-            # Player -Defence: reflect max(15, min(35, max(damage_taken, abs(-def)) * 0.35))% of flat damage (pre-bonus)
+            # Player -Defense: reflect max(15, min(35, max(damage_taken, abs(-def)) * 0.35))% of flat damage (pre-bonus)
             reflect_percent = max(15, min(35, max(incoming_damage, abs(defence)) * 0.35)) / 100
             return incoming_damage + extra_damage, ("reflect_damage", incoming_damage * reflect_percent)
         if is_enemy:
@@ -210,10 +210,8 @@ class DamageCalculator:
         counter_effects = []
         final_damage = incoming_damage
 
-        # Defence (enemies use 'Defense', players use 'Defence')
-        defence_key = 'Defense' if is_enemy else 'Defence'
         final_damage, defence_effect = DamageCalculator.apply_defence_modifier(
-            final_damage, stats.get(defence_key, 0), is_enemy, max_hp
+            final_damage, stats.get('Defense', 0), is_enemy, max_hp
         )
         if defence_effect:
             counter_effects.append(defence_effect)

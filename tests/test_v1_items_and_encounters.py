@@ -5,7 +5,7 @@ from enemies.enemies_data import (DEATH, death_chance, encounter_target_ratio, g
 from game.pyrpg import PYRPG
 from players.player_data import PlayerData
 
-STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 5, 'Defence': 5, 'Magic': 5, 'Luck': 5}
+STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 5, 'Defense': 5, 'Magic': 5, 'Luck': 5}
 
 
 def make_pd(**overrides):

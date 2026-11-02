@@ -1,4 +1,4 @@
-Name,Consumable,Strength,Agility,Intelligence,Charisma,Defence,Magic,Luck,Rarity,Buyable,Droppable
+Name,Consumable,Strength,Agility,Intelligence,Charisma,Defense,Magic,Luck,Rarity,Buyable,Droppable
 Arcane ring,No,0,0,3,0,2,5,0,32,Yes,Yes
 Beam staff,No,0,0,3,0,0,3,1,12,Yes,No
 Berserker armor,No,2,0,0,-2,4,0,0,1,Yes,No

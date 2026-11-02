@@ -2,7 +2,7 @@ from adventures.adventures import ADVENTURES, cave_entrance, parse_spawn, roll_s
 from game.pyrpg import PYRPG
 from players.player_data import PlayerData
 
-STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 5, 'Defence': 5, 'Magic': 5, 'Luck': 5}
+STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 5, 'Defense': 5, 'Magic': 5, 'Luck': 5}
 CAVE = {"Type": "Adventure", "Description": "Cave entrance", "Enemy_spawn": "Bear *2"}
 
 

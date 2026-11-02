@@ -20,7 +20,7 @@ def test_no_evasion_from_zero_or_negative_agility():
 
 def test_high_agility_defender_dodges_about_35_percent_of_hits():
     random.seed(1234)
-    stats = {'Agility': 20, 'Defence': 0}
+    stats = {'Agility': 20, 'Defense': 0}
     hits = 20000
     dodges = sum(
         1 for _ in range(hits)

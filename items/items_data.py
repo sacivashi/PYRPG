@@ -1,6 +1,6 @@
 from util.file_io import get_data, read_csv
 
-STAT_COLUMNS = ['Strength', 'Agility', 'Intelligence', 'Defence', 'Magic', 'Luck']
+STAT_COLUMNS = ['Strength', 'Agility', 'Intelligence', 'Defense', 'Magic', 'Luck']
 
 
 def get_item_names():

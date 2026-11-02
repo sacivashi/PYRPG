@@ -2,14 +2,14 @@ from items.items_data import get_item_stats, get_item_price, is_item_buyable, is
 
 
 def test_get_item_stats_returns_all_stat_deltas_including_zero():
-    # Iron Sword (v1.0): Strength 4, Agility 1, Defence 1, Luck 2, everything else 0 — all six
+    # Iron Sword (v1.0): Strength 4, Agility 1, Defense 1, Luck 2, everything else 0 — all six
     # STAT_COLUMNS should come back, not just the non-zero ones.
     stats = get_item_stats("Iron Sword")
     assert stats == {
         'Strength': 4,
         'Agility': 1,
         'Intelligence': 0,
-        'Defence': 1,
+        'Defense': 1,
         'Magic': 0,
         'Luck': 2,
     }

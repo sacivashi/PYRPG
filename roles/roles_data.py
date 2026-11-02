@@ -27,8 +27,8 @@ class RolesExtract:
 
     @staticmethod
     def get_highest_stat_value(role_stats):
-        # Exclude 'Defence' since it's not an offensive stat
-        stats_without_defence = {k: v for k, v in role_stats.items() if k != "Defence"}
+        # Exclude 'Defense' since it's not an offensive stat
+        stats_without_defence = {k: v for k, v in role_stats.items() if k != "Defense"}
 
         # Find and return the highest stat value
         return max(stats_without_defence.values())

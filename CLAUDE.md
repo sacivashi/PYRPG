@@ -67,13 +67,13 @@ Quests live in `data/quests.csv` — columns: `id, title, type, target, amount, 
 
 ### Equipment
 
-`data/items.csv` — columns: `Name, Consumable, Strength, Agility, Intelligence, Defence, Magic, Luck, Rarity, Buyable, Droppable`, where each stat is a *delta* (can be negative) applied on top of the player's base stats, not an absolute value. Read via `get_item_stats()`/`get_item_names()` (`items/items_data.py`), same `get_data()` + `read_csv()` pattern as roles/enemies.
+`data/items.csv` — columns: `Name, Consumable, Strength, Agility, Intelligence, Defense, Magic, Luck, Rarity, Buyable, Droppable`, where each stat is a *delta* (can be negative) applied on top of the player's base stats, not an absolute value. Read via `get_item_stats()`/`get_item_names()` (`items/items_data.py`), same `get_data()` + `read_csv()` pattern as roles/enemies.
 
 `PlayerData.equipped` holds at most one item name (single-slot, no weapon/armor split yet) or `None`. `Player` keeps two stat dicts: `base_stats` (pure copy of `player_data.stats`, what actually gets saved — never mutated by gear) and `stats` (the equipped-adjusted copy used for HP and all combat calculations, built by `Player.apply_equipment(base_stats, equipped_name)`). This split matters because gear can push a stat across zero in either direction — the existing negative-stat combat formulas already handle that fine (same as the curse mechanic crossing a stat through 0), so equipment needed no new combat logic, just the stat-layering.
 
 Rarity is both the drop weight (higher = more common) and the price: `get_item_price()` = `max(15, int(abs(65 - rarity) * 0.65))` — the pivot is a fixed 65, not the highest rarity in the file, so adding a very common item doesn't reprice the shop. Consumables (`Consumable = Yes`) can't be equipped; `manage_loot()` uses them instead (`use_item_outside_combat()`: potions and spell-learning items), and combat-only ones are refused there. Health/Mana potions sit outside the rotating shop stock as always-stocked slots (`PYRPG.ALWAYS_STOCKED`). Some items drop as a stack (`PYRPG.DROP_STACK_SIZES`, e.g. Nuts x4); loot stays a flat list either way, and menus group duplicates for display (`_stacked_loot()`).
 
-Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not something that happens mid-combat. Since max HP derives from Strength+Defence, changing gear changes max HP (and Intelligence gear changes max mana) — `PYRPG._apply_equipment_hp_change()` recomputes both and clamps current HP/mana to the new caps with no free heal on the way up. Level-up points and Sleight of stats work the same way (`_sync_max_hp_after_growth()`: the cap moves, current only clamps). This is deliberately different from `Player._resolve_current_hp()`'s heal-the-gap behavior on load, which is only for HP formula changes between game versions.
+Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not something that happens mid-combat. Since max HP derives from Strength+Defense, changing gear changes max HP (and Intelligence gear changes max mana) — `PYRPG._apply_equipment_hp_change()` recomputes both and clamps current HP/mana to the new caps with no free heal on the way up. Level-up points and Sleight of stats work the same way (`_sync_max_hp_after_growth()`: the cap moves, current only clamps). This is deliberately different from `Player._resolve_current_hp()`'s heal-the-gap behavior on load, which is only for HP formula changes between game versions.
 
 ### Combat System
 
@@ -104,11 +104,11 @@ The core mechanic. Any stat can be negative. Each negative stat gives a debuff +
 | -Strength | Physical attacks/abilities sear you for `int(abs(str) + int(min(max_hp*0.08, abs(str))*0.5))`, hit or miss | Landing heals `min((abs(str)+missing_hp)*0.8, (damage_done+abs(str))*0.65)` |
 | -Agility | Always acts last | `+min(15, max(5, abs(-agi)))%` dodge/counter rate |
 | -Intelligence | `min(35, abs(int)+5)%` chance a spell/ability costs 1.5x mana (or all of it) | Spells deal `int(0.5*spell_damage) + int(min(abs(int)//3, abs(mag)*0.8))` bonus |
-| -Defence | Takes extra `max(max_hp*0.05, abs(-def))` damage | Reflects part of each hit back |
+| -Defense | Takes extra `max(max_hp*0.05, abs(-def))` damage | Reflects part of each hit back |
 | -Magic | 15% less EXP; normal spells weak (`max(0.1, 1+mag*0.1)`) | Cursed spells: cost `min(abs(mag), cost*0.88)` HP, scale with `abs(mag)`, `min(65, int(sqrt(abs(mag))*10))%` to debuff the target |
 | -Luck | `min(35, abs(-lck))%` miss chance | Successful attacks are unavoidable |
 
-+Defence is a flat `min(25, 2 + def*0.7)%` damage reduction (0 or less: none). Defending adds a flat `min(10, max(0, def*0.75))` block on top, to every enemy hit until the player's next turn (`Combat.defending`).
++Defense is a flat `min(25, 2 + def*0.7)%` damage reduction (0 or less: none). Defending adds a flat `min(10, max(0, def*0.75))` block on top, to every enemy hit until the player's next turn (`Combat.defending`).
 
 Physical attack damage (`DamageCalculator.calculate_base_damage`) = `int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2)` — every physical stat counts by its size (negative stats included), so roles land close together; there's no Strength multiplier or +Luck random bonus anymore.
 
@@ -116,7 +116,7 @@ Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II
 
 ### Role and Enemy Stats
 
-- Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defence, Magic, Luck`
+- Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defense, Magic, Luck`
 - Enemies: `data/enemies.csv` — columns: `Name, Corruption, HP, Attack, Defense, Speed, Luck`
 - Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "max_hp", "mana", "stats", "gold", "loot", ...}, ...]}` (every `PlayerData` field). `max_hp` is optional for backward compatibility with older saves (`None` if absent); when present, it lets `Player` detect max_hp increases (formula tweaks, stat changes) on load and heal the character by the difference instead of leaving them stranded below the new cap. `gold`/`loot` are similarly optional, defaulting to `0`/`[]` for saves that predate them.
 
@@ -124,4 +124,4 @@ Roles/enemies stats are read via `RolesExtract` (`roles/roles_data.py`) and `get
 
 ### HP Formula
 
-Player HP = `max(22, abs(Strength) * 0.95 + abs(Defence) * 2.3)` — `Player.calculate_hp()` in `combat/combat_player.py`, used for both new and loaded players.
+Player HP = `max(22, abs(Strength) * 0.95 + abs(Defense) * 2.3)` — `Player.calculate_hp()` in `combat/combat_player.py`, used for both new and loaded players.

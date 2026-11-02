@@ -57,7 +57,7 @@ class Enemy:
             return self.stats['HP']
         # Fallback calculation if no HP stat
         strength = self.stats.get('Strength', 5)
-        defence = self.stats.get('Defence', 5)
+        defence = self.stats.get('Defense', 5)
         return abs((strength + defence) * 2)
 
     def is_alive(self):
@@ -677,10 +677,10 @@ class Combat:
     # --- Defend / enemy turn ------------------------------------------------------------------------
 
     def player_defend(self):
-        """Defend until your next turn: every enemy hit takes your usual Defence % and then a flat
+        """Defend until your next turn: every enemy hit takes your usual Defense % and then a flat
         min(10, max(0, def * 0.75)) less. Searing damage isn't blocked."""
         self.defending = True
-        block = DamageCalculator.defend_block(self._live_stats().get('Defence', 0))
+        block = DamageCalculator.defend_block(self._live_stats().get('Defense', 0))
         print(f"You take a defensive stance, blocking {round(block, 1)} damage from each hit until your next turn.")
 
     def enemy_turn(self):
@@ -736,9 +736,9 @@ class Combat:
             unavoidable=enemy_unavoidable, max_hp=self.player.max_hp
         )
 
-        # Defending: a flat block on top of the Defence % already applied above
+        # Defending: a flat block on top of the Defense % already applied above
         if self.defending and final_damage > 0:
-            block = DamageCalculator.defend_block(self._live_stats().get('Defence', 0))
+            block = DamageCalculator.defend_block(self._live_stats().get('Defense', 0))
             if block > 0:
                 final_damage = round(max(0, final_damage - block), 2)
                 print(f"Your guard blocks {round(block, 1)} damage!")
@@ -796,7 +796,7 @@ class Combat:
     def apply_curse_to_player(self, curse_amount):
         """Apply stat curse from enemy negative luck — temporary, reversed after combat"""
         player_stats = self._live_stats()
-        curseable_stats = ['Strength', 'Agility', 'Intelligence', 'Defence', 'Magic', 'Luck']
+        curseable_stats = ['Strength', 'Agility', 'Intelligence', 'Defense', 'Magic', 'Luck']
         # All non-zero stats can be cursed
         available_stats = [s for s in curseable_stats if player_stats.get(s, 0) != 0]
 

@@ -83,6 +83,13 @@ def write_json(file_name, data):
         json.dump(data, file, indent=4)
 
 
+def _migrate_stats(stats):
+    """Saves from before the Defence -> Defense rename keep the old key; read it under the new one."""
+    if "Defence" in stats:
+        stats = {("Defense" if k == "Defence" else k): v for k, v in stats.items()}
+    return stats
+
+
 def get_player(player_name):
     players_json_path = get_data("players_json")
     data = read_json(players_json_path)
@@ -95,7 +102,7 @@ def get_player(player_name):
                 level=player["level"],
                 hp=player["hp"],
                 mana=player.get("mana"),
-                stats=player["stats"],
+                stats=_migrate_stats(player["stats"]),
                 max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
                 gold=player.get("gold", 0),
                 loot=player.get("loot", []),
