@@ -1,3 +1,4 @@
+from items.items_data import get_item_names
 from util.file_io import get_data, read_csv
 
 # data/quests.csv — one row per quest:
@@ -6,11 +7,13 @@ from util.file_io import get_data, read_csv
 #   type        what counts as progress:
 #                 "defeat" — win a fight against `target` (an enemy name)
 #                 "use"    — do `target` (an action, e.g. "Fast travel")
+#                 "reach"  — explore to depth `target` (fast travel doesn't count)
+#                 "spend"  — give `target` gold, at the quest board
 #   target      matched case-insensitively
 #   amount      how many times it has to happen
-#   reward      a number = gold, or a perk name from PERKS below
+#   reward      a number = gold, a perk name from PERKS below, or an item name from items.csv
 #   description shown on the quest board (quote it if it contains commas)
-SUPPORTED_TYPES = {"defeat", "use"}
+SUPPORTED_TYPES = {"defeat", "use", "reach", "spend"}
 
 # Non-gold rewards. Claiming one adds it to PlayerData.perks; whatever it affects uses it up.
 PERKS = {
@@ -23,7 +26,7 @@ FAST_TRAVEL = "fast travel"
 
 def get_quests():
     """{quest_id: {title, type, target, amount, reward, description}}, in file order.
-    reward is an int (gold) or a str (a PERKS key)."""
+    reward is an int (gold) or a lowercase str (a PERKS key or an item name)."""
     reader = read_csv(get_data("quests_csv"))
     headers = reader[0]
     quests = {}
@@ -38,8 +41,17 @@ def get_quests():
     return quests
 
 
+def reward_item(reward):
+    """The items.csv name a reward refers to (rewards are stored lowercase), or None"""
+    if isinstance(reward, int):
+        return None
+    return next((name for name in get_item_names() if name.lower() == reward), None)
+
+
 def describe_reward(reward):
-    return f"{reward} gold" if isinstance(reward, int) else PERKS.get(reward, reward)
+    if isinstance(reward, int):
+        return f"{reward} gold"
+    return PERKS.get(reward) or reward_item(reward) or reward
 
 
 def quest_progress(quest_id, quest, quest_flags):

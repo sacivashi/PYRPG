@@ -13,7 +13,7 @@ from players.save import put_new_player
 from combat.combat_player import Player
 from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
 from spells.spells_data import learning_item_spell, can_learn, level_up_spells
-from quests.quests_data import get_quests, quest_progress, describe_reward, FAST_TRAVEL
+from quests.quests_data import get_quests, quest_progress, describe_reward, reward_item, FAST_TRAVEL
 
 
 class PYRPG:
@@ -116,6 +116,7 @@ class PYRPG:
         """Venture further out, increasing distance from town, and risk a combat encounter"""
         self.player_data.distance += 1
         self.player_data.depth_reached = max(self.player_data.depth_reached, self.player_data.distance)
+        self._record_quest_reach(self.player_data.distance)
         self.enter_combat()
 
     FREE_FAST_TRAVEL = "free_fast_travel"
@@ -482,6 +483,13 @@ class PYRPG:
         """Called when the player does something a "use" quest can ask for (e.g. FAST_TRAVEL)"""
         self._advance_quests("use", action, 1)
 
+    def _record_quest_reach(self, depth):
+        """Called from explore() — completes every unfinished "reach" quest for this depth or shallower"""
+        for quest_id, quest in get_quests().items():
+            if (quest["type"] == "reach" and quest_id not in self.player_data.completed_quests
+                    and depth >= int(quest["target"])):
+                self.player_data.quest_flags[quest_id] = quest["amount"]
+
     def _advance_quests(self, quest_type, target, amount):
         flags = self.player_data.quest_flags
         for quest_id, quest in get_quests().items():
@@ -496,6 +504,8 @@ class PYRPG:
         for quest_id, quest in get_quests().items():
             print(f"\n{quest['title']}: {quest['description']}")
             progress = quest_progress(quest_id, quest, self.player_data.quest_flags)
+            if quest["type"] == "spend" and quest_id not in self.player_data.completed_quests and progress < quest["amount"]:
+                progress = self._offer_quest_payment(quest_id, quest, progress)
 
             if quest_id in self.player_data.completed_quests:
                 print("  Status: Completed.")
@@ -505,14 +515,29 @@ class PYRPG:
                 if choice in ("y", "yes"):
                     if isinstance(reward, int):
                         self.player_data.gold += reward
+                    elif reward_item(reward):
+                        self.player_data.loot.append(reward_item(reward))
                     else:
                         self.player_data.perks.append(reward)
                     self.player_data.completed_quests.append(quest_id)
                     print(f"  Quest complete! Reward: {describe_reward(reward)}.")
+            elif quest["type"] == "spend":
+                print(f"  Status: Needs {quest['target']} gold (you have {self.player_data.gold}).")
             else:
                 print(f"  Status: In progress ({progress}/{quest['amount']}).")
 
         input("\nPress Enter to continue...")
+
+    def _offer_quest_payment(self, quest_id, quest, progress):
+        """A "spend" quest: offer to hand over its target gold. Returns the quest's new progress."""
+        cost = int(quest["target"])
+        if self.player_data.gold < cost:
+            return progress
+        if input(f"  Give {cost} gold? (yes/no): ").strip().lower() not in ("y", "yes"):
+            return progress
+        self.player_data.gold -= cost
+        self.player_data.quest_flags[quest_id] = quest["amount"]
+        return quest["amount"]
 
     def calculate_rest_chance(self):
         """min(60, max(30, Luck + 15))% for Luck >= 0; max(15, 25 - abs(Luck) * 0.48)% for -Luck"""

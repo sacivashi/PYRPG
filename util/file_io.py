@@ -90,12 +90,22 @@ def _migrate_stats(stats):
     return stats
 
 
+def _rescue_item_rewards(perks, loot):
+    """Quest item rewards (e.g. the Nasty Thieves voucher) used to be filed under perks, where
+    nothing ever used them — move them into loot. Returns (perks, loot)."""
+    from quests.quests_data import reward_item
+    items = [reward_item(perk) for perk in perks]
+    return ([perk for perk, item in zip(perks, items) if not item],
+            loot + [item for item in items if item])
+
+
 def get_player(player_name):
     players_json_path = get_data("players_json")
     data = read_json(players_json_path)
 
     for player in data["players"]:
         if player["name"].strip().lower() == player_name.strip().lower():
+            perks, loot = _rescue_item_rewards(player.get("perks", []), player.get("loot", []))
             return PlayerData(
                 name=player["name"],
                 role=player["role"],
@@ -105,7 +115,7 @@ def get_player(player_name):
                 stats=_migrate_stats(player["stats"]),
                 max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
                 gold=player.get("gold", 0),
-                loot=player.get("loot", []),
+                loot=loot,
                 equipped=player.get("equipped"),
                 exp=player.get("exp", 0),
                 in_town=player.get("in_town", True),
@@ -116,7 +126,7 @@ def get_player(player_name):
                 completed_quests=player.get("completed_quests", []),
                 known_spells=player.get("known_spells", []),
                 item_state=player.get("item_state", {}),
-                perks=player.get("perks", []),
+                perks=perks,
             )
 
     return None

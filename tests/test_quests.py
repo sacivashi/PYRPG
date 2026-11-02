@@ -227,7 +227,7 @@ def test_fast_travel_quest_loads_with_a_perk_reward():
 
 def test_fast_travelling_completes_the_quest_and_the_perk_makes_the_next_trip_free(monkeypatch):
     game = make_game(depth_reached=10, gold=100)
-    replies = iter(["10", "", "yes", "", "10", ""])  # travel, enter, claim, enter, travel, enter
+    replies = iter(["10", "", "yes", "no", "", "10", ""])  # travel, enter, claim, skip charity, enter, travel, enter
     monkeypatch.setattr("builtins.input", lambda *_: next(replies, ""))
 
     game.fast_travel()                                    # paid trip: 25 gold, counts for the quest
@@ -250,3 +250,48 @@ def test_the_free_trip_perk_survives_save_and_load(monkeypatch, tmp_path):
                     perks=["free_fast_travel"])
     put_new_player(Player(pd))
     assert get_player("PerkTest").perks == ["free_fast_travel"]
+
+
+# --- reach / spend / item rewards --------------------------------------------------------
+
+def test_exploring_to_depth_15_completes_the_reach_quest(monkeypatch):
+    game = make_game(distance=14)
+    monkeypatch.setattr(PYRPG, "enter_combat", lambda self: None)
+    game.explore()
+    assert game.player_data.quest_flags["spooky_area"] == 1
+
+
+def test_a_shallower_explore_does_not_count(monkeypatch):
+    game = make_game(distance=5)
+    monkeypatch.setattr(PYRPG, "enter_combat", lambda self: None)
+    game.explore()
+    assert "spooky_area" not in game.player_data.quest_flags
+
+
+def test_charity_takes_the_gold_and_gives_its_item(monkeypatch):
+    game = make_game(gold=60, completed_quests=["lost_cat", "nasty_thieves", "fast_travel_system", "spooky_area"])
+    monkeypatch.setattr("builtins.input", lambda *_: "yes")
+    game.quest_board()
+    assert game.player_data.gold == 5
+    assert "charity" in game.player_data.completed_quests
+    assert "Dice machine" in game.player_data.loot
+
+
+def test_charity_needs_the_gold(monkeypatch):
+    game = make_game(gold=20)
+    monkeypatch.setattr("builtins.input", lambda *_: "yes")
+    game.quest_board()
+    assert "charity" not in game.player_data.completed_quests
+
+
+def test_item_rewards_go_to_loot_so_the_voucher_works_in_the_shop(monkeypatch):
+    game = make_game(quest_flags={"nasty_thieves": 2}, completed_quests=["lost_cat", "fast_travel_system", "spooky_area", "charity"])
+    monkeypatch.setattr("builtins.input", lambda *_: "yes")
+    game.quest_board()
+    assert "Voucher" in game.player_data.loot
+    assert "voucher" not in game.player_data.perks
+
+
+def test_a_voucher_stuck_in_perks_moves_to_loot_on_load():
+    from util.file_io import _rescue_item_rewards
+    assert _rescue_item_rewards(["voucher", "free_fast_travel"], ["Nuts"]) == (["free_fast_travel"], ["Nuts", "Voucher"])
