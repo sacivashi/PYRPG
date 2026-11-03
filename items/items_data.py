@@ -3,59 +3,43 @@ from util.file_io import get_data, read_csv
 STAT_COLUMNS = ['Strength', 'Agility', 'Intelligence', 'Defense', 'Magic', 'Luck']
 
 
+def _get_item_row(name):
+    """The items.csv row for this item (matched case-insensitively), or None"""
+    return next((row for row in read_csv(get_data("items_csv")) if row["Name"].lower() == name.lower()), None)
+
+
+def _is_yes(name, column):
+    """Whether the item's `column` says Yes. False for unknown items or a missing column."""
+    row = _get_item_row(name)
+    return bool(row and (row.get(column) or "").strip().lower() == "yes")
+
+
 def get_item_names():
-    reader = read_csv(get_data("items_csv"))
-    return [row[0] for row in reader[1:] if row]
+    return [row["Name"] for row in read_csv(get_data("items_csv"))]
 
 
 def get_item_stats(name):
     """Stat deltas only — non-stat columns (e.g. Rarity) are excluded by name, not position."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]  # First row is the header
-    for row in reader[1:]:  # Skip the header
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return {stat: int(row_by_header[stat]) for stat in STAT_COLUMNS if stat in row_by_header}
-    return None
+    row = _get_item_row(name)
+    if row is None:
+        return None
+    return {stat: int(row[stat]) for stat in STAT_COLUMNS if row.get(stat) is not None}
 
 
 def get_item_rarity(name):
     """Drop weight — higher means more common. Defaults to 1 if no Rarity column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Rarity" not in headers:
-        return 1
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return int(row_by_header["Rarity"])
-    return 1
+    row = _get_item_row(name)
+    return int(row["Rarity"]) if row and row.get("Rarity") else 1
 
 
 def is_item_buyable(name):
     """Whether the item can appear in the shop. Defaults to False if no Buyable column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Buyable" not in headers:
-        return False
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return row_by_header["Buyable"].strip().lower() == "yes"
-    return False
+    return _is_yes(name, "Buyable")
 
 
 def is_item_droppable(name):
     """Whether the item can appear as a random loot drop. Defaults to False if no Droppable column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Droppable" not in headers:
-        return False
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return row_by_header["Droppable"].strip().lower() == "yes"
-    return False
+    return _is_yes(name, "Droppable")
 
 
 def get_droppable_items():
@@ -65,15 +49,7 @@ def get_droppable_items():
 
 def is_item_consumable(name):
     """Whether the item is used-and-removed rather than equipped. Defaults to False if no Consumable column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Consumable" not in headers:
-        return False
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return row_by_header["Consumable"].strip().lower() == "yes"
-    return False
+    return _is_yes(name, "Consumable")
 
 
 PRICE_PIVOT_RARITY = 65  # fixed reference point — adding a very common item no longer reprices the whole shop

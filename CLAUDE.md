@@ -47,7 +47,7 @@ CSV file paths resolve through `util/file_io.py`'s `get_data(node_name)`. Code n
 ```python
 # util/file_io.py
 def get_data(node_name):   # resolves path from env var or default, returns absolute path
-def read_csv(file_name):   # returns list of rows (list of lists) — roles/enemies data
+def read_csv(file_name):   # csv.DictReader rows: one dict per row, keyed by header (row["Defense"]) — never index columns by position
 def read_json(file_name) / write_json(file_name, data)  # player save data
 def get_player(player_name):  # checks data/players.json, returns PlayerData or None
 def delete_player(player_name):  # removes a player entry, returns True/False

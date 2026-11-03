@@ -27,13 +27,9 @@ FAST_TRAVEL = "fast travel"
 def get_quests():
     """{quest_id: {title, type, target, amount, reward, description}}, in file order.
     reward is an int (gold) or a lowercase str (a PERKS key or an item name)."""
-    reader = read_csv(get_data("quests_csv"))
-    headers = reader[0]
     quests = {}
-    for row in reader[1:]:
-        if not row:
-            continue
-        quest = dict(zip(headers, (cell.strip() for cell in row)))
+    for row in read_csv(get_data("quests_csv")):
+        quest = {column: value.strip() for column, value in row.items()}
         quest["type"] = quest["type"].lower()
         quest["amount"] = int(quest["amount"])
         quest["reward"] = int(quest["reward"]) if quest["reward"].isdigit() else quest["reward"].lower()

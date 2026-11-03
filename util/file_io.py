@@ -58,12 +58,10 @@ def get_data(node_name):
 
 
 def read_csv(file_name):
-    data = []
+    """Every row as a dict keyed by the header, e.g. row["Defense"] — columns are found by name,
+    so adding or reordering columns never shifts the others. Blank lines are skipped."""
     with open(file_name, newline='', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            data.insert(len(data), row)
-        return data
+        return [row for row in csv.DictReader(file) if any(cell and cell.strip() for cell in row.values())]
 
 
 def read_json(file_name):

@@ -4,26 +4,13 @@ from util.file_io import get_data, read_csv
 class RolesExtract:
     @staticmethod
     def get_role_names():
-        roles_csv_path = get_data("roles_csv")  # get path from XML
-        csv_data = read_csv(roles_csv_path)     # read CSV file
-        return [row[0] for row in csv_data[1:] if row]  # skip header and take first column only
+        return [row["Class"] for row in read_csv(get_data("roles_csv"))]
 
     @staticmethod
     def get_role_stats_by_name():
-        roles_csv_path = get_data("roles_csv")
-        csv_data = read_csv(roles_csv_path)
-
-        headers = csv_data[0]            # ['name', 'strength', 'dexterity', ...]
-        stat_keys = headers[1:]          # ['strength', 'dexterity', ...]
-
-        role_stats = {}
-        for row in csv_data[1:]:         # skip header
-            if row:
-                name = row[0]
-                stats = {stat_keys[i]: int(row[i + 1]) for i in range(len(stat_keys))}
-                role_stats[name] = stats
-
-        return role_stats
+        # {class: {stat: value}} — every column but Class is a stat
+        return {row["Class"]: {stat: int(value) for stat, value in row.items() if stat != "Class"}
+                for row in read_csv(get_data("roles_csv"))}
 
     @staticmethod
     def get_highest_stat_value(role_stats):

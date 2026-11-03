@@ -56,25 +56,20 @@ def apply_depth_buff(enemy_stats, depth):
 
 
 def get_enemy_names():
-    reader = read_csv(get_data("enemies_csv"))
-    name = random.choice([row[0] for row in reader if row[0] != "Name"])
-    return name
+    return random.choice([row["Name"] for row in read_csv(get_data("enemies_csv"))])
 
 
-def _parse_enemy_row(headers, row):
-    return {"Name": row[0],
-            **{
-                headers[i]: int(row[i].strip()) if row[i].strip().lstrip('-').isdigit() else row[i].strip()
-                for i in range(1, len(headers))
-            }}
+def _parse_enemy_row(row):
+    """Name stays a string; every other column becomes an int where it is one"""
+    return {column: value.strip() if column == "Name" or not value.strip().lstrip('-').isdigit()
+            else int(value.strip())
+            for column, value in row.items()}
 
 
 def get_enemy_stats(name):
-    reader = read_csv(get_data("enemies_csv"))
-    headers = reader[0]  # First row is the header
-    for row in reader[1:]:  # Skip the header
-        if row[0].lower() == name.lower():
-            return _parse_enemy_row(headers, row)
+    for row in read_csv(get_data("enemies_csv")):
+        if row["Name"].lower() == name.lower():
+            return _parse_enemy_row(row)
     return None
 
 
@@ -113,13 +108,11 @@ def get_encounter_weights(player_power, depth=None):
     """[(name, weight), ...] for every randomly-encounterable enemy, reading the CSV once.
     With a depth, the target ratio comes from DEPTH_TARGET_RATIOS instead of the flat default."""
     target_ratio = ENCOUNTER_TARGET_RATIO if depth is None else encounter_target_ratio(depth)
-    reader = read_csv(get_data("enemies_csv"))
-    headers = reader[0]
     weights = []
-    for row in reader[1:]:
-        if not row or row[0].lower() in NEVER_RANDOM_ENEMIES:
+    for row in read_csv(get_data("enemies_csv")):
+        if row["Name"].lower() in NEVER_RANDOM_ENEMIES:
             continue
-        stats = _parse_enemy_row(headers, row)
+        stats = _parse_enemy_row(row)
         weights.append((stats["Name"], get_encounter_weight(get_enemy_threat(stats), player_power, target_ratio)))
     return weights
 

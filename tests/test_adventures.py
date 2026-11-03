@@ -47,11 +47,9 @@ def test_a_cave_chest_is_always_real(monkeypatch):
 
 def test_every_adventure_and_event_in_the_csv_has_a_handler():
     from util.file_io import get_data, read_csv
-    header, *rows = read_csv(get_data("encounters_csv"))
-    type_col, desc_col = header.index("Type"), header.index("Description")
-    for row in rows:
-        if row and row[type_col] in ("Adventure", "Event"):
-            assert row[desc_col] in ADVENTURES
+    for row in read_csv(get_data("encounters_csv")):
+        if row["Type"] in ("Adventure", "Event"):
+            assert row["Description"] in ADVENTURES
 
 
 # --- the strange obelisk -------------------------------------------------------------------------
