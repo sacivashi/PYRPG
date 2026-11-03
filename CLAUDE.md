@@ -16,7 +16,7 @@ Must be run from the project root — imports are root-relative.
 pytest
 ```
 
-`tests/` holds the automated suite (197 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+`tests/` holds the automated suite (205 tests as of this writing). `conftest.py` at the project root is intentionally empty — its presence just tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
 
 ## Working with Patch Notes
 
@@ -59,7 +59,7 @@ Player data flows as the `PlayerData` dataclass (`players/player_data.py`: `name
 
 `mana` is current mana (`None` = full, for new characters and pre-mana saves); max mana is never stored — always derived from gear-adjusted stats (`Player.calculate_mana()`: `max(20, abs(Intelligence) * 4.5)`). `depth_reached` is the deepest `distance` ever reached — only `explore()` raises it, nothing lowers it — and is fast travel's ceiling. `known_spells` holds learned spell/ability names (`spells/spells_data.py`); `item_state` holds per-item progress (Thunder item use counts, Sleight of stats wins/gains).
 
-Every field added to `PlayerData` after the original set needs the same three-way wiring or it silently resets on save: `Player.__init__` (both the `PlayerData` branch and the bare-name fallback) and `Player.player_data()` to carry it through combat, `players/save.py` to write it, `util/file_io.py`'s `get_player()` to read it back (with a default, for saves predating the field). This bit gold/loot once early on — see git history — and every field since has followed the same pattern.
+Adding a `PlayerData` field is one line in `player_data.py` (give it a default, for saves predating it) — nothing else copies fields by hand. `save.py` writes `asdict(player_data)`, `get_player()` reads every field the save has and lets the dataclass default the rest, and `Player` loops over `fields(PlayerData)` to carry everything through combat except `Player.DERIVED_FIELDS` (`hp`, `mana`, `max_hp`, `stats`, which it tracks as `current_hp`/`current_mana`/`max_hp`/`base_stats`). It used to be hand-wired in all three places, and missed fields silently reset on save; `tests/test_player_data_roundtrip.py` guards against that coming back. Load-time fixes for old saves (`_migrate_stats()`, `_rescue_item_rewards()`) live in `get_player()`.
 
 ### Quests
 

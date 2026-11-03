@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+from dataclasses import fields
 from players.player_data import PlayerData
 
 # Navigate from util/file_io.py up to the project root
@@ -105,29 +106,12 @@ def get_player(player_name):
 
     for player in data["players"]:
         if player["name"].strip().lower() == player_name.strip().lower():
-            perks, loot = _rescue_item_rewards(player.get("perks", []), player.get("loot", []))
-            return PlayerData(
-                name=player["name"],
-                role=player["role"],
-                level=player["level"],
-                hp=player["hp"],
-                mana=player.get("mana"),
-                stats=_migrate_stats(player["stats"]),
-                max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
-                gold=player.get("gold", 0),
-                loot=loot,
-                equipped=player.get("equipped"),
-                exp=player.get("exp", 0),
-                in_town=player.get("in_town", True),
-                distance=player.get("distance", 0),
-                depth_reached=player.get("depth_reached", player.get("distance", 0)),  # older saves: start from where they are
-                failed_attempts=player.get("failed_attempts", 0),
-                quest_flags=player.get("quest_flags", {}),
-                completed_quests=player.get("completed_quests", []),
-                known_spells=player.get("known_spells", []),
-                item_state=player.get("item_state", {}),
-                perks=perks,
-            )
+            # every field the save has; anything missing (older saves) gets the PlayerData default
+            saved = {f.name: player[f.name] for f in fields(PlayerData) if f.name in player}
+            saved.setdefault("depth_reached", player.get("distance", 0))  # older saves: start from where they are
+            saved["stats"] = _migrate_stats(saved["stats"])
+            saved["perks"], saved["loot"] = _rescue_item_rewards(saved.get("perks", []), saved.get("loot", []))
+            return PlayerData(**saved)
 
     return None
 

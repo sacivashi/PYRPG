@@ -1,4 +1,6 @@
+import copy
 import random
+from dataclasses import fields
 
 from players.player_data import PlayerData
 from items.items_data import get_item_stats, STAT_COLUMNS
@@ -7,58 +9,28 @@ from items.items_data import get_item_stats, STAT_COLUMNS
 class Player:
     # Player class for combat — handles live HP, damage, healing during a fight
 
+    # PlayerData fields Player tracks under its own names/rules; every other field is carried through as-is
+    DERIVED_FIELDS = {"hp", "mana", "max_hp", "stats"}
+
     def __init__(self, player_data, role=None, level=None, stats=None, hp=None):
         if isinstance(player_data, tuple):
             name, role, level, hp, stats = player_data
             player_data = PlayerData(name=name, role=role, level=level, hp=hp, stats=stats)
+        elif not isinstance(player_data, PlayerData):  # bare name
+            player_data = PlayerData(name=player_data, role=role, level=level if level is not None else 1,
+                                     hp=hp, stats=stats or {})
 
-        if isinstance(player_data, PlayerData):
-            self.name = player_data.name
-            self.role = player_data.role
-            self.level = player_data.level
-            self.base_stats = dict(player_data.stats)  # copy — combat mutations must not leak into the caller's PlayerData
-            self.equipped = player_data.equipped
-            self.stats = self.apply_equipment(self.base_stats, self.equipped)
-            self.max_hp = self.calculate_hp(self.stats)
-            self.current_hp = self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp)
-            self.max_mana = self.calculate_mana(self.stats)
-            self.current_mana = self.max_mana if player_data.mana is None else min(player_data.mana, self.max_mana)
-            self.gold = player_data.gold
-            self.loot = list(player_data.loot)
-            self.exp = player_data.exp
-            self.in_town = player_data.in_town
-            self.distance = player_data.distance
-            self.depth_reached = player_data.depth_reached
-            self.failed_attempts = player_data.failed_attempts
-            self.quest_flags = dict(player_data.quest_flags)
-            self.completed_quests = list(player_data.completed_quests)
-            self.known_spells = list(player_data.known_spells)
-            self.item_state = dict(player_data.item_state)
-            self.perks = list(player_data.perks)
-            return
-
-        self.name = player_data
-        self.role = role
-        self.level = level if level is not None else 1
-        self.base_stats = dict(stats) if stats else {}
-        self.equipped = None
+        # copies — combat mutations must not leak into the caller's PlayerData
+        for f in fields(PlayerData):
+            if f.name not in self.DERIVED_FIELDS:
+                setattr(self, f.name, copy.copy(getattr(player_data, f.name)))
+        self.base_stats = dict(player_data.stats)
         self.stats = self.apply_equipment(self.base_stats, self.equipped)
         self.max_hp = self.calculate_hp(self.stats)
-        self.current_hp = min(hp if hp is not None else self.max_hp, self.max_hp)
+        self.current_hp = (self.max_hp if player_data.hp is None
+                           else self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp))
         self.max_mana = self.calculate_mana(self.stats)
-        self.current_mana = self.max_mana
-        self.gold = 0
-        self.loot = []
-        self.exp = 0
-        self.in_town = True
-        self.distance = 0
-        self.depth_reached = 0
-        self.failed_attempts = 0
-        self.quest_flags = {}
-        self.completed_quests = []
-        self.known_spells = []
-        self.item_state = {}
-        self.perks = []
+        self.current_mana = self.max_mana if player_data.mana is None else min(player_data.mana, self.max_mana)
 
     @staticmethod
     def extract_player(player_data):
@@ -99,14 +71,9 @@ class Player:
         return min(new_max_hp, saved_hp + hp_gain)
 
     def player_data(self):
-        return PlayerData(self.name, self.role, self.level, self.current_hp, self.base_stats,
-                           max_hp=self.max_hp, mana=self.current_mana, gold=self.gold, loot=self.loot, equipped=self.equipped,
-                           exp=self.exp, in_town=self.in_town, distance=self.distance,
-                           depth_reached=self.depth_reached,
-                           failed_attempts=self.failed_attempts,
-                           quest_flags=self.quest_flags, completed_quests=self.completed_quests,
-                           known_spells=self.known_spells, item_state=self.item_state,
-                           perks=self.perks)
+        carried = {f.name: getattr(self, f.name) for f in fields(PlayerData) if f.name not in self.DERIVED_FIELDS}
+        return PlayerData(**carried, hp=self.current_hp, mana=self.current_mana, max_hp=self.max_hp,
+                          stats=self.base_stats)
 
     def get_live_stats(self):
         return {

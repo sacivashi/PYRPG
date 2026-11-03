@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from util.file_io import get_data, read_json, write_json
 
 
@@ -8,28 +10,8 @@ def put_new_player(new_player_obj):
     player_data = new_player_obj.player_data()
     name = player_data.name.title()  # Normalize name case
 
-    new_entry = {
-        "name": name,
-        "role": player_data.role,
-        "level": player_data.level,
-        "hp": int(player_data.hp),
-        "mana": player_data.mana,
-        "max_hp": int(player_data.max_hp),
-        "stats": player_data.stats,
-        "gold": player_data.gold,
-        "loot": player_data.loot,
-        "equipped": player_data.equipped,
-        "exp": player_data.exp,
-        "in_town": player_data.in_town,
-        "distance": player_data.distance,
-        "depth_reached": player_data.depth_reached,
-        "failed_attempts": player_data.failed_attempts,
-        "quest_flags": player_data.quest_flags,
-        "completed_quests": player_data.completed_quests,
-        "known_spells": player_data.known_spells,
-        "item_state": player_data.item_state,
-        "perks": player_data.perks,
-    }
+    new_entry = asdict(player_data)  # every PlayerData field, so new fields save automatically
+    new_entry.update(name=name, hp=int(player_data.hp), max_hp=int(player_data.max_hp))
 
     # Find existing player entry (if exists), else append
     found = False
