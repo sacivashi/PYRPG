@@ -255,5 +255,6 @@ Coming through like a truck, here are current specific unlock-ables;
 |Voucher|Yes|0|0|0|**0**|0|0|0|15|No|Yes|
 |Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
 
-Miscellaneous updates:
+## Other updates:
 - Change player "Defence" to "Defense" (yes finally).
+- Add Knight description.
