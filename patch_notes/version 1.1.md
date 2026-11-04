@@ -262,4 +262,4 @@ Coming through like a truck, here are current specific unlock-ables;
 - Add csv.DictReader for better csv parsing.
 - Fix the Charity and Spooky Area quests, which couldn't be completed before.
 - Fix the quest voucher: it now goes to your loot and really gives 15% off. Old saves get theirs back.
-- Quests can now reward items.
+- Quests now reward items.
