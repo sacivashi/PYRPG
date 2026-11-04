@@ -17,26 +17,26 @@ def make_game(**overrides):
 
 def test_defeating_a_cat_sets_the_quest_flag():
     game = make_game()
-    game._update_quest_progress("Cat")
+    game.quest_event("defeat", "Cat")
     assert game.player_data.quest_flags["lost_cat"] == 1
 
 
 def test_matching_is_case_insensitive():
     game = make_game()
-    game._update_quest_progress("CAT")
+    game.quest_event("defeat", "CAT")
     assert game.player_data.quest_flags["lost_cat"] == 1
 
 
 def test_defeating_a_different_enemy_does_not_set_the_flag():
     game = make_game()
-    game._update_quest_progress("Bandit")
+    game.quest_event("defeat", "Bandit")
     assert "lost_cat" not in game.player_data.quest_flags
 
 
 def test_a_group_of_cats_also_sets_the_flag():
-    # group encounters still pass the single shared enemy_name to _update_quest_progress
+    # group encounters still pass the single shared enemy_name to quest_event
     game = make_game()
-    game._update_quest_progress("Cat")
+    game.quest_event("defeat", "Cat")
     assert game.player_data.quest_flags.get("lost_cat") == 1
 
 
@@ -187,10 +187,10 @@ def use_quests(monkeypatch, tmp_path, rows):
 def test_multi_kill_quests_count_up_and_cap_at_the_amount(monkeypatch, tmp_path):
     use_quests(monkeypatch, tmp_path, ['wolves,Wolf Pack,defeat,Wolf,5,60,"Thin out the wolves."'])
     game = make_game()
-    game._update_quest_progress("Wolf")
-    game._update_quest_progress("Wolf", defeated=3)          # a group of 3
+    game.quest_event("defeat", "Wolf")
+    game.quest_event("defeat", "Wolf", 3)          # a group of 3
     assert game.player_data.quest_flags["wolves"] == 4
-    game._update_quest_progress("Wolf", defeated=3)
+    game.quest_event("defeat", "Wolf", 3)
     assert game.player_data.quest_flags["wolves"] == 5
 
 
@@ -295,3 +295,9 @@ def test_item_rewards_go_to_loot_so_the_voucher_works_in_the_shop(monkeypatch):
 def test_a_voucher_stuck_in_perks_moves_to_loot_on_load():
     from util.file_io import _rescue_item_rewards
     assert _rescue_item_rewards(["voucher", "free_fast_travel"], ["Nuts"]) == (["free_fast_travel"], ["Nuts", "Voucher"])
+
+
+def test_every_quest_in_the_csv_uses_a_type_the_game_handles():
+    from quests.quests_data import get_quests, SUPPORTED_TYPES
+    for quest_id, quest in get_quests().items():
+        assert quest["type"] in SUPPORTED_TYPES, f"{quest_id}: unknown quest type {quest['type']!r}"

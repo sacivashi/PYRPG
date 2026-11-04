@@ -13,7 +13,7 @@ from players.save import put_new_player
 from combat.combat_player import Player
 from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
 from spells.spells_data import learning_item_spell, can_learn, level_up_spells
-from quests.quests_data import get_quests, quest_progress, describe_reward, reward_item, FAST_TRAVEL
+from quests.quests_data import get_quests, quest_progress, describe_reward, grant_reward, QUEST_TYPES, FAST_TRAVEL
 
 
 class PYRPG:
@@ -116,7 +116,7 @@ class PYRPG:
         """Venture further out, increasing distance from town, and risk a combat encounter"""
         self.player_data.distance += 1
         self.player_data.depth_reached = max(self.player_data.depth_reached, self.player_data.distance)
-        self._record_quest_reach(self.player_data.distance)
+        self.quest_event("reach", self.player_data.distance)
         self.enter_combat()
 
     FREE_FAST_TRAVEL = "free_fast_travel"
@@ -170,7 +170,7 @@ class PYRPG:
             print(f"Your free trip takes you to depth {depth} at no cost!")
         else:
             print(f"You pay {cost} gold and arrive at depth {depth}.")
-        self._record_quest_use(FAST_TRAVEL)
+        self.quest_event("use", FAST_TRAVEL)
         input("\nPress Enter to continue...")
 
     def return_to_town(self):
@@ -410,7 +410,7 @@ class PYRPG:
             for _ in range(group_size):
                 self._roll_for_loot()
 
-            self._update_quest_progress(enemy_name, group_size)
+            self.quest_event("defeat", enemy_name, group_size)
             self._sleight_of_stats_progress()
         elif result == "defeat":
             self._apply_death_penalties()
@@ -474,28 +474,15 @@ class PYRPG:
         self.player_data.loot.remove(item_name)
         return True
 
-    def _update_quest_progress(self, enemy_name, defeated=1):
-        """Called after every victory — counts the fight toward every unfinished "defeat" quest
-        (data/quests.csv) whose target it was. A group counts every enemy in it."""
-        self._advance_quests("defeat", enemy_name, defeated)
-
-    def _record_quest_use(self, action):
-        """Called when the player does something a "use" quest can ask for (e.g. FAST_TRAVEL)"""
-        self._advance_quests("use", action, 1)
-
-    def _record_quest_reach(self, depth):
-        """Called from explore() — completes every unfinished "reach" quest for this depth or shallower"""
-        for quest_id, quest in get_quests().items():
-            if (quest["type"] == "reach" and quest_id not in self.player_data.completed_quests
-                    and depth >= int(quest["target"])):
-                self.player_data.quest_flags[quest_id] = quest["amount"]
-
-    def _advance_quests(self, quest_type, target, amount):
+    def quest_event(self, quest_type, value, amount=1):
+        """Report something that happened — a won fight ("defeat", enemy name, group size), an action
+        ("use", FAST_TRAVEL), a depth ("reach", distance) — and count it toward every unfinished
+        quest of that type whose target it matches (QUEST_TYPES in quests/quests_data.py)."""
+        matches = QUEST_TYPES[quest_type]
         flags = self.player_data.quest_flags
         for quest_id, quest in get_quests().items():
-            if quest_id in self.player_data.completed_quests or quest["type"] != quest_type:
-                continue
-            if target.lower() == quest["target"].lower():
+            if (quest["type"] == quest_type and quest_id not in self.player_data.completed_quests
+                    and matches(quest["target"], value)):
                 flags[quest_id] = min(quest["amount"], quest_progress(quest_id, quest, flags) + amount)
 
     def quest_board(self):
@@ -513,12 +500,7 @@ class PYRPG:
                 reward = quest["reward"]
                 choice = input(f"  Ready to turn in for {describe_reward(reward)}! Claim it now? (yes/no): ").strip().lower()
                 if choice in ("y", "yes"):
-                    if isinstance(reward, int):
-                        self.player_data.gold += reward
-                    elif reward_item(reward):
-                        self.player_data.loot.append(reward_item(reward))
-                    else:
-                        self.player_data.perks.append(reward)
+                    grant_reward(self.player_data, reward)
                     self.player_data.completed_quests.append(quest_id)
                     print(f"  Quest complete! Reward: {describe_reward(reward)}.")
             elif quest["type"] == "spend":
