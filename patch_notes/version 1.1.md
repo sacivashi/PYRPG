@@ -13,7 +13,7 @@ quite allot really:
     - Better physical damage system, which brought all roles so far into the early game combat win percentages to 80+%. 
     - Better enemies difficulty encounters logic which goes up with in game depth.
     - Spell & ability damage seperate from physical.
-    - New damage type "searing" which bypasses every kind of defense/defense/corruption.
+    - New damage type "searing" which bypasses every kind of defense/corruption.
 - Allot more items and consumables
 - New unique roles.
 - spell/ability learning with level or by consumable usage.
@@ -118,12 +118,14 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 
 aren't the pretty? c:
 
+> **For now you can raise/lower charisma per level, yeah doesn't make any actual sense, but I still need to decide on what gets you or takes you charisma.**
+
 ## Encounters but tastier:
 
 - slaying an enemy with 1 hit now says (40%): "you brutally slayed (enemy) in 1 hit" or "You sure you aren't too strong for this area? Becuase you just took that x in 1 hit". Or "One punch man is you!" Or "Dayum their HP is just gone, poof.".
 - Enemy fleeing a battle gives out some flavor (35%): like "x was too afraid to keep facing you, so it fled {on dropping stuff:} and at with that it lost ...". "The cowardous x fled battle {on dropping stuff:} luckily, they dropped ....". "Can't believe x fled this fight, {on drops:} atleast I can find victory on ....". "x fled, {drops:} and dropped ...". "Well didn't anticipate x to just run, {drops:} oh well let's take the .... and leave then.".
     - On -cha: "You were so ugly, x couldn't hold it any longer so it fled. {drops:} just take the .... and don't make me look at you too please.". "No wonder x chose to give up, your face is a puke fest... {drops:} still some .... left though..". "Your vile aura made x run to their momma. {drops:} joy on their ... drops.
-    - On high end cha: "Don't blame me I am unsure why would x go away either {drops:} oh hey shiny ....! .". "I guess they were taken breathless by your handsome self that x decided to not fight any longer.. {drops:} oh well, stuff!". "x ran off... so what?! just sway your hair be pretty {drops:} and take the remnance!"
+    - On high end cha: "Don't blame me I am unsure why would x go away either {drops:} oh hey shiny ....! .". "I guess they were taken breathless by your handsome self that x decided to not fight any longer.. {drops:} oh well, stuff!". "x ran off... so what?! just sway your hair be pretty {drops:} and take the remanence!"
 - Resting success (55%): "zZzZ", "snore sounds", "Miserable no more!", "Wish I could rest as much as you right now!", "Had a good nap?", "Wipe that drool off ya, we got adventure to find!", "Keep up, you'll remember to buy potions eventually.", "looking for nuts?", "You sleep very loudly"
 - Resting failure (25%): "You light the fire, as you do x appears, out of nowhere.", "You turn on your mattress, and as you turn back x appears, how nice.", "As you lay back, you suddenly notice x lays next to you, in a sexy pose... strange.", "You are about to rest, but your spidey senses sense x", "You may not rest now, there are monsters nearby", "You may not rest now, because I said so", "Miserable as usual huh", "Awh you trying to sleep? But we just reached the best part... x attack!".
 - Winning combat with 100% ~ 75% HP (20%): "Guess I will play with you next time!", "Yes!", "Winner winner chicken dinner", "Now eat them!", "A winner is you", "Wow so big and strong", "Too easy", "Easy peasy", "You won that with skill", "You could do that with eyes closed", "woah! bam! pow!", "Remember that you won? yeah it was just now I know!".
@@ -198,8 +200,8 @@ Coming through like a truck, here are current specific unlock-ables;
 
 - Necromancer unlock: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip the Necronomicon item.
 - Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
-- Tank unlock: With any class, block at least 80 physical damage, or with any class, raise your defense stat to be > 10
-- Monk unlock: With any class, prey to a sculpture 20 times.
+- Tank unlock: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10 
+- Monk unlock: With any class, pray to a sculpture 20 times (cumulative).
 - **Knight** unlock: With any class, complete 5 quests.
 
 ## knight.
