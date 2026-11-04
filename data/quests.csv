@@ -7,3 +7,5 @@ charity,Charity,spend,55,1,Dice machine,2,"A homeless villager is looking for sc
 pest_control,Pest Control,defeat,Plague Rat,5,20,1,"A local farmer has reported a pest infestation. Defeat 5 Plague Rats and return here for a reward."
 test_of_faith,Test Of Faith,use,sculpture,3,Lucky clover,0,"A local priest has asked you to test your faith. Pray at 3 sculptures and return here for a reward."
 rescue_mission,Rescue Mission,reach,5,1,0,1,"A mother has reported her child missing, locals say the seen footsteps leading to the dungeon. Reach depth 5 and return here for a reward."
+meet_up,Meet Up,reach,100,1,Bloody crown,0,"A black hooded man comes to you in a whisper, saying he wants to meet you at the deepest end of the dungeon. Reach depth 100."
+bribe,Bribe,spend,30,1,free_fast_travel,-1,"A shady looking adventurer approaches you telling you they have a fast travel pass, they want a bribe for it however. Spend 30 gold to get a free fast travel pass."
