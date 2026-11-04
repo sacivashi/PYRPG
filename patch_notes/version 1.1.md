@@ -94,9 +94,9 @@ Following the solutions enemies encountered now have their nuggings installed to
 
 I think it is prime time for charisma to be added. Well hello there handsomes.
 
-> - Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountring bad encounter types. +int(max(0,min(20, cha * 0.25)))%
+> - Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountering bad encounter types. +int(max(0,min(20, cha * 0.25)))%
 > - -Charisma: 
-> - Benefeit..?: You are so darn ugly, enemies intend to flee from you all the time (100% to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
+> - Benefit..?: You are so darn ugly, enemies intend to flee from you all the time (100% to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
 > - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
 >> charisma stat doesn't benefit combat damage, or encounter calculations
 
@@ -113,12 +113,14 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 |ranger|3|11|6|**5**|2|2|9|
 |rogue|5|9|5|**7**|4|2|9|
 |satyr|2|7|9|**6**|3|4|4|
-|tank|0|-5|2|**0**|12|1|5
+|tank|0|-5|2|**0**|12|1|5|
 |warrior|6|4|4|**4**|6|3|1|
 
 aren't the pretty? c:
 
-> **For now you can raise/lower charisma per level, yeah doesn't make any actual sense, but I still need to decide on what gets you or takes you charisma.**
+## Raising/Lowering charisma:
+
+> Per level changing charisma doesn't make logical sense, so, I will make quests mainly reward or lower your charisma based on actions.
 
 ## Encounters but tastier:
 
@@ -202,7 +204,7 @@ Coming through like a truck, here are current specific unlock-ables;
 - Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
 - Tank unlock: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10 
 - Monk unlock: With any class, pray to a sculpture 20 times (cumulative).
-- **Knight** unlock: With any class, complete 5 quests.
+- **Knight** unlock: With any class, complete 5 quests that gain charisma.
 
 ## knight.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
@@ -265,4 +267,5 @@ Coming through like a truck, here are current specific unlock-ables;
 - Fix the Charity and Spooky Area quests, which couldn't be completed before.
 - Fix the quest voucher: it now goes to your loot and really gives 15% off. Old saves get theirs back.
 - Quests now reward items.
+- Quest system reworked: new quest types are easy to add
 - Add more quests ([quests.csv](../data/quests.csv))
