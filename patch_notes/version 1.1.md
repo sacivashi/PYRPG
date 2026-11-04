@@ -259,6 +259,16 @@ Coming through like a truck, here are current specific unlock-ables;
 |Voucher|Yes|0|0|0|**0**|0|0|0|15|No|Yes|
 |Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
 
+## Some more enemies (some are for quests only):
+|Name|Corruption|HP|Attack|Defense|Speed|Luck|
+|---|---|---|---|---|---|---|
+|Guard|0|100|12|22|8|0| *quest only
+|Priest|0|25|-14|2|2|15| 
+|Townfolk|0|15|3|1|2|0| *quest only
+|Wisp|0|8|7|2|4|4|
+
+
+
 ## Other updates:
 - Change player "Defence" to "Defense" (yes finally).
 - Add Knight description.
