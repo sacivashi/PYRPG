@@ -201,39 +201,31 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 Coming through like a truck, here are current specific un-lockable things;
 > classes:
     
-    Necromancer unlock: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip the Necronomicon item.
-    
-    Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
-    
-    Tank unlock: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10.
-    
-    Monk unlock: With any class, pray to a sculpture 20 times (cumulative).
-    
-    Knight* unlock: With any class, complete 5 quests that gain charisma. (0 charisma or -charisma quests don't count).
+    1: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip a certain item.
+    2: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
+    3: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10.
+    4: With any class, pray to a sculpture 20 times (cumulative).
+    5: With any class, complete 5 quests that gain charisma. (0 charisma or -charisma quests don't count).
 
 > Enemies:
 
-    - Cursed Priest unlock: Defeat a priest*. Got to make players feel some regret.
-    - Cursed Human unlock: Defeat a townsfolk. Got to make players feel some regret.
-    - Demon unlock: In combat, heal a cumulative sum of 45 HP from attacking.
-    - Golem unlock: Reach a max HP value of 100.
+    - 1: Defeat a priest*. Got to make players feel some regret.
+    - 2: Defeat a townsfolk*. Got to make players feel some regret.
+    - 3: In combat, heal a cumulative sum of 45 HP from attacking.
+    - 4: Reach a max HP value of 100.
 
 > Items:
 
-    - Beam staff unlock: spend cumulative 55 mana.
-    - Necronomicon unlock: Beat 6 zombies.
-    - Nullifier unlock: Lower/Raise enemy stats to become 0.
-    - Timer unlock: Encounter the same enemy 11 times.
+    - 1: spend cumulative 55 mana.
+    - 2: Beat 6 zombies.
+    - 3: Lower/Raise enemy stats to become 0.
+    - 4: Encounter the same enemy 11 times.
 
 
-## knight.
+## new classes.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
 |Knight|8|5|4|10|8|3|8|
-
-## And one more.
-|Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
-|---|---|---|---|---|---|---|---|
 |Pirate|2|5|-8|-4|6|0|11|
 
 ## Items.
