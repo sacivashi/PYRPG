@@ -213,9 +213,13 @@ Coming through like a truck, here are current specific un-lockable things;
 
 > Enemies:
 
-    Cursed Priest unlock: Defeat a priest*. Got to make players feel some regret.
-    Cursed Human unlock: Defeat a townsfolk. Got to make players feel some regret.
-    
+    - Cursed Priest unlock: Defeat a priest*. Got to make players feel some regret.
+    - Cursed Human unlock: Defeat a townsfolk. Got to make players feel some regret.
+    - Demon unlock: In combat, heal a cumulative sum of 45 HP from attacking.
+    - Golem unlock: Reach a max HP value of 100.
+
+
+
 ## knight.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
