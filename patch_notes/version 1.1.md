@@ -197,15 +197,25 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 > Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1)`, past depth 50 buff are also included. Enemy encounter calculations do not affect Mimics.
 >> Same goes for thief merchant, only if it is a thief merchant
 
-## Unlock-ables:
-Coming through like a truck, here are current specific unlock-ables;
+## Un-lockable things:
+Coming through like a truck, here are current specific un-lockable things;
+> classes:
+    
+    Necromancer unlock: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip the Necronomicon item.
+    
+    Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
+    
+    Tank unlock: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10.
+    
+    Monk unlock: With any class, pray to a sculpture 20 times (cumulative).
+    
+    Knight* unlock: With any class, complete 5 quests that gain charisma. (0 charisma or -charisma quests don't count).
 
-- Necromancer unlock: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip the Necronomicon item.
-- Forsaken unlock: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
-- Tank unlock: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10 
-- Monk unlock: With any class, pray to a sculpture 20 times (cumulative).
-- **Knight** unlock: With any class, complete 5 quests that gain charisma.
+> Enemies:
 
+    Cursed Priest unlock: Defeat a priest*. Got to make players feel some regret.
+    Cursed Human unlock: Defeat a townsfolk. Got to make players feel some regret.
+    
 ## knight.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
