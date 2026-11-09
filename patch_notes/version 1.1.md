@@ -218,12 +218,22 @@ Coming through like a truck, here are current specific un-lockable things;
     - Demon unlock: In combat, heal a cumulative sum of 45 HP from attacking.
     - Golem unlock: Reach a max HP value of 100.
 
+> Items:
+
+    - Beam staff unlock: spend cumulative 55 mana.
+    - Necronomicon unlock: Beat 6 zombies.
+    - Nullifier unlock: Lower/Raise enemy stats to become 0.
 
 
 ## knight.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
-|knight|8|5|4|10|8|3|8|
+|Knight|8|5|4|10|8|3|8|
+
+## And one more.
+|Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
+|---|---|---|---|---|---|---|---|
+|Pirate|2|5|-8|-4|6|0|11|
 
 ## Items.
 |Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
