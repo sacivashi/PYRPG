@@ -12,7 +12,7 @@ quite allot really:
 - difficulty curve balanced to be more satisfying with:
     - Better physical damage system, which brought all roles so far into the early game combat win percentages to 80+%. 
     - Better enemies difficulty encounters logic which goes up with in game depth.
-    - Spell & ability damage seperate from physical.
+    - Spell & ability damage separate from physical.
     - New damage type "searing" which bypasses every kind of defense/corruption.
 - Allot more items and consumables
 - New unique roles.
@@ -22,16 +22,16 @@ quite allot really:
 - Fast travel to any depth reached with a gold cost.
 - Quests moved to a CSV, with new quest types and perk rewards.
 - Depth milestones: groups scale with depth, the 50+ enemy buff, and Death at 100+ (please don't ask xD)
-- Mana: regen, potions, and full restore when resting in town.
+- Mana: re-gen, potions, and full restore when resting in town.
 - Defend rework: a real block that lasts until your next turn.
 
 ## re-touching enemies... not in a weird way you freaks!
 
 Lets face it, enemies are quite boring, you encounter one (or two or three) and all they ever do is; attack you, or attack the moment they have the opportunity.
 
-This enemy's behaviour dishes out few problems:
+This enemy's behavior dishes out few problems:
 
-1. It gives the player an aggressive behaviour restriction as well, a "kill or die" sort of system.
+1. It gives the player an aggressive behavior restriction as well, a "kill or die" sort of system.
 2. It makes the game be mostly a "sit there and spam number 1 till enemy dies" game... which becomes hectic and boring (from tests too it feels like so). 
 3. Enemies have no... flavor, each enemy is like the last one all that matter are the stats, a name doesn't make something unique if it acts similarly.
 
@@ -43,7 +43,7 @@ Adding some more encounters rather than just enemies:
 - Thief merchant(s) (11% rate): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
 - Treasure chest(s) (25% rate): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
 - Mimic chest(s) (5% rate): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
-- Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(choosen_hp value * 2.3) and heal that value.
+- Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(chosen_hp value * 2.3) and heal that value.
 > Sculptures (or boons) (18% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
 >
     Of resting: better rest odd for three time (+15%)
@@ -56,7 +56,7 @@ Adding some more encounters rather than just enemies:
 
     Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
 - Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
-- Unlockables: PYRPG has always been an open book, but content you unlock through tasks adds replayability, and it's satisfying to earn.
+- Unlocks: PYRPG has always been an open book, but content you unlock through tasks adds replayability, and it's satisfying to earn.
 
 And now for the main event:
 
@@ -197,11 +197,11 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 > Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1)`, past depth 50 buff are also included. Enemy encounter calculations do not affect Mimics.
 >> Same goes for thief merchant, only if it is a thief merchant
 
-## Un-lockable things:
+## Unlocks:
 Coming through like a truck, here are current specific un-lockable things;
 > classes:
     
-    1: As a mage, defeat 15 enemies with -lck stat, or as a mage, buy/get and equip a certain item.
+    1: As a mage, defeat 15 enemies with -lck stat, or as a mage, find and equip a certain item.
     2: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
     3: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10.
     4: With any class, pray to a sculpture 20 times (cumulative).
@@ -225,10 +225,10 @@ Coming through like a truck, here are current specific un-lockable things;
 ## new classes.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
-|Knight|8|5|4|10|8|3|8|
+|???|???|???|???|???|???|???|???|
 |Pirate|2|5|-8|-4|6|0|11|
 
-## Items.
+## Items (and small adjustments).
 |Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
 |------|-----|----|----|----|----|----|---|---|---|---|---|
 |Arcane ring|No|0|0|3|**0**|2|5|0|32|Yes|Yes|
@@ -254,7 +254,7 @@ Coming through like a truck, here are current specific un-lockable things;
 |Mana surge book|Yes|0|0|0|**0**|0|0|0|0|No|No|
 |Mind Shocker|No|10|5|-10|**-6**|4|0|4|7|No|Yes|
 |Nature's codex|Yes|0|0|0|**0**|0|0|0|17|Yes|Yes|
-|Necronomicon|No|0|0|10|**-4**|0|-10|2|10|Yes|Yes|
+|Necronomicon|No|0|0|10|**-4**|0|-10|2|10|~~Yes~~ → No|Yes|
 |Nullifier|No|8|-5|-4|**-3**|-2|-1|0|9|No|Yes|
 |Nuts|Yes|0|0|0|**0**|0|0|0|45|No|Yes|
 |Power ring|No|5|0|0|**-1**|2|0|0|32|Yes|Yes|
@@ -290,7 +290,7 @@ Coming through like a truck, here are current specific un-lockable things;
 
 ## Other updates:
 - Change player "Defence" to "Defense" (yes finally).
-- Add Knight description.
+- Add ??? description.
 - Better save & load data structure.
 - Add csv.DictReader for better csv parsing.
 - Fix the Charity and Spooky Area quests, which couldn't be completed before.
