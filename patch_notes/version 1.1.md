@@ -223,6 +223,7 @@ Coming through like a truck, here are current specific un-lockable things;
     - Beam staff unlock: spend cumulative 55 mana.
     - Necronomicon unlock: Beat 6 zombies.
     - Nullifier unlock: Lower/Raise enemy stats to become 0.
+    - Timer unlock: Encounter the same enemy 11 times.
 
 
 ## knight.
