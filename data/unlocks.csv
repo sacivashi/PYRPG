@@ -1,0 +1,8 @@
+id,unlocks,type,target,amount,hint
+knight,class:knight,charisma_quest,,5,Complete 5 quests that gain charisma
+monk,class:monk,use,Sculpture,20,Pray to a sculpture 20 times
+necromancer_a,class:necromancer,defeat,-lck,15,As a mage defeat 15 enemies with -lck
+necromancer_b,class:necromancer,equip,Necronomicon,1,As a mage equip a certain item
+necronomicon,item:Necronomicon,defeat,Zombie,6,Beat 6 zombies
+cursed_human,enemy:Cursed human,defeat,Townfolk,1,Defeat a townfolk
+cursed_priest,enemy:Cursed priest,defeat,Priest,1,Defeat a priest
