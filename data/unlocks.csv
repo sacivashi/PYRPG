@@ -10,4 +10,5 @@ tank_a,class:tank,block,,80,,Block 80 physical damage by defending
 tank_b,class:tank,stat_above,Defense,10,,Raise your defense above 10
 cursed_human,enemy:Cursed human,quest,townfolk_raid,1,,Complete the townfolk raid quest
 cursed_priest,enemy:Cursed priest,quest,church_betrayal,1,,Complete the church betrayal quest
-church_betrayal,quest:church_betrayal,quest,test_of_faith,1,,???
+church_betrayal,quest:church_betrayal,quest,test_of_faith,1,,Complete the test of faith quest
+guard_event,event:Halt!,quest,townfolk_raid,1,,Complete the townfolk raid quest
