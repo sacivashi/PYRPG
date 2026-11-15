@@ -4,8 +4,8 @@ monk,class:monk,use,Sculpture,20,,Pray to a sculpture 20 times
 necromancer_a,class:necromancer,defeat,-lck,15,Mage, defeat 15 enemies with -lck
 necromancer_b,class:necromancer,equip,Necronomicon,1,Mage, equip a certain item
 necronomicon,item:Necronomicon,defeat,Zombie,6,,Beat 6 zombies
-cursed_human,enemy:Cursed human,defeat,Townfolk,1,,Defeat a townfolk
-cursed_priest,enemy:Cursed priest,defeat,Priest,1,,Defeat a priest
+cursed_human,enemy:Cursed human,defeat,Townfolk,1,,Defeat townfolk quest
+cursed_priest,enemy:Cursed priest,defeat,Priest,1,,Defeat priest quest
 forsaken_a,class:forsaken,defeated,,20,,Be defeated 20 times
 forsaken_b,class:forsaken,stat_below,Magic,0,Warrior, lower your magic below 0
 tank_a,class:tank,block,,80,,Block 80 physical damage by defending
