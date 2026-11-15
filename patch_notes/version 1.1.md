@@ -100,6 +100,19 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 > - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
 >> charisma stat doesn't benefit combat damage, or encounter calculations
 
+## Raising/Lowering charisma:
+
+> Per level changing charisma doesn't make logical sense, so, I will make quests mainly reward or lower your charisma based on actions.
+
+## Quests rework:
+The way old quests and quest board worked were dull and gave you each and every quest from the start.
+
+So now here are the changes coming up:
+- Quests opt in; choose whether to start any quest or not at your own pace.
+- Quests progress: now each and any quest progress starts counting once one accepts it.
+- Choice quests (or moral quests): Completing some quests may give you a choice to make which can be good, or bad. which will effect your charisma. (still completes them either case)
+
+
 ## here are some numbers! (charisma to roles):
 |Class|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|
 |---|---|---|---|---|---|---|---|
@@ -117,10 +130,6 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 |warrior|6|4|4|**4**|6|3|1|
 
 aren't the pretty? c:
-
-## Raising/Lowering charisma:
-
-> Per level changing charisma doesn't make logical sense, so, I will make quests mainly reward or lower your charisma based on actions.
 
 ## Encounters but tastier:
 
