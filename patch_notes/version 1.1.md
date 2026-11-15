@@ -218,8 +218,8 @@ Coming through like a truck, here are current specific un-lockable things;
 
 > Enemies:
 
-    - 1: Defeat a priest*. Got to make players feel some regret.
-    - 2: Defeat a townsfolk*. Got to make players feel some regret.
+    - 1: Do a certain quest involving priest*. Got to make players feel some regret.
+    - 2: Do a certain quest involving townsfolk*. Got to make players feel some regret.
     - 3: In combat, heal a cumulative sum of 45 HP from attacking.
     - 4: Reach a max HP value of 100.
 
