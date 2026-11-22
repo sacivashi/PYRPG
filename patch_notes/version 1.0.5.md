@@ -65,111 +65,6 @@ Adding some more encounters rather than just enemies:
 - Halt! (town event, 5% rate): Did something you shouldn't have? While your charisma is below 0, a guard may stop you on your way back to town. Pay a fine (15 ~ 40 gold, the better your charisma the cheaper), or refuse and fight. Lose the fight and the guard takes the full 40 anyway (or everything you've got, if you're that broke).
 - Unlocks: PYRPG has always been an open book, but content you unlock through tasks adds replay-ability, and it's satisfying to earn.
 
-And now for the main event:
-
-## enemies move logic:
-
-Following the solutions enemies encountered now have their nuggings installed to them:
-
-> enemy thought process:
->> - on 100% ~ 80% of HP, priorities dishing out attacks
->>> New attack types:
->>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
->>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
->>>> odds: 60 normal, 20 charged, 20 defend
->> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
->>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a 15% chance to counter attack
->>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
->> - 45% and less:
->>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp. nor count towards a defeat x number quest
-
-> enemy thought process, but it's groups:
->> - all members at 100% ~ 80% of HP, the one member uses the solo phase 1 odds (60/20/20)
->>> other member or 2 members may support attack, or defend themselves (60 norm/30 charge/10 def)
->> - any single member at 80% ~ 45% of HP, choose between attempting to defend and attacking
->>> other member or 2 members might attack, defend, or attempt to heal the most injured, non -attack member (45 atk/15 chrg/20 def/20 heal), can't heal selves.
->>>> successful heal attempts heal the injured enemy for 12% missing HP.
->> - single member at 45% and less:
->>> Same as singular, just if that one flees, the rest stay. The others use the phase 2 support odds, so they may still heal it.
-
-**those nuggings don't affect any special encounters (eg; mimics, death)** 
-
-> With that, adding some more to enemy def:
->> Enemies choosing to defend, will block; `def% + min(10, max(0,def * 0.65))` physical damage
-
-## introducing a new player stat:
-
-I think it is prime time for charisma to be added. Well hello there handsomes.
-
-> - Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountering bad encounter types. +int(max(0,min(20, cha * 0.25)))%
-> - -Charisma: 
-> - Benefit..?: You are so darn ugly, enemies intend to flee from you all the time (100% to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
-> - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
->> charisma stat doesn't benefit combat damage, or encounter calculations
-> - Anyone who charges you (merchants, cooks, guards...) is swayed too: costs like the cook's `1.5 ~ 2.3` slide to the cheap end the prettier you are, and to the pricey end the uglier.
-> - Some encounters only happen at certain charisma. Behave (or don't) accordingly.
-> - Old saves: your existing characters get their class's charisma value, no one starts at 0.
-
-## Raising/Lowering charisma:
-
-> Per level changing charisma doesn't make logical sense, so, I will make quests mainly reward or lower your charisma based on actions.
-
-## Quests rework:
-The way old quests and quest board worked were dull and gave you each and every quest from the start.
-
-So now here are the changes coming up:
-- Quests opt in; choose whether to start any quest or not at your own pace.
-- Quests progress: now each and any quest progress starts counting once one accepts it.
-- Choice quests (or moral quests): Completing some quests may give you a choice to make which can be good, or bad. which will effect your charisma. (still completes them either case)
-- Quest chains: Quests that open up after you do a prior quest, still experimental
-- Quest enemies: some quests bring their own enemies with them (townsfolk, priests...), you fight them the moment you accept. Those enemies don't show up anywhere else.
-- Some quests cost you charisma just for saying yes. Shady people make shady offers.
-
-## here are some numbers! (charisma to roles):
-|Class|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|
-|---|---|---|---|---|---|---|---|
-|druid|4|4|6|**3**|4|6|4|
-|dwarf|7|3|5|**1**|7|3|0|
-|elf|4|7|6|**4**|4|5|2|
-|forsaken|-1|5|3|**-7**|9|-4|4|
-|mage|3|4|10|**2**|3|9|5|
-|monk|5|5|8|**4**|-9|3|1|
-|necromancer|1|4|6|**-5**|5|-8|5|
-|ranger|3|11|6|**5**|2|2|9|
-|rogue|5|9|5|**7**|4|2|9|
-|satyr|2|7|9|**6**|3|4|4|
-|tank|0|-5|2|**0**|12|1|5|
-|warrior|6|4|4|**4**|6|3|1|
-
-aren't the pretty? c:
-
-## Encounters but tastier:
-
-- slaying an enemy with 1 hit now says (40%): "you brutally slayed (enemy) in 1 hit" or "You sure you aren't too strong for this area? Becuase you just took that x in 1 hit". Or "One punch man is you!" Or "Dayum their HP is just gone, poof.".
-- Enemy fleeing a battle gives out some flavor (35%): like "x was too afraid to keep facing you, so it fled {on dropping stuff:} and at with that it lost ...". "The cowardous x fled battle {on dropping stuff:} luckily, they dropped ....". "Can't believe x fled this fight, {on drops:} atleast I can find victory on ....". "x fled, {drops:} and dropped ...". "Well didn't anticipate x to just run, {drops:} oh well let's take the .... and leave then.".
-    - On -cha: "You were so ugly, x couldn't hold it any longer so it fled. {drops:} just take the .... and don't make me look at you too please.". "No wonder x chose to give up, your face is a puke fest... {drops:} still some .... left though..". "Your vile aura made x run to their momma. {drops:} joy on their ... drops.
-    - On high end cha: "Don't blame me I am unsure why would x go away either {drops:} oh hey shiny ....! .". "I guess they were taken breathless by your handsome self that x decided to not fight any longer.. {drops:} oh well, stuff!". "x ran off... so what?! just sway your hair be pretty {drops:} and take the remanence!"
-- Resting success (55%): "zZzZ", "snore sounds", "Miserable no more!", "Wish I could rest as much as you right now!", "Had a good nap?", "Wipe that drool off ya, we got adventure to find!", "Keep up, you'll remember to buy potions eventually.", "looking for nuts?", "You sleep very loudly"
-- Resting failure (25%): "You light the fire, as you do x appears, out of nowhere.", "You turn on your mattress, and as you turn back x appears, how nice.", "As you lay back, you suddenly notice x lays next to you, in a sexy pose... strange.", "You are about to rest, but your spidey senses sense x", "You may not rest now, there are monsters nearby", "You may not rest now, because I said so", "Miserable as usual huh", "Awh you trying to sleep? But we just reached the best part... x attack!".
-- Winning combat with 100% ~ 75% HP (20%): "Guess I will play with you next time!", "Yes!", "Winner winner chicken dinner", "Now eat them!", "A winner is you", "Wow so big and strong", "Too easy", "Easy peasy", "You won that with skill", "You could do that with eyes closed", "woah! bam! pow!", "Remember that you won? yeah it was just now I know!".
-- Winning combat with 74% ~ 50% HP (15%): "A few scratches, but it was worth it", "Could always go better", "Oof no worries you'll jog it off", "Hmm not as satisfying", "You won with hard work".
-- Winning combat with 49% ~ 1% HP (15%): "That was a real struggle bus", "Do we get a zenkai boost? No? Darn.", "We be struggling", "Maybe it's prime time to return to town.", "Ohh tough one aren't you?", "Next hit could be the last you take, consider your steps!"
-- Level ups (75%): "You feel a little taller", "They grow up so fast", "level up!", "Wonder where all that exp goes to...", "Now you can use that anvil... wrong game again.", "A number just went up."
-- Learning spell\ability by level (55%): "Wow you are so smart!", "Can you learn how to take breaks too?", "So many calculations!", "Learn it? I barely know it!", "What was it called now?", "Don't forget to scream it's name whenever you use it!"
-- Learning spell\ability by item (25%): "That was very long to read", "Too long to read for me!", "How many lines of code was that again?", "You still scrolling through that?", "This x is bigger than I thought!", "So long, so..... boring.", "A bookworm as well aren't we?"
-- On being slayed by an enemy (30%): "Guess x was too tough for you", "Couldn't rest, right?", "X had you in the first half...", "You'd get X next time champ", "[player's name], you cannot give up now, get up!", "revive? 3...2...1... oh wait this is not this type of game...", "R.I.P [player's name], they were the hero we needed but not deserved", "Wait, lemme put you back a couple of steps!", "You lost!", "Heh, noob."
-- slayed and losing an item (40%): "aaaaaand it's gone! referring to your .... by the way", "You dropped something, it was ....!", "The earth giveth and the earth taketh your ....", "your bag feels lighter, checking out you see you no longer have ....!", "Oops dropped your glasses!... erm I mean your ....."
-- slayed town revival (35%): Wait, lemme put you back a couple of steps... oops guess you need to restart", "[player's name] got kicked.... to town", "And stay there!", "I'm gonna take your horse to the old town... and you too", "Well, at least there you are safe.", "And so, it ends, where it began.", "An apple a day, keeps the wild away.".
-- Slayed and losing gold and n > 0 (20%): "Congrats you are n coins poorer!", "Glad these coins aren't made of diamonds, because you just lost n of them!", "You shake your pockets and see that you are n gold less... you actually counted all that?", "How sad, those n coins could be converted into something far better", "Need a donation? you lost n gold".
-- Slayed losing gold and n <= 0 (40%): "You got slain so many times that now you need donations for real!","Maybe you need to start thinking about your career options...","You have so much gold that you lost none of it!... oh wait opposite, you don't have enough to even lose it!","So now you are poor too, I thought I'd seen everything.","Even a piece of bread needs to spare you at this rate!"
-- Evading attacks (15% odds to appear): "You awake your ultra instinct and....", "You become neo, and evade x non existent bullets!", "You are so quick you evade x attack by only moving your head!", "You seen that coming, didn't you?", "You evade the attack. Sweet moves!", "Your evasion tactics are so funky! looks like dancing!", "Evasion ftw".
-- Physical Attacking (10% appearance): "Go for the head!", "Hit harder!", "And so you try to hit them and...", "Oh boy, action time!", "Let me rate your hit.... x tier", "Shoryuken!", "How does it feel to spam 1?", "Oh yes I like those numbers!".
-- Missing attacks (45%): "Wh- what?!", "Careful, you almost hit yourself there", "The enemy is right there", "Are you serious?!", "Sneaky x!", "x slid pass that one", "No worries you'd get used to the skill shots!", "Could it be? Ultra instinct?!", "Funny one, now land it!", "Unlucky.. probably in a literal sense.", "Is your weapon is shorter than you thought?", "toastie", "Even I could hit x from my own screen!".
-- Magical attacking (13%): "Abracadabra!", "Alakazam!", "Wingardium leviosuhhhh", "Fantasma!", "Reaching the arcane depths you use ....", "Some magical hocus pocus!", "Sparkly shiny magic stuff!", "wizard 101 who?", "Look mom, no wands!", "Oh yes I have the brain power", "Gun shot!... but it's magic!", "Magic goes brrrrrrr", "Unlimited powerrrrrr!"
-- Cursed spell usage (13%): "Hocus pocus your stats are now irrelavant!", "I smell black magic", "Hexagonal force! wrong hex type?", "Get swallowed by darkness!", "hsssssss", "Bow!", "Weaken.. or strengthen, it depends!", "Now which stat shall it be?", "*evil laugh*".
-- Fleeing successfully (35%): "You bravely ran away", "Sir [player's name] ran away", "[player] cowardly fled", "You do know doing that achieves nothing but shame, right?", "{insert cartoony running sounds here}", "Let's run for it scoobs!", "Enemy too scary?", "No doubt here, you left x in the dust.", "Look at em zooming!"
-- Fleeing fail (35%): "You ran away... in a circle!", "You tried to run, but your feet won't co-op", "It's seems as though, you are grounded", "You go for a sprint, but x held the tip of your... outfit?", "Guess we cannot run away now Scoobs", "Sir [player] can't bravely run away", "Mysterious powers teleport you back into combat as you distance yourself", "You run, but as you do, you notice only the combat area is loading, you are screwed.", "You trip on a teeny tiny rock, baka. Good thing fall damage doesn't exist."
-- Attempting to flee death encounter (85%): "What'd you expect?", "Not this time....", "Death is undeniable...", "You chose this....", "I told you....", "You asked, didn't you?", "You reached so far, let it end.", "No.", "This is basically god, running expands your doom", "Nope.", "Tick, tock", "I AM HERE, JUST FOR YOU.", "You attempted to flee, but its Death", "The fear value is too high to flee". **not landing the flavors says "cannot flee"**
 
 ## Some more:
 
@@ -210,6 +105,7 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
     Passive encounters choices:
     "As you walk by there seem to be a (chest/merchant), (flavor if hit it). {do you open it? y\n} or {buy\sell\leave}."
 
+
 ## Mimic added:
 
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|
@@ -218,13 +114,97 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 > Mimic > 0 stats get stronger the deeper you are by `(base stats + depth - 1)`, past depth 50 buff are also included. Enemy encounter calculations do not affect Mimics.
 >> Same goes for thief merchant, only if it is a thief merchant
 
+
+And now for the main event:
+
+## enemies move logic:
+
+Following the solutions enemies encountered now have their nuggings installed to them:
+
+> enemy thought process:
+>> - on 100% ~ 80% of HP, priorities dishing out attacks
+>>> New attack types:
+>>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
+>>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
+>>>> odds: 60 normal, 20 charged, 20 defend
+>> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
+>>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a 15% chance to counter attack
+>>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
+>> - 45% and less:
+>>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp. nor count towards a defeat x number quest
+
+> enemy thought process, but it's groups:
+>> - all members at 100% ~ 80% of HP, the one member uses the solo phase 1 odds (60/20/20)
+>>> other member or 2 members may support attack, or defend themselves (60 norm/30 charge/10 def)
+>> - any single member at 80% ~ 45% of HP, choose between attempting to defend and attacking
+>>> other member or 2 members might attack, defend, or attempt to heal the most injured, non -attack member (45 atk/15 chrg/20 def/20 heal), can't heal selves.
+>>>> successful heal attempts heal the injured enemy for 12% missing HP.
+>> - single member at 45% and less:
+>>> Same as singular, just if that one flees, the rest stay. The others use the phase 2 support odds, so they may still heal it.
+
+**those nuggings don't affect any special encounters (eg; mimics, death)** 
+
+> With that, adding some more to enemy def:
+>> Enemies choosing to defend, will block; `def% + min(10, max(0,def * 0.65))` physical damage
+
+
+## introducing a new player stat:
+
+I think it is prime time for charisma to be added. Well hello there handsome(s).
+
+> - Charisma: shop costs are int(max(0,min(15,cha * 0.48)))% cheaper. You sway other people easier, giving you bonus odds, to not fail with sculptures, not encountering bad encounter types. +int(max(0,min(20, cha * 0.25)))%
+> - -Charisma: 
+> - Benefit..?: You are so darn ugly, enemies intend to flee from you all the time (100% to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
+> - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
+>> charisma stat doesn't benefit combat damage, or encounter calculations
+> - Anyone who charges you (merchants, cooks, guards...) is swayed too: costs like the cook's `1.5 ~ 2.3` slide to the cheap end the prettier you are, and to the pricey end the uglier.
+> - Some encounters only happen at certain charisma. Behave (or don't) accordingly.
+> - Old saves: your existing characters get their class's charisma value, no one starts at 0.
+
+
+## here are some numbers! (charisma to roles):
+|Class|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|
+|---|---|---|---|---|---|---|---|
+|druid|4|4|6|**3**|4|6|4|
+|dwarf|7|3|5|**1**|7|3|0|
+|elf|4|7|6|**4**|4|5|2|
+|forsaken|-1|5|3|**-7**|9|-4|4|
+|mage|3|4|10|**2**|3|9|5|
+|monk|5|5|8|**4**|-9|3|1|
+|necromancer|1|4|6|**-5**|5|-8|5|
+|ranger|3|11|6|**5**|2|2|9|
+|rogue|5|9|5|**7**|4|2|9|
+|satyr|2|7|9|**6**|3|4|4|
+|tank|0|-5|2|**0**|12|1|5|
+|warrior|6|4|4|**4**|6|3|1|
+
+aren't the pretty? c:
+
+
+## Raising/Lowering charisma:
+
+> Per level changing charisma doesn't make logical sense, so, I will make quests mainly reward or lower your charisma based on actions.
+
+
+## Quests rework:
+The way old quests and quest board worked were dull and gave you each and every quest from the start.
+
+So now here are the changes coming up:
+- Quests opt in; choose whether to start any quest or not at your own pace.
+- Quests progress: now each and any quest progress starts counting once one accepts it.
+- Choice quests (or moral quests): Completing some quests may give you a choice to make which can be good, or bad. which will effect your charisma. (still completes them either case)
+- Quest chains: Quests that open up after you do a prior quest, still experimental
+- Quest enemies: some quests bring their own enemies with them (townsfolk, priests...), you fight them the moment you accept. Those enemies don't show up anywhere else.
+- Some quests cost you charisma just for saying yes. Shady people make shady offers.
+
+
 ## Unlocks:
 Coming through like a truck, here are current specific un-lockable things;
 > classes:
     
     1: As a mage, defeat 15 enemies with -lck stat, or as a mage, find and equip a certain item.
-    2: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be < 0.
-    3: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be > 10.
+    2: With any class, be defeated 20 times, or as a warrior, lower your magic stat to be <= 0.
+    3: With any class, block at least 80 physical damage with defending (cumulative), or with any class, raise your defense stat to be >= 10.
     4: With any class, pray to a sculpture 20 times (cumulative).
     5: With any class, complete 5 quests that gain charisma. (0 charisma or -charisma quests don't count).
 
@@ -242,6 +222,39 @@ Coming through like a truck, here are current specific un-lockable things;
     - 3: Lower/Raise enemy stats to become 0.
     - 4: Encounter the same enemy 11 times.
 
+> How unlocks look in game:
+
+Locked classes show up as ??? at class selection, with their hint and how far you've got:
+
+    Choose a role:
+      druid, dwarf, elf, mage, pirate, ranger, rogue, satyr, warrior
+
+    Locked:
+      ???  As a mage, defeat 15 enemies with -lck   (4/15)
+      ???  Be defeated 20 times                     (7/20)
+      ???  Pray to a sculpture 20 times             (12/20)
+
+New town option, the Journal: everything you've unlocked, and everything you haven't (yet):
+
+    === Journal ===
+    Classes   6/11   Enemies   2/4   Items   1/4
+
+    [Enemies]
+      Demon          unlocked
+      ???            Do a certain quest involving priest*
+      ???            In combat, heal 45 HP from attacking   (31/45)
+
+And when you unlock something, you'll know:
+
+    You defeated Zombie!
+      ✦ Unlocked: Necronomicon (item) ✦
+
+...well, most of the time. Some unlocks are a bit quieter about it:
+
+    ...something followed you out of town.
+
+>> Unlock progress counts across all your characters, so dying 20 times on one and 0 on another still adds up. Your failures are shared, cherish them.
+
 
 ## new classes.
 |Class|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|
@@ -250,6 +263,7 @@ Coming through like a truck, here are current specific un-lockable things;
 |Pirate|2|5|-8|-4|6|0|11|
 
 > Pirate: not the sharpest cutlass in the chest, and nobody in town wants them at dinner, but boy are they lucky. The luckiest class in the game, tough as an old ship's hull, and magic? What's magic? Arr!
+
 
 ## Items (and small adjustments).
 |Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
@@ -299,6 +313,7 @@ Coming through like a truck, here are current specific un-lockable things;
 |Voucher|Yes|0|0|0|**0**|0|0|0|15|No|Yes|
 |Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
 
+
 ## New items:
 |Name|Consumable|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|Rarity|Buyable|Droppable|
 |------|-----|----|----|----|----|----|---|---|---|---|---|
@@ -310,6 +325,7 @@ Coming through like a truck, here are current specific un-lockable things;
 
 Prayer card: only out of combat, on use receive a random prayer or curse boon 
 
+
 ## Some more enemies (some are special):
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|info|
 |---|---|---|---|---|---|---|---|
@@ -320,6 +336,34 @@ Prayer card: only out of combat, on use receive a random prayer or curse boon
 |Townfolk|0|15|3|1|2|0|quest only|
 |Wisp|0|8|7|2|4|4||
 
+
+## Encounters but tastier:
+
+- slaying an enemy with 1 hit now says (40%): "you brutally slayed (enemy) in 1 hit" or "You sure you aren't too strong for this area? Becuase you just took that x in 1 hit". Or "One punch man is you!" Or "Dayum their HP is just gone, poof.".
+- Enemy fleeing a battle gives out some flavor (35%): like "x was too afraid to keep facing you, so it fled {on dropping stuff:} and at with that it lost ...". "The cowardous x fled battle {on dropping stuff:} luckily, they dropped ....". "Can't believe x fled this fight, {on drops:} atleast I can find victory on ....". "x fled, {drops:} and dropped ...". "Well didn't anticipate x to just run, {drops:} oh well let's take the .... and leave then.".
+    - On -cha: "You were so ugly, x couldn't hold it any longer so it fled. {drops:} just take the .... and don't make me look at you too please.". "No wonder x chose to give up, your face is a puke fest... {drops:} still some .... left though..". "Your vile aura made x run to their momma. {drops:} joy on their ... drops.
+    - On high end cha: "Don't blame me I am unsure why would x go away either {drops:} oh hey shiny ....! .". "I guess they were taken breathless by your handsome self that x decided to not fight any longer.. {drops:} oh well, stuff!". "x ran off... so what?! just sway your hair be pretty {drops:} and take the remanence!"
+- Resting success (55%): "zZzZ", "snore sounds", "Miserable no more!", "Wish I could rest as much as you right now!", "Had a good nap?", "Wipe that drool off ya, we got adventure to find!", "Keep up, you'll remember to buy potions eventually.", "looking for nuts?", "You sleep very loudly"
+- Resting failure (25%): "You light the fire, as you do x appears, out of nowhere.", "You turn on your mattress, and as you turn back x appears, how nice.", "As you lay back, you suddenly notice x lays next to you, in a sexy pose... strange.", "You are about to rest, but your spidey senses sense x", "You may not rest now, there are monsters nearby", "You may not rest now, because I said so", "Miserable as usual huh", "Awh you trying to sleep? But we just reached the best part... x attack!".
+- Winning combat with 100% ~ 75% HP (20%): "Guess I will play with you next time!", "Yes!", "Winner winner chicken dinner", "Now eat them!", "A winner is you", "Wow so big and strong", "Too easy", "Easy peasy", "You won that with skill", "You could do that with eyes closed", "woah! bam! pow!", "Remember that you won? yeah it was just now I know!".
+- Winning combat with 74% ~ 50% HP (15%): "A few scratches, but it was worth it", "Could always go better", "Oof no worries you'll jog it off", "Hmm not as satisfying", "You won with hard work".
+- Winning combat with 49% ~ 1% HP (15%): "That was a real struggle bus", "Do we get a zenkai boost? No? Darn.", "We be struggling", "Maybe it's prime time to return to town.", "Ohh tough one aren't you?", "Next hit could be the last you take, consider your steps!"
+- Level ups (75%): "You feel a little taller", "They grow up so fast", "level up!", "Wonder where all that exp goes to...", "Now you can use that anvil... wrong game again.", "A number just went up."
+- Learning spell\ability by level (55%): "Wow you are so smart!", "Can you learn how to take breaks too?", "So many calculations!", "Learn it? I barely know it!", "What was it called now?", "Don't forget to scream it's name whenever you use it!"
+- Learning spell\ability by item (25%): "That was very long to read", "Too long to read for me!", "How many lines of code was that again?", "You still scrolling through that?", "This x is bigger than I thought!", "So long, so..... boring.", "A bookworm as well aren't we?"
+- On being slayed by an enemy (30%): "Guess x was too tough for you", "Couldn't rest, right?", "X had you in the first half...", "You'd get X next time champ", "[player's name], you cannot give up now, get up!", "revive? 3...2...1... oh wait this is not this type of game...", "R.I.P [player's name], they were the hero we needed but not deserved", "Wait, lemme put you back a couple of steps!", "You lost!", "Heh, noob."
+- slayed and losing an item (40%): "aaaaaand it's gone! referring to your .... by the way", "You dropped something, it was ....!", "The earth giveth and the earth taketh your ....", "your bag feels lighter, checking out you see you no longer have ....!", "Oops dropped your glasses!... erm I mean your ....."
+- slayed town revival (35%): Wait, lemme put you back a couple of steps... oops guess you need to restart", "[player's name] got kicked.... to town", "And stay there!", "I'm gonna take your horse to the old town... and you too", "Well, at least there you are safe.", "And so, it ends, where it began.", "An apple a day, keeps the wild away.".
+- Slayed and losing gold and n > 0 (20%): "Congrats you are n coins poorer!", "Glad these coins aren't made of diamonds, because you just lost n of them!", "You shake your pockets and see that you are n gold less... you actually counted all that?", "How sad, those n coins could be converted into something far better", "Need a donation? you lost n gold".
+- Slayed losing gold and n <= 0 (40%): "You got slain so many times that now you need donations for real!","Maybe you need to start thinking about your career options...","You have so much gold that you lost none of it!... oh wait opposite, you don't have enough to even lose it!","So now you are poor too, I thought I'd seen everything.","Even a piece of bread needs to spare you at this rate!"
+- Evading attacks (15% odds to appear): "You awake your ultra instinct and....", "You become neo, and evade x non existent bullets!", "You are so quick you evade x attack by only moving your head!", "You seen that coming, didn't you?", "You evade the attack. Sweet moves!", "Your evasion tactics are so funky! looks like dancing!", "Evasion ftw".
+- Physical Attacking (10% appearance): "Go for the head!", "Hit harder!", "And so you try to hit them and...", "Oh boy, action time!", "Let me rate your hit.... x tier", "Shoryuken!", "How does it feel to spam 1?", "Oh yes I like those numbers!".
+- Missing attacks (45%): "Wh- what?!", "Careful, you almost hit yourself there", "The enemy is right there", "Are you serious?!", "Sneaky x!", "x slid pass that one", "No worries you'd get used to the skill shots!", "Could it be? Ultra instinct?!", "Funny one, now land it!", "Unlucky.. probably in a literal sense.", "Is your weapon is shorter than you thought?", "toastie", "Even I could hit x from my own screen!".
+- Magical attacking (13%): "Abracadabra!", "Alakazam!", "Wingardium leviosuhhhh", "Fantasma!", "Reaching the arcane depths you use ....", "Some magical hocus pocus!", "Sparkly shiny magic stuff!", "wizard 101 who?", "Look mom, no wands!", "Oh yes I have the brain power", "Gun shot!... but it's magic!", "Magic goes brrrrrrr", "Unlimited powerrrrrr!"
+- Cursed spell usage (13%): "Hocus pocus your stats are now irrelavant!", "I smell black magic", "Hexagonal force! wrong hex type?", "Get swallowed by darkness!", "hsssssss", "Bow!", "Weaken.. or strengthen, it depends!", "Now which stat shall it be?", "*evil laugh*".
+- Fleeing successfully (35%): "You bravely ran away", "Sir [player's name] ran away", "[player] cowardly fled", "You do know doing that achieves nothing but shame, right?", "{insert cartoony running sounds here}", "Let's run for it scoobs!", "Enemy too scary?", "No doubt here, you left x in the dust.", "Look at em zooming!"
+- Fleeing fail (35%): "You ran away... in a circle!", "You tried to run, but your feet won't co-op", "It's seems as though, you are grounded", "You go for a sprint, but x held the tip of your... outfit?", "Guess we cannot run away now Scoobs", "Sir [player] can't bravely run away", "Mysterious powers teleport you back into combat as you distance yourself", "You run, but as you do, you notice only the combat area is loading, you are screwed.", "You trip on a teeny tiny rock, baka. Good thing fall damage doesn't exist."
+- Attempting to flee death encounter (85%): "What'd you expect?", "Not this time....", "Death is undeniable...", "You chose this....", "I told you....", "You asked, didn't you?", "You reached so far, let it end.", "No.", "This is basically god, running expands your doom", "Nope.", "Tick, tock", "I AM HERE, JUST FOR YOU.", "You attempted to flee, but its Death", "The fear value is too high to flee". **not landing the flavors says "cannot flee"**
 
 
 ## Other updates:
