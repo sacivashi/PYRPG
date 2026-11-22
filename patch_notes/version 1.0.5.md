@@ -43,8 +43,8 @@ Adding some more encounters rather than just enemies:
 - Thief merchant(s) (11% rate): Same as merchant but buying or selling from/to them makes them suprise attack you (which means, the intiation will be theirs regardless). selling an item + winning combat returns you the item. Buying and winning returns you the gold you wasted, but no item (unless a loot dropped magically). thief merchants aren't called thief merchants, are called merchants. same stats as normal enemy thief.
 - Treasure chest(s) (25% rate): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
 - Mimic chest(s) (5% rate): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
-- Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(chosen_hp value * 2.3) and heal that value.
-> Sculptures (or boons) (18% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (will tell you by text):
+- Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(chosen_hp value * 1.5 ~ 2.3 depending on cha) and heal that value.
+> Sculptures (or boons & curses) (18% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (the effect is told after usage):
 >
     Of resting: better rest odd for three time (+15%)
     Of survival: higher rest heal for three time (only on success) (+15% of max HP & mana, so 45% per rest).
@@ -55,7 +55,7 @@ Adding some more encounters rather than just enemies:
 
 
     Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
-- Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. Will add two for now.
+- Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously..
 - Unlocks: PYRPG has always been an open book, but content you unlock through tasks adds replayability, and it's satisfying to earn.
 
 And now for the main event:
@@ -111,7 +111,7 @@ So now here are the changes coming up:
 - Quests opt in; choose whether to start any quest or not at your own pace.
 - Quests progress: now each and any quest progress starts counting once one accepts it.
 - Choice quests (or moral quests): Completing some quests may give you a choice to make which can be good, or bad. which will effect your charisma. (still completes them either case)
-
+- Quest chains: Quests that open up after you do a prior quest, still experimental
 
 ## here are some numbers! (charisma to roles):
 |Class|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|
@@ -263,7 +263,7 @@ Coming through like a truck, here are current specific un-lockable things;
 |Mana surge book|Yes|0|0|0|**0**|0|0|0|0|No|No|
 |Mind Shocker|No|10|5|-10|**-6**|4|0|4|7|No|Yes|
 |Nature's codex|Yes|0|0|0|**0**|0|0|0|17|Yes|Yes|
-|Necronomicon|No|0|0|10|**-4**|0|-10|2|10|~~Yes~~ → No|Yes|
+|Necronomicon|No|0|0|10|**-4**|0|-10|2|10|~~Yes~~ → **No**|Yes|
 |Nullifier|No|8|-5|-4|**-3**|-2|-1|0|9|No|Yes|
 |Nuts|Yes|0|0|0|**0**|0|0|0|45|No|Yes|
 |Power ring|No|5|0|0|**-1**|2|0|0|32|Yes|Yes|
@@ -285,10 +285,18 @@ Coming through like a truck, here are current specific un-lockable things;
 |Voucher|Yes|0|0|0|**0**|0|0|0|15|No|Yes|
 |Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
 
-## Some more enemies (some are for quests only):
+## New items:
+|Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
+|------|-----|----|----|----|----|----|---|---|---|---|---|
+|Cutlass|No|3|3|0|1|0|0|6|13|No|yes|
+|Golden obol|No|0|0|3|8|1|0|8|4|No|yes|
+
+
+
+## Some more enemies (some are special):
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|info|
 |---|---|---|---|---|---|---|---|
-|Guard|0|100|12|22|8|0|quest only|
+|Guard|0|100|12|22|8|0|event only|
 |Mole|0|11|5|4|-5|0||
 |Mole king|0|20|10|8|-20|0||
 |Priest|0|25|-14|2|2|15|quest only| 
