@@ -1,4 +1,4 @@
-# PYRPG v 1.0.5:
+# PYRPG v 1.1:
 ## Enemies but with brains and different encounters!
 
 > Taking off from version 1.0, we now can do some magical stuff!
@@ -117,7 +117,7 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 
 And now for the main event:
 
-## enemies move logic:
+## enemies move logic: (v1.1)
 
 Following the solutions enemies encountered now have their nuggings installed to them:
 
@@ -167,7 +167,7 @@ I think it is prime time for charisma to be added. Well hello there handsome(s).
 |---|---|---|---|---|---|---|---|
 |druid|4|4|6|**3**|4|6|4|
 |dwarf|7|3|5|**1**|7|3|0|
-|elf|4|7|6|**4**|4|5|2|
+|elf|4|7|6|**4**|7|5|2|
 |forsaken|-1|5|3|**-7**|9|-4|4|
 |mage|3|4|10|**2**|3|9|5|
 |monk|5|5|8|**4**|-9|3|1|
@@ -186,7 +186,7 @@ aren't the pretty? c:
 > Per level changing charisma doesn't make logical sense, so, I will make quests mainly reward or lower your charisma based on actions.
 
 
-## Quests rework:
+## Quests rework: (This patch)
 The way old quests and quest board worked were dull and gave you each and every quest from the start.
 
 So now here are the changes coming up:
@@ -198,7 +198,7 @@ So now here are the changes coming up:
 - Some quests cost you charisma just for saying yes. Shady people make shady offers.
 
 
-## Unlocks:
+## Unlocks: (1.0.7)
 Coming through like a truck, here are current specific un-lockable things;
 > classes:
     
@@ -237,17 +237,17 @@ Locked classes show up as ??? at class selection, with their hint and how far yo
 New town option, the Journal: everything you've unlocked, and everything you haven't (yet):
 
     === Journal ===
-    Classes   6/11   Enemies   2/4   Items   1/4
+    Classes   0/5   Enemies   1/4   Items   0/4
 
     [Enemies]
-      Demon          unlocked
-      ???            Do a certain quest involving priest*
+      ???            unlocked
+      ???            Do a certain quest involving priest
       ???            In combat, heal 45 HP from attacking   (31/45)
 
 And when you unlock something, you'll know:
 
     You defeated Zombie!
-      ✦ Unlocked: Necronomicon (item) ✦
+      ✦ Unlocked: ??? ✦
 
 ...well, most of the time. Some unlocks are a bit quieter about it:
 
