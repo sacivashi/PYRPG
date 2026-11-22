@@ -11,4 +11,4 @@ meet_up,Meet Up,reach,100,1,Bloody crown,0,,"A black hooded man comes to you in 
 bribe,Bribe,spend,30/0,1,free_fast_travel/0,-1/0,"Bribe"/"Don't","A familiar looking adventurer approaches you telling you they have a fast travel pass, they want a bribe for it however. Spend 30 gold to get a free fast travel pass.",
 lost_wallet,Lost Wallet,defeat,Bandit,1,20/60,+1/-3,"Give"/"Take wallet","A local villager has lost their wallet. Defeat a Bandit and return here for a reward.",
 townfolk_raid,Townfolk Raid,defeat,Townfolk,3,80,-5,,"A shady yet short and ugly person comes at you striking a conversation, most be drunk. He says if he could get rid of a bit of the town's population, town's hunger will lower. He asks you to defeat 3 townsfolk for him, for a hefty price. Do you agree?",Townfolk *3
-church_betrayal,Church Betrayal,defeat,Priest,1,50,-5,,"",priest *1
+church_betrayal,Church Betrayal,defeat,Priest,1,50,-5,,"A hooded figure stops you outside the church. He says the priest has been pocketing the offerings, and that the prayers he sent you on were never heard. He wants the priest gone. Defeat the priest and return for your pay.",priest *1
