@@ -44,14 +44,16 @@ Adding some more encounters rather than just enemies:
 - Treasure chest(s) (25% rate): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
 - Mimic chest(s) (5% rate): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
 - Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(chosen_hp value * 1.5 ~ 2.3 depending on cha) and heal that value.
-> Sculptures (or boons & curses) (18% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (the effect is told after usage):
+> Sculptures (or boons & curses) (15% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (the effect is told after usage):
 >
     Of resting: better rest odd for three time (+15%)
     Of survival: higher rest heal for three time (only on success) (+15% of max HP & mana, so 45% per rest).
     Of Prosperity: Some more gold income (+12% on next win)
     Of Intellect: A boost of exp (+30% on next win)
     Of Growth: Set your max_HP to +15 and then full heal, that max hp stays on till you win combat.
-    Of fear: Entering combat, your **charisma** (coming up) stat is multiplied by -1, clears at combat's end.
+    Of fear: Lower your charisma by 999. effects for 5 encounters.
+    Of Crippling: Change your strength to 0. effects on till a successful rest.
+    Of misery: Change your luck to 0. effects on till a successful rest.
 
 
     Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
@@ -286,12 +288,15 @@ Coming through like a truck, here are current specific un-lockable things;
 |Wooden sword|No|2|1|0|**0**|1|0|1|80|Yes|Yes|
 
 ## New items:
-|Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
+|Name|Consumable|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|Rarity|Buyable|Droppable|
 |------|-----|----|----|----|----|----|---|---|---|---|---|
-|Cutlass|No|3|3|0|1|0|0|6|13|No|yes|
-|Golden obol|No|0|0|3|8|1|0|8|4|No|yes|
+|Big Bonk|No|15|-9|-5|0|2|0|0|5|No|Yes|
+|Cutlass|No|3|3|0|1|0|0|6|13|No|Yes|
+|Golden obol|No|0|0|3|8|1|0|8|4|No|Yes|
+|Prayer card|Yes|0|0|0|0|0|0|0|28|Yes|No|
+|Rapier|No|4|5|2|2|4|0|4|3|Yes|No|
 
-
+Prayer card: only out of combat, on use receive a random prayer or curse boon 
 
 ## Some more enemies (some are special):
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|info|
