@@ -231,4 +231,12 @@ def test_defend_ends_when_your_turn_comes_back(monkeypatch):
 
 def test_old_saves_read_defence_as_defense():
     from util.file_io import _migrate_stats
-    assert _migrate_stats({'Strength': 3, 'Defence': 7}) == {'Strength': 3, 'Defense': 7}
+    assert _migrate_stats({'Strength': 3, 'Defence': 7, 'Charisma': 1}) == {'Strength': 3, 'Defense': 7, 'Charisma': 1}
+
+
+def test_old_saves_get_their_class_charisma():
+    from util.file_io import _migrate_stats
+    stats = _migrate_stats({'Strength': 6, 'Agility': 4, 'Intelligence': 4, 'Defense': 6, 'Magic': 3, 'Luck': 1},
+                           role="Warrior")
+    assert stats['Charisma'] == 4  # warrior's Charisma in roles.csv
+    assert list(stats) == ['Strength', 'Agility', 'Intelligence', 'Charisma', 'Defense', 'Magic', 'Luck']

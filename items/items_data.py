@@ -1,6 +1,10 @@
+from util.charisma import CHARISMA
 from util.file_io import get_data, read_csv
 
+# The stats that level-ups, Sleight of stats and combat work with. Charisma isn't one of them: it only
+# changes through quests and gear, so it's added separately for item deltas (ITEM_STAT_COLUMNS).
 STAT_COLUMNS = ['Strength', 'Agility', 'Intelligence', 'Defense', 'Magic', 'Luck']
+ITEM_STAT_COLUMNS = STAT_COLUMNS + [CHARISMA]
 
 
 def _get_item_row(name):
@@ -23,7 +27,7 @@ def get_item_stats(name):
     row = _get_item_row(name)
     if row is None:
         return None
-    return {stat: int(row[stat]) for stat in STAT_COLUMNS if row.get(stat) is not None}
+    return {stat: int(row[stat]) for stat in ITEM_STAT_COLUMNS if row.get(stat) is not None}
 
 
 def get_item_rarity(name):

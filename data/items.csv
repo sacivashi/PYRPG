@@ -2,13 +2,16 @@ Name,Consumable,Strength,Agility,Intelligence,Charisma,Defense,Magic,Luck,Rarity
 Arcane ring,No,0,0,3,0,2,5,0,32,Yes,Yes
 Beam staff,No,0,0,3,0,0,3,1,12,Yes,No
 Berserker armor,No,2,0,0,-2,4,0,0,1,Yes,No
+Big Bonk,No,15,-9,-5,0,2,0,0,5,No,Yes
 Blade rush,Yes,0,0,0,0,0,0,0,22,Yes,No
 Bloody crown,No,-6,2,9,1,-7,4,-1,6,No,Yes
 Bomb,Yes,0,0,0,0,0,0,0,50,Yes,No
 Cursed blade,No,6,0,0,-1,-3,0,-2,14,No,Yes
+Cutlass,No,3,3,0,1,0,0,6,13,No,Yes
 Dagger,No,1,3,0,3,0,0,1,30,Yes,Yes
 Diamond sword,No,8,-3,0,1,2,1,3,15,Yes,Yes
 Dice machine,Yes,0,0,0,0,0,0,0,20,Yes,No
+Golden obol,No,0,0,3,8,1,0,8,4,No,Yes
 Golden ring,No,0,0,0,5,2,0,5,32,No,Yes
 Hard ring,No,0,0,0,0,7,0,0,32,Yes,Yes
 Health potion,Yes,0,0,0,0,0,0,0,0,No,No
@@ -26,6 +29,7 @@ Necronomicon,No,0,0,10,-4,0,-10,2,10,No,Yes
 Nullifier,No,8,-5,-4,-3,-2,-1,0,9,No,Yes
 Nuts,Yes,0,0,0,0,0,0,0,45,No,Yes
 Power ring,No,5,0,0,-1,2,0,0,32,Yes,Yes
+Rapier,No,4,5,2,2,4,0,4,3,Yes,No
 Scroll,No,0,0,7,0,0,3,0,25,Yes,Yes
 Scroll of doom,Yes,0,0,0,0,0,0,0,0,No,No
 Sleight of stats,No,0,0,0,0,0,0,0,6,Yes,No

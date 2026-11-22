@@ -40,6 +40,7 @@ def _get_config_value(node_name):
         "items_csv": "data/items.csv",
         "quests_csv": "data/quests.csv",
         "encounters_csv": "data/encounters.csv",
+        "unlocks_csv": "data/unlocks.csv",
         "players_json": "data/players.json",
     }
     return defaults.get(node_name.lower())
@@ -82,10 +83,20 @@ def write_json(file_name, data):
         json.dump(data, file, indent=4)
 
 
-def _migrate_stats(stats):
-    """Saves from before the Defence -> Defense rename keep the old key; read it under the new one."""
+def _migrate_stats(stats, role=None):
+    """Old saves: read the pre-rename Defence key as Defense, and give characters from before
+    Charisma existed their class's Charisma (placed in roles.csv's column order, so it shows up
+    in the same spot as on a new character)."""
     if "Defence" in stats:
         stats = {("Defense" if k == "Defence" else k): v for k, v in stats.items()}
+    from util.charisma import CHARISMA
+    if CHARISMA not in stats:
+        from roles.roles_data import RolesExtract
+        role_stats = RolesExtract.get_role_stats_by_name().get((role or "").lower(), {})
+        stats = {**stats, CHARISMA: role_stats.get(CHARISMA, 0)}
+        order = list(role_stats)
+        if order:
+            stats = {k: stats[k] for k in sorted(stats, key=lambda k: order.index(k) if k in order else len(order))}
     return stats
 
 
@@ -107,8 +118,12 @@ def get_player(player_name):
             # every field the save has; anything missing (older saves) gets the PlayerData default
             saved = {f.name: player[f.name] for f in fields(PlayerData) if f.name in player}
             saved.setdefault("depth_reached", player.get("distance", 0))  # older saves: start from where they are
-            saved["stats"] = _migrate_stats(saved["stats"])
+            saved["stats"] = _migrate_stats(saved["stats"], saved.get("role"))
             saved["perks"], saved["loot"] = _rescue_item_rewards(saved.get("perks", []), saved.get("loot", []))
+            if "accepted_quests" not in player:  # from before quests were opt-in
+                from quests.quests_data import started_quests
+                saved["accepted_quests"] = started_quests(saved.get("completed_quests", []),
+                                                          saved.get("quest_flags", {}))
             return PlayerData(**saved)
 
     return None

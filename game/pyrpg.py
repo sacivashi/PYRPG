@@ -13,7 +13,8 @@ from players.save import put_new_player
 from combat.combat_player import Player
 from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
 from spells.spells_data import learning_item_spell, can_learn, level_up_spells
-from quests.quests_data import get_quests, quest_progress, describe_reward, grant_reward, QUEST_TYPES, FAST_TRAVEL
+from quests.quests_data import get_quests, quest_progress, quest_unlocked, describe_reward, grant_reward, QUEST_TYPES, FAST_TRAVEL
+from util.charisma import CHARISMA, charisma_price, price_sway_percent
 
 
 class PYRPG:
@@ -275,14 +276,17 @@ class PYRPG:
             print(f"Gold: {self.player_data.gold}")
             if has_voucher:
                 print("(Voucher active: 15% off your next purchase)")
+            sway = price_sway_percent(self._charisma())
+            if sway:
+                print(f"(Charisma: prices {sway}% {'lower' if self._charisma() > 0 else 'higher'} for you)")
             for i, (name, price) in enumerate(stock, 1):
                 if (i - 1) in sold_out:
                     print(f"  [{i}] {name} - SOLD OUT")
                 else:
-                    print(f"  [{i}] {name} - {self._apply_voucher_discount(price, has_voucher)} gold")
+                    print(f"  [{i}] {name} - {self._shop_price(price, has_voucher)} gold")
             print(f"  [5] Reroll stock - {reroll_cost} gold")
             for slot, (name, price) in enumerate(self.ALWAYS_STOCKED, 6):
-                print(f"  [{slot}] {name} - {self._apply_voucher_discount(price, has_voucher)} gold (always in stock)")
+                print(f"  [{slot}] {name} - {self._shop_price(price, has_voucher)} gold (always in stock)")
             print("  [0] Leave shop")
 
             choice = input("\nChoose an item to buy, 'c' + number to check its stats (e.g. c1), 5 to reroll, 6/7 for potions, or 0 to leave: ").strip()
@@ -331,8 +335,9 @@ class PYRPG:
                 sold_out.add(index)
 
     def _buy(self, item_name, price, has_voucher):
-        """Charge for one item (Voucher discount applied and used up). Returns True if bought."""
-        final_price = self._apply_voucher_discount(price, has_voucher)
+        """Charge for one item (Charisma sway, then the Voucher discount, which gets used up).
+        Returns True if bought."""
+        final_price = self._shop_price(price, has_voucher)
         if self.player_data.gold < final_price:
             print("You don't have enough gold.")
             input("\nPress Enter to continue...")
@@ -349,6 +354,13 @@ class PYRPG:
 
     def _apply_voucher_discount(self, price, has_voucher):
         return round(price * (1 - self.VOUCHER_DISCOUNT)) if has_voucher else price
+
+    def _shop_price(self, price, has_voucher=False):
+        """What the shop actually charges: swayed by your Charisma, then the Voucher on top"""
+        return self._apply_voucher_discount(charisma_price(price, self._charisma()), has_voucher)
+
+    def _charisma(self):
+        return self._effective_stats().get(CHARISMA, 0)
 
     def _roll_shop_stock(self):
         """Pick a random subset of buyable items to stock the shop with"""
@@ -368,7 +380,7 @@ class PYRPG:
 
         item_name, price = items[index]
         self._print_item_stats(item_name)
-        print(f"  Price: {price} gold")
+        print(f"  Price: {self._shop_price(price)} gold")
         input("\nPress Enter to continue...")
 
     def enter_combat(self):
@@ -476,50 +488,149 @@ class PYRPG:
 
     def quest_event(self, quest_type, value, amount=1):
         """Report something that happened — a won fight ("defeat", enemy name, group size), an action
-        ("use", FAST_TRAVEL), a depth ("reach", distance) — and count it toward every unfinished
-        quest of that type whose target it matches (QUEST_TYPES in quests/quests_data.py)."""
+        ("use", FAST_TRAVEL), a depth ("reach", distance) — and count it toward every accepted,
+        unfinished quest of that type whose target it matches (QUEST_TYPES in quests/quests_data.py).
+        Quests you haven't accepted yet don't count anything."""
         matches = QUEST_TYPES[quest_type]
         flags = self.player_data.quest_flags
         for quest_id, quest in get_quests().items():
-            if (quest["type"] == quest_type and quest_id not in self.player_data.completed_quests
+            if (quest["type"] == quest_type and quest_id in self.player_data.accepted_quests
+                    and quest_id not in self.player_data.completed_quests
                     and matches(quest["target"], value)):
                 flags[quest_id] = min(quest["amount"], quest_progress(quest_id, quest, flags) + amount)
 
+    def _quest_status(self, quest_id, quest):
+        """"completed", "new" (not accepted yet), "in progress" or "ready" (to claim). Spend quests
+        have nothing to do out in the world, so you make their choice the moment you open them."""
+        if quest_id in self.player_data.completed_quests:
+            return "completed"
+        if quest["type"] == "spend":
+            return "choose"
+        if quest_id not in self.player_data.accepted_quests:
+            return "new"
+        if quest_progress(quest_id, quest, self.player_data.quest_flags) >= quest["amount"]:
+            return "ready"
+        return "in progress"
+
+    def _quest_status_label(self, quest_id, quest):
+        status = self._quest_status(quest_id, quest)
+        if status == "in progress":
+            return f"In progress ({quest_progress(quest_id, quest, self.player_data.quest_flags)}/{quest['amount']})"
+        return {"completed": "Completed", "choose": "New", "new": "New", "ready": "Ready to claim!"}[status]
+
+    def _visible_quests(self):
+        """The board's quests, minus quest-chain ones whose earlier quest isn't done yet"""
+        return [(quest_id, quest) for quest_id, quest in get_quests().items()
+                if quest_unlocked(quest_id, self.player_data.completed_quests)]
+
     def quest_board(self):
-        """Town quest board — lists every quest, lets you turn in ones that are ready"""
-        print("\n=== Quest Board ===")
-        for quest_id, quest in get_quests().items():
-            print(f"\n{quest['title']}: {quest['description']}")
-            progress = quest_progress(quest_id, quest, self.player_data.quest_flags)
-            if quest["type"] == "spend" and quest_id not in self.player_data.completed_quests and progress < quest["amount"]:
-                progress = self._offer_quest_payment(quest_id, quest, progress)
+        """Town quest board: pick a quest to read it, accept it, fight for it or claim it"""
+        while True:
+            quests = self._visible_quests()
+            print("\n=== Quest Board ===")
+            print(f"Gold: {self.player_data.gold}")
+            for i, (quest_id, quest) in enumerate(quests, 1):
+                print(f"  [{i}] {quest['title']} - {self._quest_status_label(quest_id, quest)}")
+            print("  [0] Leave")
 
-            if quest_id in self.player_data.completed_quests:
-                print("  Status: Completed.")
-            elif progress >= quest["amount"]:
-                reward = quest["reward"]
-                choice = input(f"  Ready to turn in for {describe_reward(reward)}! Claim it now? (yes/no): ").strip().lower()
-                if choice in ("y", "yes"):
-                    grant_reward(self.player_data, reward)
-                    self.player_data.completed_quests.append(quest_id)
-                    print(f"  Quest complete! Reward: {describe_reward(reward)}.")
-            elif quest["type"] == "spend":
-                print(f"  Status: Needs {quest['target']} gold (you have {self.player_data.gold}).")
+            choice = input("\nChoose a quest (0 or Enter to leave): ").strip()
+            if choice in ("0", ""):
+                return
+            try:
+                index = int(choice) - 1
+                if index < 0 or index >= len(quests):
+                    raise ValueError
+            except ValueError:
+                print("Invalid choice.")
+                continue
+            self._open_quest(*quests[index])
+
+    def _open_quest(self, quest_id, quest):
+        """One quest's page: what it says and whatever you can do with it right now"""
+        print(f"\n--- {quest['title']} ---")
+        print(quest["description"] or "...")
+        status = self._quest_status(quest_id, quest)
+
+        if status == "completed":
+            made = self.player_data.quest_choices.get(quest_id)
+            print(f"Completed{f' (you chose: {made})' if made else ''}.")
+            input("\nPress Enter to continue...")
+        elif status == "new":
+            self._offer_quest(quest_id, quest)
+        elif status == "in progress":
+            print(f"{self._quest_status_label(quest_id, quest)}.")
+            if quest["spawn"]:
+                name, count = quest["spawn"]
+                if input(f"[1] Fight ({count} {name})  [0] Back: ").strip() == "1":
+                    self._quest_fight(quest)
             else:
-                print(f"  Status: In progress ({progress}/{quest['amount']}).")
+                input("\nPress Enter to continue...")
+        else:
+            self._complete_quest(quest_id, quest)
 
+    def _offer_quest(self, quest_id, quest):
+        """Accept a quest, or leave it for later. Quests with a spawn start their fight right away."""
+        options = quest["options"]
+        if len(options) > 1:
+            print("Reward: depends on what you choose...")
+        elif describe_reward(options[0]["reward"]):
+            print(f"Reward: {describe_reward(options[0]['reward'])}")
+        if input("[1] Accept  [0] Not now: ").strip() != "1":
+            return
+        self.player_data.accepted_quests.append(quest_id)
+        print("Quest accepted!")
+        if quest["spawn"]:
+            self._quest_fight(quest)
+        else:
+            input("\nPress Enter to continue...")
+
+    def _quest_fight(self, quest):
+        """Fight a quest's own enemies, right here in town"""
+        name, count = quest["spawn"]
+        stats = get_enemy_stats(name)
+        name = stats["Name"] if stats else name
+        if count > 1:
+            print(f"\n{count} {name}s step up. Fight!")
+        else:
+            print(f"\nA {name} steps up. Fight!")
+        self.fight(name, count)
+
+    def _option_label(self, option):
+        """'Give (20 gold)', 'Accept (costs 55 gold, Dice machine)', 'Claim (30 gold)', 'Decline'"""
+        details = [f"costs {option['cost']} gold" if option["cost"] else None, describe_reward(option["reward"])]
+        details = ", ".join(d for d in details if d)
+        return f"{option['label'] or 'Claim'}{f' ({details})' if details else ''}"
+
+    def _complete_quest(self, quest_id, quest):
+        """Claim a finished quest, or make a choice quest's choice. Every choice completes the quest:
+        pay its cost (spend quests), get its reward, and take its Charisma change."""
+        options = quest["options"]
+        menu = "  ".join(f"[{i}] {self._option_label(option)}" for i, option in enumerate(options, 1))
+        choice = input(f"{menu}  [0] Not now: ").strip()
+        if not choice.isdigit() or not 1 <= int(choice) <= len(options):
+            return
+        option = options[int(choice) - 1]
+        if option["cost"] > self.player_data.gold:
+            print(f"You need {option['cost']} gold for that (you have {self.player_data.gold}).")
+            input("\nPress Enter to continue...")
+            return
+
+        self.player_data.gold -= option["cost"]
+        grant_reward(self.player_data, option["reward"])
+        if option["charisma"]:
+            stats = self.player_data.stats
+            stats[CHARISMA] = stats.get(CHARISMA, 0) + option["charisma"]
+        if quest_id not in self.player_data.accepted_quests:
+            self.player_data.accepted_quests.append(quest_id)
+        if option["label"]:
+            self.player_data.quest_choices[quest_id] = option["label"]
+        self.player_data.completed_quests.append(quest_id)
+
+        reward = describe_reward(option["reward"])
+        print(f"Quest complete!{f' Reward: {reward}.' if reward else ''}")
+        if option["charisma"]:
+            print(f"Charisma {option['charisma']:+d} (now {self.player_data.stats[CHARISMA]}).")
         input("\nPress Enter to continue...")
-
-    def _offer_quest_payment(self, quest_id, quest, progress):
-        """A "spend" quest: offer to hand over its target gold. Returns the quest's new progress."""
-        cost = int(quest["target"])
-        if self.player_data.gold < cost:
-            return progress
-        if input(f"  Give {cost} gold? (yes/no): ").strip().lower() not in ("y", "yes"):
-            return progress
-        self.player_data.gold -= cost
-        self.player_data.quest_flags[quest_id] = quest["amount"]
-        return quest["amount"]
 
     def calculate_rest_chance(self):
         """min(60, max(30, Luck + 15))% for Luck >= 0; max(15, 25 - abs(Luck) * 0.48)% for -Luck"""
@@ -542,8 +653,9 @@ class PYRPG:
             self._apply_equipment_hp_change()
 
     def _player_power(self):
-        """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched against"""
-        return sum(abs(int(v)) for v in self._effective_stats().values())
+        """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched
+        against. Charisma doesn't count: it never makes you stronger in a fight."""
+        return sum(abs(int(v)) for k, v in self._effective_stats().items() if k != CHARISMA)
 
     def _max_mana(self):
         """Max mana from gear-adjusted stats — never stored, always derived, like max HP in combat"""

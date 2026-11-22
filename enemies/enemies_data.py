@@ -27,7 +27,9 @@ DEPTH_TARGET_RATIOS = [
 
 DEATH = "Death"
 DEATH_START_DEPTH = 100        # min(100, depth - 99)% chance any encounter at 100+ is Death
-NEVER_RANDOM_ENEMIES = {"death"}  # only ever met through the depth roll, never the weighted pool
+# Never in the weighted pool: Death only comes through the depth roll, and quest enemies only
+# through the quest that spawns them (quests.csv `spawn`)
+NEVER_RANDOM_ENEMIES = {"death", "priest", "townfolk"}
 DEPTH_BUFF_START = 50          # past this, every positive enemy stat gets +(depth - 50)
 
 

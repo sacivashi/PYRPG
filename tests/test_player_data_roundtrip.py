@@ -5,7 +5,7 @@ from players.player_data import PlayerData
 from players.save import put_new_player
 from util.file_io import get_player
 
-STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 5, 'Defense': 5, 'Magic': 5, 'Luck': 5}
+STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 5, 'Charisma': 5, 'Defense': 5, 'Magic': 5, 'Luck': 5}
 
 
 def test_every_player_data_field_survives_combat_and_save(monkeypatch, tmp_path):
