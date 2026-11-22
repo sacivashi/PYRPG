@@ -34,7 +34,7 @@ This enemy's behavior dishes out few problems:
 3. Enemies have no... flavor, each enemy is like the last one all that matter are the stats, a name doesn't make something unique if it acts similarly.
 
 ### The fixes:
-- Have a 25% to get a passive encounter when you press explore.
+- Have a 25% chance to get a passive encounter when you press explore.
 - Add new "encounters.csv"
 Adding some more encounters rather than just enemies:
 - Wandering merchant(s)(25% rate): Can be "encountered" by depth 11+, they sell you items for `(base store cost * 1.3)` the cost, but have a chance to have rarer unpurchaseable loot on them `(still cost * 1.3)`. They also accept to take loot for `int(35% of item's price)` sell value. Has a chance to be thief merchant.
@@ -59,7 +59,7 @@ Adding some more encounters rather than just enemies:
     - Cave entrance: something lives in there. Two somethings, actually.
     - A strange obelisk: free EXP? Nothing is free...
     - Graveyard: the dead don't stay down around here.
-    - Sudden Hunger: only when you're at half HP or less. You find something to eat... and something finds you.
+    - Sudden Hunger: only when you're at half HP or less. You find something to eat... and it's alive.
 - Halt! (town event, 5% rate): Did something you shouldn't have? While your charisma is below 0, a guard may stop you on your way back to town. Pay a fine (15 ~ 40 gold, the better your charisma the cheaper), or refuse and fight. Lose the fight and the guard takes the full 40 anyway (or everything you've got, if you're that broke).
 
 

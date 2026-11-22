@@ -1,5 +1,5 @@
 import random
-from enemies.enemies_data import get_encounter_enemy, DEATH
+from enemies.enemies_data import get_encounter_enemy, get_enemy_stats, DEATH
 
 
 def parse_spawn(cell):
@@ -8,6 +8,12 @@ def parse_spawn(cell):
         return None
     name, _, count = cell.partition("*")
     return name.strip(), int(count) if count.strip() else 1
+
+
+def spawn_name(name):
+    """The enemy's name as enemies.csv spells it ('slime' -> 'Slime')"""
+    stats = get_enemy_stats(name)
+    return stats["Name"] if stats else name
 
 
 def roll_spawn(game, cell):
@@ -78,5 +84,95 @@ def strange_obelisk(game, row):
     return "exp"
 
 
+def graveyard(game, row):
+    """Look around or walk on. Looking around always wakes the dead (the row's Enemy_spawn); put
+    them back down and one of the graves turns out to be a chest. Returns the fight's result or None."""
+    print("\nYou come across an old graveyard. Some of the graves look... freshly dug.")
+    if input("Look around the graves? (y/n) ").strip().lower() != "y":
+        print("You keep walking. Probably for the best.")
+        return None
+
+    spawn = parse_spawn(row.get("Enemy_spawn", ""))
+    if not spawn:
+        print("\nNothing stirs. In an open grave, a chest sits half-buried.")
+        game.open_chest()
+        return "chest"
+    name, size = spawn_name(spawn[0]), spawn[1]
+    print(f"\nThe ground shifts... {size} {name}s claw their way up!" if size > 1
+          else f"\nThe ground shifts... a {name} claws its way up!")
+
+    def grave_chest():
+        print("In the grave they crawled out of, a chest sits half-buried.")
+        game.open_chest()
+
+    return game.fight(name, size, on_victory=grave_chest)
+
+
+def sudden_hunger(game, row):
+    """Only at half HP or less (the row's HP_req). You're so hungry that the snack is the row's
+    Enemy_spawn (a Slime): take a bite and heal the row's Value... and it fights back.
+    Returns the fight's result, or None."""
+    heal = int(float((row.get("Value") or "0").lstrip("+=")))
+    spawn = parse_spawn(row.get("Enemy_spawn", ""))
+    name, size = (spawn_name(spawn[0]), spawn[1]) if spawn else (None, 0)
+    if name:
+        print(f"\nYour stomach growls. A {name} wobbles by, all glistening and jiggly. "
+              f"It looks... kind of delicious?")
+        prompt = f"Take a bite out of the {name}? (y/n) "
+    else:
+        print("\nYour stomach growls. On a rock nearby sits something that looks... edible. Mostly.")
+        prompt = "Eat it? (y/n) "
+    if input(prompt).strip().lower() != "y":
+        print("You're not that hungry. Yet.")
+        return None
+
+    pd = game.player_data
+    healed = max(0, min(heal, pd.max_hp - pd.hp))
+    pd.hp += healed
+    if not name:
+        print(f"Not bad! You recover {healed} HP. HP: {pd.hp}/{pd.max_hp}")
+        input("\nPress Enter to continue...")
+        return "ate"
+    print(f"*CHOMP* Tastes like... lime? You recover {healed} HP. HP: {pd.hp}/{pd.max_hp}")
+    print(f"\nThe {name} did NOT enjoy that. It fights back!" if size == 1
+          else f"\nTurns out it wasn't alone. {size} angry {name}s fight back!")
+    return game.fight(name, size)
+
+
+def halt(game, row):
+    """Town event, -Charisma only: a guard stops you on the way back in. Pay a fine (15 ~ 40 gold,
+    the closer to 0 your Charisma the cheaper) or refuse and fight. Lose and the guard takes the
+    full top fine anyway, or everything you've got. Returns "paid" or the fight's result."""
+    from adventures.encounters import parse_range, swayed
+    low, high = parse_range(row.get("Cost"))
+    fine = round(swayed(row, low, high, game, ugly_only=True))
+    top_fine = round(high)
+    pd = game.player_data
+
+    print("\n\"Halt!\" A town guard steps into your path. \"You've been causing trouble, haven't you?\"")
+    print(f"\"Pay a fine of {fine} gold, or we do this the hard way.\"")
+    print(f"Gold: {pd.gold}")
+    choice = input(f"[1] Pay the fine ({fine} gold)  [2] Refuse and fight: ").strip()
+    if choice == "1":
+        if pd.gold >= fine:
+            pd.gold -= fine
+            print("You pay up. \"Stay out of trouble.\" The guard steps aside.")
+            input("\nPress Enter to continue...")
+            return "paid"
+        print("\"You don't even have that?\" The guard draws a sword.")
+    else:
+        print("\"The hard way it is.\"")
+
+    spawn = parse_spawn(row.get("Enemy_spawn", "")) or ("Guard", 1)
+    result = game.fight(spawn_name(spawn[0]), spawn[1])
+    if result == "defeat":
+        taken = min(pd.gold, top_fine)
+        pd.gold -= taken
+        print(f"While you're out cold, the guard helps themself to {taken} gold.")
+        input("\nPress Enter to continue...")
+    return result
+
+
 # Encounter Description -> the function that runs it
-ADVENTURES = {"Cave entrance": cave_entrance, "A strange obelisk": strange_obelisk}
+ADVENTURES = {"Cave entrance": cave_entrance, "A strange obelisk": strange_obelisk,
+              "Graveyard": graveyard, "Sudden Hunger": sudden_hunger, "Halt!": halt}

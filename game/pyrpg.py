@@ -118,7 +118,27 @@ class PYRPG:
         self.player_data.distance += 1
         self.player_data.depth_reached = max(self.player_data.depth_reached, self.player_data.distance)
         self.quest_event("reach", self.player_data.distance)
-        self.enter_combat()
+        if not self.passive_encounter():
+            self.enter_combat()
+
+    def passive_encounter(self):
+        """25% of explores: something from encounters.csv instead of a fight (a chest, the Cook, an
+        adventure...). Returns True if one happened."""
+        from adventures.encounters import roll_wild_encounter, run_encounter
+        row = roll_wild_encounter(self)
+        if row is None:
+            return False
+        run_encounter(self, row)
+        return True
+
+    def town_encounter(self):
+        """On the way back into town: the town rows of encounters.csv (Halt!). Returns True if one happened."""
+        from adventures.encounters import roll_town_encounter, run_encounter
+        row = roll_town_encounter(self)
+        if row is None:
+            return False
+        run_encounter(self, row)
+        return True
 
     FREE_FAST_TRAVEL = "free_fast_travel"
 
@@ -186,7 +206,8 @@ class PYRPG:
             self.player_data.in_town = True
             self.player_data.distance = 0
             self.player_data.failed_attempts = 0
-            input("\nPress Enter to continue...")
+            if not self.town_encounter():
+                input("\nPress Enter to continue...")
         else:
             print("You lose your way and are ambushed!")
             self.player_data.failed_attempts += 1
@@ -396,14 +417,17 @@ class PYRPG:
             print(f"\nA wild {enemy_name} appears!")
         return self.fight(enemy_name, group_size)
 
-    def fight(self, enemy_name, group_size=1):
+    def fight(self, enemy_name, group_size=1, surprise=False, scaling=0, on_victory=None):
         """Run one fight and settle it: rewards on a win, death penalties on a loss. Shared by
-        random encounters and adventures, so a fight pays out the same wherever it happens."""
+        random encounters and adventures, so a fight pays out the same wherever it happens.
+        `surprise`: every enemy acts first. `scaling`: flat bonus to the enemy's positive stats
+        (Mimics, thief merchants). `on_victory`: extra payout, run after the usual rewards."""
         # Auto-save before risky combat
         print("💾 Auto-saving before combat...")
         self.auto_save_player_state()
 
-        result, current_hp, current_mana = start_combat(self.player_data, enemy_name, group_size)
+        extras = {k: v for k, v in (("surprise", surprise), ("scaling", scaling)) if v}
+        result, current_hp, current_mana = start_combat(self.player_data, enemy_name, group_size, **extras)
         self.player_data.hp = current_hp
         self.player_data.mana = current_mana
 
@@ -424,6 +448,8 @@ class PYRPG:
 
             self.quest_event("defeat", enemy_name, group_size)
             self._sleight_of_stats_progress()
+            if on_victory:
+                on_victory()
         elif result == "defeat":
             self._apply_death_penalties()
             self._handle_defeat_respawn()

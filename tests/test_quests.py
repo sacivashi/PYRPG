@@ -343,6 +343,7 @@ def test_the_free_trip_perk_survives_save_and_load(monkeypatch, tmp_path):
 def test_exploring_to_depth_15_completes_the_reach_quest(monkeypatch):
     game = make_game(distance=14, accepted_quests=["spooky_area"])
     monkeypatch.setattr(PYRPG, "enter_combat", lambda self: None)
+    monkeypatch.setattr(PYRPG, "passive_encounter", lambda self: False)
     game.explore()
     assert game.player_data.quest_flags["spooky_area"] == 1
 
@@ -350,6 +351,7 @@ def test_exploring_to_depth_15_completes_the_reach_quest(monkeypatch):
 def test_a_shallower_explore_does_not_count(monkeypatch):
     game = make_game(distance=5, accepted_quests=["spooky_area"])
     monkeypatch.setattr(PYRPG, "enter_combat", lambda self: None)
+    monkeypatch.setattr(PYRPG, "passive_encounter", lambda self: False)
     game.explore()
     assert "spooky_area" not in game.player_data.quest_flags
 

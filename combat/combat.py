@@ -1,7 +1,7 @@
 import random
 from combat.damage_calculator import DamageCalculator
 from combat.combat_player import Player
-from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH
+from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH, DEPTH_BUFF_START
 from spells.spells_data import get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
 
 # Group encounters — v1.0: the odds and sizes both scale with depth.
@@ -43,14 +43,25 @@ class Enemy:
     """One member of a (possibly solo) enemy group. Each has its own HP, stats (so a debuff
     on one doesn't affect its siblings), corruption, and initiative/dodge_bonus."""
 
-    def __init__(self, name, depth=0):
+    def __init__(self, name, depth=0, scaling=0):
         self.name = name
-        self.stats = apply_depth_buff(get_enemy_stats(name), depth)
+        self.stats = self._scaled_stats(name, depth, scaling)
         self.max_hp = self._calculate_hp()
         self.hp = self.max_hp
         self.corruption = self.stats.get('Corruption', 0)  # live value — grows by 1 each of its turns
         self.dodge_bonus = 0
         self.initiative = 0
+
+    @staticmethod
+    def _scaled_stats(name, depth, scaling):
+        """The CSV stats with the depth 50+ buff. `scaling` is a flat bonus to every stat above 0 on
+        top of that, for enemies that grow with depth themselves (Mimics, thief merchants: depth - 1).
+        Those get the 50+ buff too, even when they're never in the random pool."""
+        stats = get_enemy_stats(name)
+        if not scaling:
+            return apply_depth_buff(stats, depth)
+        bonus = scaling + max(0, depth - DEPTH_BUFF_START)
+        return {k: (v + bonus if k != "Name" and isinstance(v, int) and v > 0 else v) for k, v in stats.items()}
 
     def _calculate_hp(self):
         if 'HP' in self.stats:
@@ -81,10 +92,11 @@ class Combat:
     COMBAT_USABLE_ITEMS = ["bomb", "timer", "health potion", "mana potion", "nuts", "dice machine", *THUNDER_ITEMS]
     BERSERKER_ARMOR = "berserker armor"
 
-    def __init__(self, player_data, enemy_name, group_size=1):
+    def __init__(self, player_data, enemy_name, group_size=1, surprise=False, scaling=0):
         self.player = Player(player_data)
         depth = player_data.distance
-        self.enemies = [Enemy(enemy_name, depth) for _ in range(group_size)]
+        self.enemies = [Enemy(enemy_name, depth, scaling) for _ in range(group_size)]
+        self.surprise = surprise  # a surprise attack: every enemy acts before the player
 
         # Calculate initiative for turn order — player and every enemy get their own
         self.player_initiative, self.player_dodge_bonus = self.calculate_initiative(self.player.get_live_stats()['stats'])
@@ -118,6 +130,8 @@ class Combat:
         for i, enemy in enumerate(self.enemies, 1):
             label = enemy.name if len(self.enemies) == 1 else f"{enemy.name} #{i}"
             print(f"{label} Initiative: {enemy.initiative}")
+        if self.surprise:
+            print("It's a surprise attack!")
         if self.current_turn == "player":
             print("You go first!")
         else:
@@ -131,7 +145,7 @@ class Combat:
         order = [("player", None, self.player_initiative)]
         for i, enemy in enumerate(self.enemies):
             order.append(("enemy", i, enemy.initiative))
-        order.sort(key=lambda entry: entry[2], reverse=True)
+        order.sort(key=lambda entry: (entry[0] == "enemy" and self.surprise, entry[2]), reverse=True)
         return [(kind, idx) for kind, idx, _ in order]
 
     def calculate_initiative(self, stats):
@@ -851,11 +865,11 @@ class Combat:
 
 
 # Helper function to start combat
-def start_combat(player_data, enemy_name, group_size=1):
+def start_combat(player_data, enemy_name, group_size=1, surprise=False, scaling=0):
     """Initialize and run a combat encounter. Items used up and item progress (Thunder use counts)
     are written back onto player_data — they're the only combat changes that persist besides
     HP/mana, which come back in the return value."""
-    combat = Combat(player_data, enemy_name, group_size)
+    combat = Combat(player_data, enemy_name, group_size, surprise, scaling)
     result = combat.run_combat()
     player_data.loot = combat.player.loot
     player_data.item_state = combat.player.item_state

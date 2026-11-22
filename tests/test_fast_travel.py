@@ -21,6 +21,7 @@ def answer(monkeypatch, *responses):
 def test_exploring_deeper_raises_depth_reached(monkeypatch):
     game = make_game(in_town=False, distance=4, depth_reached=4)
     monkeypatch.setattr(game, "enter_combat", lambda: None)
+    monkeypatch.setattr(game, "passive_encounter", lambda: False)
     game.explore()
     assert game.player_data.depth_reached == 5
 
@@ -28,6 +29,7 @@ def test_exploring_deeper_raises_depth_reached(monkeypatch):
 def test_depth_reached_never_goes_down(monkeypatch):
     game = make_game(in_town=False, distance=2, depth_reached=10)
     monkeypatch.setattr(game, "enter_combat", lambda: None)
+    monkeypatch.setattr(game, "passive_encounter", lambda: False)
     game.explore()
     assert game.player_data.depth_reached == 10
 
