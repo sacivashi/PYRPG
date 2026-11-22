@@ -15,5 +15,3 @@ class Descriptions:
 	TANK_DESC = "An unmovable wall of armor. Shrugs off blows that would fell others, but slow to act and light on damage."
 	WARRIOR_DESC ="output damage while also being the group's tank".capitalize()
 	
-	
-	

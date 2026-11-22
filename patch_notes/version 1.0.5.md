@@ -44,7 +44,7 @@ Adding some more encounters rather than just enemies:
 - Treasure chest(s) (25% rate): Can be "encountered", at any depth, contain some gold (5 ~ 13) and may contain a random loot. Has a chance to be a mimic. **Chests in encounter adventures are always good**
 - Mimic chest(s) (5% rate): Same as treasure, but choosing to open these makes them surprise attack you, defeating one gives you bonus gold (3 ~ 11). mimics aren't called mimics, just treasure chest.
 - Cook(s) (22% rate): Can be "encountered" at depth 5+, pay int(chosen_hp value * 1.5 ~ 2.3 depending on cha) and heal that value.
-> Sculptures (or boons & curses) (15% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (the effect is told after usage):
+> Sculptures (or boons & curses) (12% rate): Can be "encountered", at depth 5+, prayer sculptures which can be one of the following (the effect is told after usage):
 >
     Of resting: better rest odd for three time (+15%)
     Of survival: higher rest heal for three time (only on success) (+15% of max HP & mana, so 45% per rest).
@@ -57,7 +57,12 @@ Adding some more encounters rather than just enemies:
 
 
     Any of those sculptures have a 10% chance to fail.. The gods have their own reasons.
-- Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously..
+- Random event(s)/ adventure(s) (several rates, look at encounters csv): Can be "encountered" at several depths, giving you a choice to proceed by... choose cautiously.. A little taste of what's out there:
+    - Cave entrance: something lives in there. Two somethings, actually.
+    - A strange obelisk: free EXP? Nothing is free...
+    - Graveyard: the dead don't stay down around here.
+    - Sudden Hunger: only when you're at half HP or less. You find something to eat... and something finds you.
+- Halt! (town event, 5% rate): Did something you shouldn't have? While your charisma is below 0, a guard may stop you on your way back to town. Pay a fine (15 ~ 40 gold, the better your charisma the cheaper), or refuse and fight. Lose the fight and the guard takes the full 40 anyway (or everything you've got, if you're that broke).
 - Unlocks: PYRPG has always been an open book, but content you unlock through tasks adds replayability, and it's satisfying to earn.
 
 And now for the main event:
@@ -101,6 +106,9 @@ I think it is prime time for charisma to be added. Well hello there handsomes.
 > - Benefit..?: You are so darn ugly, enemies intend to flee from you all the time (100% to 0% HP... lmao) but have more odds to drop stuff by min(45,abs(cha) * 1.5). 
 > - Debuff: You are so darn ugly..(I am sorry lol) that you sway others to make you fail (opposite odds and shop costs from +cha (up to +15% shop costs and up to +20% fail and bad encounters.))
 >> charisma stat doesn't benefit combat damage, or encounter calculations
+> - Anyone who charges you (merchants, cooks, guards...) is swayed too: costs like the cook's `1.5 ~ 2.3` slide to the cheap end the prettier you are, and to the pricey end the uglier.
+> - Some encounters only happen at certain charisma. Behave (or don't) accordingly.
+> - Old saves: your existing characters get their class's charisma value, no one starts at 0.
 
 ## Raising/Lowering charisma:
 
@@ -114,6 +122,8 @@ So now here are the changes coming up:
 - Quests progress: now each and any quest progress starts counting once one accepts it.
 - Choice quests (or moral quests): Completing some quests may give you a choice to make which can be good, or bad. which will effect your charisma. (still completes them either case)
 - Quest chains: Quests that open up after you do a prior quest, still experimental
+- Quest enemies: some quests bring their own enemies with them (townsfolk, priests...), you fight them the moment you accept. Those enemies don't show up anywhere else.
+- Some quests cost you charisma just for saying yes. Shady people make shady offers.
 
 ## here are some numbers! (charisma to roles):
 |Class|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|
@@ -238,6 +248,8 @@ Coming through like a truck, here are current specific un-lockable things;
 |---|---|---|---|---|---|---|---|
 |???|???|???|???|???|???|???|???|
 |Pirate|2|5|-8|-4|6|0|11|
+
+> Pirate: not the sharpest cutlass in the chest, and nobody in town wants them at dinner, but boy are they lucky. The luckiest class in the game, tough as an old ship's hull, and magic? What's magic? Arr!
 
 ## Items (and small adjustments).
 |Name|Consumable|Strength|Agility|Intelligence|**Charisma**|Defense|Magic|Luck|Rarity|Buyable|Droppable|
