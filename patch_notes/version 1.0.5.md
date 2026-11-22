@@ -63,7 +63,7 @@ Adding some more encounters rather than just enemies:
     - Graveyard: the dead don't stay down around here.
     - Sudden Hunger: only when you're at half HP or less. You find something to eat... and something finds you.
 - Halt! (town event, 5% rate): Did something you shouldn't have? While your charisma is below 0, a guard may stop you on your way back to town. Pay a fine (15 ~ 40 gold, the better your charisma the cheaper), or refuse and fight. Lose the fight and the guard takes the full 40 anyway (or everything you've got, if you're that broke).
-- Unlocks: PYRPG has always been an open book, but content you unlock through tasks adds replayability, and it's satisfying to earn.
+- Unlocks: PYRPG has always been an open book, but content you unlock through tasks adds replay-ability, and it's satisfying to earn.
 
 And now for the main event:
 
@@ -130,7 +130,7 @@ So now here are the changes coming up:
 |---|---|---|---|---|---|---|---|
 |druid|4|4|6|**3**|4|6|4|
 |dwarf|7|3|5|**1**|7|3|0|
-|elf|4|7|6|**7**|4|5|2|
+|elf|4|7|6|**4**|4|5|2|
 |forsaken|-1|5|3|**-7**|9|-4|4|
 |mage|3|4|10|**2**|3|9|5|
 |monk|5|5|8|**4**|-9|3|1|
