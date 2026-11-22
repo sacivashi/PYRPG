@@ -1,4 +1,4 @@
-# PYRPG v 1.1:
+# PYRPG v 1.0.5:
 ## Enemies but with brains and different encounters!
 
 > Taking off from version 1.0, we now can do some magical stuff!

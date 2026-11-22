@@ -91,7 +91,7 @@ Equipping/unequipping is a menu-only action (`PYRPG.manage_loot()`), not somethi
 
 `enemies/enemies_data.py` — `get_encounter_enemy(player_power, depth)` weights enemies by threat vs a target of `player_power * encounter_target_ratio(depth)` (`DEPTH_TARGET_RATIOS`; with no depth, the flat 2.5). From depth 100, Death can claim the encounter first (`death_chance()`); Death is in `NEVER_RANDOM_ENEMIES`, so it's never in the weighted pool, always solo, and can't be fled. `apply_depth_buff()` adds `depth - 50` to every positive enemy stat past depth 50.
 
-### Adventures (v1.1, in progress)
+### Adventures (v1.0.5, in progress)
 
 `data/encounters.csv` (`get_data("encounters_csv")`) lists passive encounters — `Type, Description, Depth, Effect, Value, Duration, Cost, Odds, Enemy_spawn` — but nothing rolls from it yet. `Adventure` and `Event` rows only trigger; the steps live in code, in `adventures/adventures.py`'s `ADVENTURES` (Description -> function taking `(game, row)`). `Enemy_spawn` is `Name *N` (`parse_spawn()`), or `?xN` for "roll an enemy against N times the usual target for this depth" (`roll_spawn()` -> `get_encounter_enemy(power * N, depth)`; the Strange obelisk uses `?x2`). Adventure fights go through `PYRPG.fight(enemy, size)` (split out of `enter_combat()`, so rewards/death penalties match a random fight), and chests through `PYRPG.open_chest()` (5 ~ 13 gold + a loot roll). `open_chest()` is always a real chest — Mimics are their own encounter row, decided before it's called — which is why adventure chests are always safe.
 
