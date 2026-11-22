@@ -12,4 +12,4 @@ Chest,Mimic,1,,,,,5,Mimic,no
 Healer,Cook,5,HP,+=v,,v*1.5~2.3,22,,yes
 Adventure,Cave entrance,6,adventure,,,,10,Bear *2,no
 Event,A strange obelisk,8,EXP,+=100,,,3,?x2,no
-Event,Halt!,0,,,,15~40,5,Guard *1,yes
+Event,Halt!,town,,,,0/15~40,5,Guard *1,yes
