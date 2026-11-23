@@ -332,3 +332,131 @@ def test_returning_to_town_can_be_halted(monkeypatch):
     monkeypatch.setattr("adventures.encounters.run_encounter", lambda g, row: halted.append(g.player_data.in_town))
     game.return_to_town()
     assert halted == [True]     # you're already back in town when the guard steps up
+
+
+# --- wandering merchants and thieves -------------------------------------------------------------
+
+from adventures.encounters import merchant, merchant_stock, sell_price
+
+MERCHANT = {"Type": "Merchant", "Description": "Merchant", "Depth": "11", "Cost": "*=1.3", "Odds": "25",
+            "Enemy_spawn": "", "Charisma_effect": "no"}
+THIEF = dict(MERCHANT, Description="Thief merchant", Odds="11", Enemy_spawn="Thief")
+STOCK = [("Dagger", 30), ("Hard ring", 30), ("Iron sword", 40)]
+
+
+def fixed_stock(monkeypatch, stock=STOCK):
+    monkeypatch.setattr(encounters, "merchant_stock", lambda: list(stock))
+
+
+def test_merchants_start_at_depth_11():
+    assert not eligible(make_game(distance=10), MERCHANT)
+    assert eligible(make_game(distance=11), MERCHANT)
+
+
+def test_a_thief_merchant_is_a_bad_encounter_and_a_merchant_is_not():
+    assert is_bad(THIEF) and not is_bad(MERCHANT)
+
+
+def test_buying_costs_the_markup(monkeypatch):
+    game = make_game(gold=100, distance=11)
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "1", "0")
+    assert merchant(game, MERCHANT) == "left"
+    assert game.player_data.loot == ["Dagger"] and game.player_data.gold == 100 - 39
+
+
+def test_a_bought_item_sells_out(monkeypatch):
+    game = make_game(gold=100, distance=11)
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "1", "1", "0")
+    merchant(game, MERCHANT)
+    assert game.player_data.loot == ["Dagger"]
+
+
+def test_charisma_only_sways_the_merchant_if_the_row_says_so(monkeypatch):
+    game = make_game(charisma=100, gold=100, distance=11)
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "1", "0")
+    merchant(game, dict(MERCHANT, Charisma_effect="yes"))
+    assert game.player_data.gold == 100 - 33          # 39, 15% off
+
+
+def test_selling_pays_35_percent_and_unequips_the_last_copy(monkeypatch):
+    game = make_game(gold=0, distance=11, loot=["Hard ring"], equipped="Hard ring")
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "s", "1", "0")
+    merchant(game, MERCHANT)
+    assert game.player_data.loot == [] and game.player_data.equipped is None
+    from items.items_data import get_item_price
+    assert game.player_data.gold == sell_price(game, "Hard ring") == int(get_item_price("Hard ring") * 0.35)
+
+
+def test_potions_sell_against_their_shop_price(monkeypatch):
+    assert sell_price(make_game(), "Health potion") == 5
+
+
+def test_merchants_stock_shop_items_and_sometimes_a_rare_one(monkeypatch):
+    from items.items_data import is_item_buyable
+    monkeypatch.setattr("adventures.encounters.random.randint", lambda a, b: 1)
+    stock = merchant_stock()
+    assert len(stock) == 4
+    assert all(is_item_buyable(name) for name, _ in stock[:3])
+    assert not is_item_buyable(stock[3][0])
+    monkeypatch.setattr("adventures.encounters.random.randint", lambda a, b: 100)
+    assert len(merchant_stock()) == 3
+
+
+def test_buying_from_a_thief_takes_your_gold_and_starts_a_surprise_fight(monkeypatch):
+    game = make_game(gold=100, distance=12)
+    fixed_stock(monkeypatch)
+    fights = record_fights(monkeypatch, result="defeat")
+    replies(monkeypatch, "1")
+    assert merchant(game, THIEF) == "defeat"
+    assert fights == [{"enemy": "Thief", "size": 1, "surprise": True, "scaling": 11}]
+    assert game.player_data.gold == 61 and game.player_data.loot == []
+
+
+def test_beating_the_thief_gets_the_gold_back_but_not_the_item(monkeypatch):
+    game = make_game(gold=100, distance=12)
+    fixed_stock(monkeypatch)
+    record_fights(monkeypatch)
+    replies(monkeypatch, "1")
+    assert merchant(game, THIEF) == "victory"
+    assert game.player_data.gold == 100 and game.player_data.loot == []
+
+
+def test_selling_to_a_thief_and_winning_gets_the_item_back(monkeypatch):
+    game = make_game(gold=0, distance=12, loot=["Dagger"])
+    fixed_stock(monkeypatch)
+    record_fights(monkeypatch)
+    replies(monkeypatch, "s", "1")
+    merchant(game, THIEF)
+    assert game.player_data.loot == ["Dagger"] and game.player_data.gold == 0
+
+
+def test_selling_to_a_thief_and_losing_loses_the_item(monkeypatch):
+    game = make_game(gold=0, distance=12, loot=["Dagger"])
+    fixed_stock(monkeypatch)
+    record_fights(monkeypatch, result="defeat")
+    replies(monkeypatch, "s", "1")
+    merchant(game, THIEF)
+    assert game.player_data.loot == [] and game.player_data.gold == 0
+
+
+def test_just_looking_at_a_thief_is_safe(monkeypatch):
+    game = make_game(gold=100, distance=12)
+    fixed_stock(monkeypatch)
+    fights = record_fights(monkeypatch)
+    replies(monkeypatch, "c1", "", "0")
+    assert merchant(game, THIEF) == "left"
+    assert fights == [] and game.player_data.gold == 100
+
+
+def test_a_sharp_mind_can_see_a_thief(monkeypatch, capsys):
+    game = make_game(intelligence=30, distance=12)
+    fixed_stock(monkeypatch)
+    monkeypatch.setattr("adventures.encounters.random.randint", lambda a, b: 1)
+    replies(monkeypatch, "0")
+    merchant(game, THIEF)
+    out = capsys.readouterr().out
+    assert any(flavor in out for flavor in encounters.NOTICE_FLAVOR["Merchant"]), out

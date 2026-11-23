@@ -1,8 +1,7 @@
 import csv
 import json
 import os
-from dataclasses import fields
-from players.player_data import PlayerData
+from players.player_data import PlayerData, saved_fields
 
 # Navigate from util/file_io.py up to the project root
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -116,7 +115,7 @@ def get_player(player_name):
     for player in data["players"]:
         if player["name"].strip().lower() == player_name.strip().lower():
             # every field the save has; anything missing (older saves) gets the PlayerData default
-            saved = {f.name: player[f.name] for f in fields(PlayerData) if f.name in player}
+            saved = {f.name: player[f.name] for f in saved_fields() if f.name in player}
             saved.setdefault("depth_reached", player.get("distance", 0))  # older saves: start from where they are
             saved["stats"] = _migrate_stats(saved["stats"], saved.get("role"))
             saved["perks"], saved["loot"] = _rescue_item_rewards(saved.get("perks", []), saved.get("loot", []))

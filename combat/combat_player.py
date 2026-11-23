@@ -4,6 +4,7 @@ from dataclasses import fields
 
 from players.player_data import PlayerData
 from items.items_data import get_item_stats, STAT_COLUMNS
+from util.effects import apply_effects, bonus
 
 
 class Player:
@@ -25,8 +26,9 @@ class Player:
             if f.name not in self.DERIVED_FIELDS:
                 setattr(self, f.name, copy.copy(getattr(player_data, f.name)))
         self.base_stats = dict(player_data.stats)
-        self.stats = self.apply_equipment(self.base_stats, self.equipped)
-        self.max_hp = self.calculate_hp(self.stats)
+        # gear, then boons & curses on top (self.effects is carried over like any other field)
+        self.stats = apply_effects(self.apply_equipment(self.base_stats, self.equipped), self.effects)
+        self.max_hp = self.max_hp_with_effects(self.stats, self.effects)
         self.current_hp = (self.max_hp if player_data.hp is None
                            else self._resolve_current_hp(player_data.hp, player_data.max_hp, self.max_hp))
         self.max_mana = self.calculate_mana(self.stats)
@@ -55,6 +57,11 @@ class Player:
         # max(22, abs(Strength) * 0.95 + abs(Defense) * 2.3)
         return int(max(22, abs(int(stats['Strength'])) * 0.95 + abs(int(stats['Defense'])) * 2.3))
 
+
+    @staticmethod
+    def max_hp_with_effects(stats, effects):
+        """calculate_hp() plus any max HP boon (Of growth)"""
+        return int(bonus(effects, "max_hp", Player.calculate_hp(stats)))
 
     @staticmethod
     def calculate_mana(stats):

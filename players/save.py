@@ -1,5 +1,7 @@
 from dataclasses import asdict
 
+from players.player_data import saved_fields
+
 from util.file_io import get_data, read_json, write_json
 
 
@@ -10,7 +12,9 @@ def put_new_player(new_player_obj):
     player_data = new_player_obj.player_data()
     name = player_data.name.title()  # Normalize name case
 
-    new_entry = asdict(player_data)  # every PlayerData field, so new fields save automatically
+    # every saved PlayerData field, so new fields save automatically (effects never do)
+    everything = asdict(player_data)
+    new_entry = {f.name: everything[f.name] for f in saved_fields()}
     new_entry.update(name=name, hp=int(player_data.hp), max_hp=int(player_data.max_hp))
 
     # Find existing player entry (if exists), else append

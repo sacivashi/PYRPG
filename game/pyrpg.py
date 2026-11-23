@@ -15,6 +15,8 @@ from items.items_data import get_item_stats, get_buyable_items, get_droppable_it
 from spells.spells_data import learning_item_spell, can_learn, level_up_spells
 from quests.quests_data import get_quests, quest_progress, quest_unlocked, describe_reward, grant_reward, QUEST_TYPES, FAST_TRAVEL
 from util.charisma import CHARISMA, charisma_price, price_sway_percent
+from util.effects import apply_effects, bonus, describe, tick
+from util.events import EventBus
 
 
 class PYRPG:
@@ -29,6 +31,27 @@ class PYRPG:
 
         # Main game loop
         self.main_menu()
+
+    @property
+    def events(self):
+        """This game's event bus (util/events.py), built on first use with the game's own listeners:
+        quests count kills, depth and fast travel from it, and boons & curses wear off on it."""
+        if getattr(self, "_events", None) is None:
+            self._events = EventBus()
+            self._events.on("victory", lambda enemy, size: self.quest_event("defeat", enemy, size))
+            self._events.on("explore", lambda distance: self.quest_event("reach", distance))
+            self._events.on("fast_travel", lambda depth: self.quest_event("use", FAST_TRAVEL))
+            for event in ("explore", "rest", "rested", "town_rest", "victory"):
+                self._events.on(event, lambda event=event, **_: self._tick_effects(event))
+        return self._events
+
+    def _tick_effects(self, event):
+        """Count one `event` against the active boons & curses, and say which ones just wore off"""
+        ended = tick(self.player_data.effects, event)
+        for effect in ended:
+            print(f"{effect['name']} wears off.")
+        if ended:
+            self._refresh_max_hp()
 
     def main_menu(self):
         """Main game loop — dispatches to the town or wild menu depending on location"""
@@ -117,7 +140,7 @@ class PYRPG:
         """Venture further out, increasing distance from town, and risk a combat encounter"""
         self.player_data.distance += 1
         self.player_data.depth_reached = max(self.player_data.depth_reached, self.player_data.distance)
-        self.quest_event("reach", self.player_data.distance)
+        self.events.emit("explore", distance=self.player_data.distance)
         if not self.passive_encounter():
             self.enter_combat()
 
@@ -191,7 +214,7 @@ class PYRPG:
             print(f"Your free trip takes you to depth {depth} at no cost!")
         else:
             print(f"You pay {cost} gold and arrive at depth {depth}.")
-        self.quest_event("use", FAST_TRAVEL)
+        self.events.emit("fast_travel", depth=depth)
         input("\nPress Enter to continue...")
 
     def return_to_town(self):
@@ -269,6 +292,7 @@ class PYRPG:
             return
 
         self.player_data.gold -= self.REST_COST
+        self.events.emit("town_rest")  # lifts curses first, so the heal is to the uncursed max
         self.player_data.hp = self.player_data.max_hp
         self.player_data.mana = self._max_mana()
         print(f"\nYou pay {self.REST_COST} gold and rest fully, recovering all your HP and mana.")
@@ -435,10 +459,12 @@ class PYRPG:
             # Rewards are per-enemy, summed independently rather than one roll * group_size,
             # so a group's payout has the same variance as fighting each member separately.
             gold_reward = sum(self.calculate_gold_reward() for _ in range(group_size))
+            gold_reward = int(bonus(self.player_data.effects, "gold", gold_reward))
             self.player_data.gold += gold_reward
             print(f"You gained {gold_reward} gold!")
 
             exp_reward = sum(self.calculate_exp_reward(enemy_name) for _ in range(group_size))
+            exp_reward = bonus(self.player_data.effects, "EXP", exp_reward)
             self.player_data.exp += exp_reward
             print(f"You gained {exp_reward:.1f}% EXP!")
             self._process_level_ups()
@@ -446,7 +472,7 @@ class PYRPG:
             for _ in range(group_size):
                 self._roll_for_loot()
 
-            self.quest_event("defeat", enemy_name, group_size)
+            self.events.emit("victory", enemy=enemy_name, size=group_size)
             self._sleight_of_stats_progress()
             if on_victory:
                 on_victory()
@@ -496,6 +522,9 @@ class PYRPG:
         elif key == "nuts":
             self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + self.NUTS_HEAL)
             print(f"You munch some Nuts. HP: {self.player_data.hp}/{self.player_data.max_hp}")
+        elif key == "prayer card":
+            from adventures.encounters import prayer_card
+            prayer_card(self)
         elif learning_item_spell(item_name):
             spell = learning_item_spell(item_name)
             if spell in self.player_data.known_spells:
@@ -662,14 +691,23 @@ class PYRPG:
         """min(60, max(30, Luck + 15))% for Luck >= 0; max(15, 25 - abs(Luck) * 0.48)% for -Luck"""
         luck = self._effective_stats().get('Luck', 0)
         if luck < 0:
-            return round(max(15, 25 - abs(luck) * 0.48), 1)
-        return min(60, max(30, luck + 15))
+            chance = round(max(15, 25 - abs(luck) * 0.48), 1)
+        else:
+            chance = min(60, max(30, luck + 15))
+        return bonus(self.player_data.effects, "rest_chance", chance)  # Of resting: +15
 
     def _effective_stats(self):
         """Base stats with the equipped item's deltas applied — what the character actually has
         right now. Everything outside combat that reads a stat (rest odds, rewards, encounters,
         max HP) goes through this so gear counts everywhere, not just in fights."""
+        return apply_effects(self._gear_stats(), self.player_data.effects)
+
+    def _gear_stats(self):
+        """Base stats + gear, without boons & curses"""
         return Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
+
+    def _max_hp(self):
+        return Player.max_hp_with_effects(self._effective_stats(), self.player_data.effects)
 
     def _unequip_consumable(self):
         """Consumables can't be worn — a save from before the Dice machine became one gets it unequipped"""
@@ -680,8 +718,9 @@ class PYRPG:
 
     def _player_power(self):
         """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched
-        against. Charisma doesn't count: it never makes you stronger in a fight."""
-        return sum(abs(int(v)) for k, v in self._effective_stats().items() if k != CHARISMA)
+        against. Charisma doesn't count: it never makes you stronger in a fight. Neither do boons &
+        curses: a crippled character still meets what their gear says they can handle."""
+        return sum(abs(int(v)) for k, v in self._gear_stats().items() if k != CHARISMA)
 
     def _max_mana(self):
         """Max mana from gear-adjusted stats — never stored, always derived, like max HP in combat"""
@@ -695,26 +734,31 @@ class PYRPG:
     def _sync_max_hp_after_growth(self):
         """Recompute max HP (gear included) after a permanent stat gain. Raises the cap only — no free
         heal, same as mana; clamps in case the stat change lowered max HP."""
-        new_max_hp = Player.calculate_hp(self._effective_stats())
+        new_max_hp = self._max_hp()
         self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
+
+    REST_RESTORATION = 0.30  # of max HP & mana per successful rest out there
 
     def rest(self):
         """Attempt to rest: Luck-based odds to succeed and recover 30% max HP and mana, otherwise ambushed into combat"""
         success_chance = self.calculate_rest_chance()
+        restoration = bonus(self.player_data.effects, "rest_restoration", self.REST_RESTORATION)
         roll = random.randint(1, 100)
+        self.events.emit("rest")
 
         print(f"\nYou attempt to rest... ({success_chance:g}% chance of success)")
 
         if roll <= success_chance:
-            heal_amount = round(self.player_data.max_hp * 0.30)
+            heal_amount = round(self.player_data.max_hp * restoration)
             self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + heal_amount)
             max_mana = self._max_mana()
-            mana_amount = round(max_mana * 0.30)
+            mana_amount = round(max_mana * restoration)
             self.player_data.mana = min(max_mana, self._current_mana() + mana_amount)
             print(f"You rest peacefully and recover {heal_amount} HP and {mana_amount} mana.")
             print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
             print(f"Mana: {self.player_data.mana}/{max_mana}")
+            self.events.emit("rested")
             input("\nPress Enter to continue...")
         else:
             print("Your rest is interrupted!")
@@ -843,6 +887,10 @@ class PYRPG:
         print("Stats:")
         for stat, value in effective_stats.items():
             print(f"  {stat}: {value}")
+        if self.player_data.effects:
+            print("Boons & curses:")
+            for effect in self.player_data.effects:
+                print(f"  {describe(effect)}")
 
         input("\nPress Enter to continue...")
 
@@ -945,10 +993,14 @@ class PYRPG:
 
     def _apply_equipment_hp_change(self):
         """Recompute max HP and mana after equipping/unequipping. Clamp only — no free heal or refill from gear."""
-        new_max_hp = Player.calculate_hp(self._effective_stats())
+        new_max_hp = self._max_hp()
         self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
         self.player_data.mana = self._current_mana()
+
+    def _refresh_max_hp(self):
+        """A boon or curse started or ended: same as a gear change (the cap moves, current only clamps)"""
+        self._apply_equipment_hp_change()
 
     def _do_save(self):
         """Shared save logic used by save_game and auto_save"""
