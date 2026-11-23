@@ -460,3 +460,38 @@ def test_a_sharp_mind_can_see_a_thief(monkeypatch, capsys):
     merchant(game, THIEF)
     out = capsys.readouterr().out
     assert any(flavor in out for flavor in encounters.NOTICE_FLAVOR["Merchant"]), out
+
+
+def test_bulk_selling_a_stack(monkeypatch):
+    game = make_game(gold=0, distance=11, loot=["Nuts"] * 4 + ["Dagger"])
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "s", "1", "3", "0", "0")
+    merchant(game, MERCHANT)
+    assert game.player_data.loot == ["Nuts", "Dagger"]
+    assert game.player_data.gold == sell_price(game, "Nuts") * 3
+
+
+def test_a_sells_the_whole_stack_and_the_menu_stays_open_for_more(monkeypatch):
+    game = make_game(gold=0, distance=11, loot=["Nuts"] * 4 + ["Dagger"])
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "s", "1", "a", "1", "0", "0")      # all the Nuts, then the Dagger
+    merchant(game, MERCHANT)
+    assert game.player_data.loot == []
+    assert game.player_data.gold == sell_price(game, "Nuts") * 4 + sell_price(game, "Dagger")
+
+
+def test_enter_sells_just_one_and_too_many_sells_them_all(monkeypatch):
+    game = make_game(gold=0, distance=11, loot=["Nuts"] * 4)
+    fixed_stock(monkeypatch)
+    replies(monkeypatch, "s", "1", "", "1", "99", "0")
+    merchant(game, MERCHANT)
+    assert game.player_data.loot == []
+
+
+def test_a_thief_takes_the_whole_bulk_sale_and_gives_it_all_back_if_you_win(monkeypatch):
+    game = make_game(gold=0, distance=12, loot=["Nuts"] * 4)
+    fixed_stock(monkeypatch)
+    record_fights(monkeypatch)
+    replies(monkeypatch, "s", "1", "a")
+    merchant(game, THIEF)
+    assert game.player_data.loot == ["Nuts"] * 4 and game.player_data.gold == 0

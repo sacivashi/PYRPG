@@ -302,12 +302,16 @@ def merchant(game, row):
             print("You nod to the merchant and move on.")
             return "left"
         if choice == "s":
-            sold = _sell_to_merchant(game)
-            if sold and thief:
-                return _thief_strikes(game, thief, item=sold)
-            if sold:
-                pd.gold += sell_price(game, sold)
-                print(f"Sold {sold} for {sell_price(game, sold)} gold.")
+            while True:  # keep selling until you say stop (or run out of loot)
+                sold = _sell_to_merchant(game)
+                if not sold:
+                    break
+                name, amount = sold
+                if thief:
+                    return _thief_strikes(game, thief, items=[name] * amount)
+                earned = sell_price(game, name) * amount
+                pd.gold += earned
+                print(f"Sold {name}{f' x{amount}' if amount > 1 else ''} for {earned} gold. (Gold: {pd.gold})")
             continue
         if choice.startswith("c"):
             index = _pick(choice[1:], len(stock))
@@ -344,29 +348,36 @@ def _pick(text, count):
 
 
 def _sell_to_merchant(game):
-    """Pick one item from your loot and hand one copy over (unequipping it if it was the last one
-    worn). Returns the item's name, or None. Paying for it is the merchant's business."""
+    """Pick a stack from your loot and how many of it to hand over (Enter = 1, 'a' = the whole
+    stack), unequipping it if the last worn copy goes. Returns (name, count), or None to stop
+    selling. Paying for it is the merchant's business."""
     pd = game.player_data
     stacks = game._stacked_loot()
     if not stacks:
-        print("You have nothing to sell.")
+        print("You have nothing (left) to sell.")
         return None
     print("\nWhat do you want to sell?")
     for i, (name, count) in enumerate(stacks, 1):
-        print(f"  [{i}] {game._stack_label(name, count)} - {sell_price(game, name)} gold")
-    index = _pick(input("Sell which? (0 to go back): "), len(stacks))
+        print(f"  [{i}] {game._stack_label(name, count)} - {sell_price(game, name)} gold each")
+    index = _pick(input("Sell which? (0 to stop selling): "), len(stacks))
     if index is None:
         return None
 
-    name = stacks[index][0]
-    pd.loot.remove(name)
+    name, owned = stacks[index]
+    amount = 1
+    if owned > 1:
+        answer = input(f"How many? (1-{owned}, a = all {owned}, Enter = 1): ").strip().lower()
+        amount = owned if answer == "a" else int(answer) if answer.isdigit() else 1
+        amount = max(1, min(owned, amount))
+    for _ in range(amount):
+        pd.loot.remove(name)
     if name == pd.equipped and name not in pd.loot:
         pd.equipped = None
         game._apply_equipment_hp_change()
-    return name
+    return name, amount
 
 
-def _thief_strikes(game, thief, gold=0, item=None):
+def _thief_strikes(game, thief, gold=0, items=()):
     """The merchant was a thief: it keeps what you handed over and surprise-attacks. Win and you
     get it back."""
     pd = game.player_data
@@ -377,9 +388,9 @@ def _thief_strikes(game, thief, gold=0, item=None):
         if gold:
             pd.gold += gold
             print(f"You take back your {gold} gold.")
-        if item:
-            pd.loot.append(item)
-            print(f"You take back your {item}.")
+        if items:
+            pd.loot.extend(items)
+            print(f"You take back your {items[0]}{f' (x{len(items)})' if len(items) > 1 else ''}.")
 
     return game.fight(name, size, surprise=True, scaling=pd.distance - 1, on_victory=give_back)
 
