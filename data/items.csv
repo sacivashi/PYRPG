@@ -17,7 +17,6 @@ Golden ring,No,0,0,0,5,2,0,5,32,No,Yes
 Hard ring,No,0,0,0,0,7,0,0,32,Yes,Yes
 Health potion,Yes,0,0,0,0,0,0,0,0,No,No
 Hexing amulet,No,0,0,0,0,0,3,-9,10,No,Yes
-Hunter's trophy,No,3,3,0,2,1,0,3,9,No,Yes
 Iron sword,No,4,1,0,0,1,0,2,30,Yes,No
 Lucky clover,No,0,0,0,2,0,0,15,12,Yes,Yes
 Magic mushroom,No,3,3,3,3,3,3,3,5,No,Yes
@@ -30,7 +29,6 @@ Nature's codex,Yes,0,0,0,0,0,0,0,17,Yes,Yes
 Necronomicon,No,0,0,10,-4,0,-10,2,10,No,Yes
 Nullifier,No,8,-5,-4,-3,-2,-1,0,9,No,Yes
 Nuts,Yes,0,0,0,0,0,0,0,45,No,Yes
-Overflow charm,No,0,0,6,0,0,4,0,9,No,Yes
 Power ring,No,5,0,0,-1,2,0,0,32,Yes,Yes
 Prayer card,Yes,0,0,0,0,0,0,0,28,Yes,No
 Rapier,No,4,5,2,2,4,0,4,3,Yes,No
@@ -48,7 +46,6 @@ Thunder disciple,Yes,0,0,0,0,0,0,0,0,No,No
 Thunder master,Yes,0,0,0,0,0,0,0,0,No,No
 Timer,Yes,0,0,0,0,0,0,0,15,Yes,No
 Turtle shell,No,0,-7,2,2,12,0,0,14,Yes,No
-Void shard,No,0,2,2,-2,0,5,-3,8,No,Yes
 Voodoo doll,No,2,0,3,-3,0,-1,-10,10,No,Yes
 Voucher,Yes,0,0,0,0,0,0,0,15,No,Yes
 Wooden sword,No,2,1,0,0,1,0,1,80,Yes,Yes

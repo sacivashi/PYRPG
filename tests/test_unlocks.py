@@ -47,8 +47,8 @@ def test_everything_named_in_unlocks_csv_exists():
 
 def test_a_fresh_game_has_the_unlockables_locked():
     assert locked_names("class") == {"knight", "monk", "necromancer", "forsaken", "tank"}
-    assert locked_names("enemy") == {"cursed human", "cursed priest", "vampire lord", "behemoth"}
-    assert locked_names("item") == {"necronomicon", "overflow charm", "void shard", "hunter's trophy"}
+    assert locked_names("enemy") == {"cursed human", "cursed priest", "demon", "golem"}
+    assert locked_names("item") == {"necronomicon", "beam staff", "nullifier", "timer"}
     assert not is_unlocked("event:Halt!")
     assert is_unlocked("class:mage")            # not named by any row: never locked
 
@@ -57,7 +57,7 @@ def test_locked_enemies_and_items_never_show_up():
     from enemies.enemies_data import get_encounter_weights
     from items.items_data import get_droppable_items
     names = {name for name, _ in get_encounter_weights(50)}
-    assert "Cursed Human" not in names and "Behemoth" not in names
+    assert "Cursed Human" not in names and "Golem" not in names
     assert "Necronomicon" not in {name for name, _ in get_droppable_items()}
     grant("enemy:Cursed Human")
     grant("item:Necronomicon")
@@ -211,3 +211,13 @@ def test_locked_role_lines(monkeypatch, tmp_path):
     use_rows(monkeypatch, tmp_path, "a,class:x,defeated,,20,,Be defeated 20 times")
     record("defeated", amount=7)
     assert locked_role_lines() == ["  ???  Be defeated 20 times   (7/20)"]
+
+
+def test_curses_push_negative_enemy_stats_up_toward_0():
+    combat = Combat(make_game().player_data, "Weakling")
+    enemy = combat.enemies[0]
+    enemy.stats = {"Attack": -15, "Speed": 0, "Defense": 0, "Luck": 0}
+    combat.apply_debuff_to_enemy(enemy, 7)
+    assert enemy.stats["Attack"] == -8 and combat.tally["zeroed"] == 0
+    combat.apply_debuff_to_enemy(enemy, 9)
+    assert enemy.stats["Attack"] == 0 and combat.tally["zeroed"] == 1     # raised to 0 counts for the Nullifier

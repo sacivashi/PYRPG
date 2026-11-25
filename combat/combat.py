@@ -847,14 +847,20 @@ class Combat:
                     return
 
     def apply_debuff_to_enemy(self, target, debuff_amount):
-        """-Magic cursed spell benefit: lower one random (positive) enemy stat"""
+        """-Magic cursed spell benefit: push one random non-zero enemy stat toward 0 — the same logic
+        as an enemy's -Luck curse on you (apply_curse_to_player): a positive stat drops (min 0), a
+        negative one rises (max 0), so its negative-stat mechanic weakens too"""
         curseable_stats = ['Attack', 'Speed', 'Defense', 'Luck']
-        available_stats = [s for s in curseable_stats if target.stats.get(s, 0) > 0]
+        available_stats = [s for s in curseable_stats if target.stats.get(s, 0) != 0]
         if available_stats:
             stat = random.choice(available_stats)
             old_val = target.stats[stat]
-            target.stats[stat] = max(0, old_val - debuff_amount)
-            print(f"Your curse weakens the {target.name}: {stat} drops from {old_val} to {target.stats[stat]}!")
+            if old_val > 0:
+                target.stats[stat] = max(0, old_val - debuff_amount)
+                print(f"Your curse weakens the {target.name}: {stat} drops from {old_val} to {target.stats[stat]}!")
+            else:
+                target.stats[stat] = min(0, old_val + debuff_amount)
+                print(f"Your curse drags the {target.name}'s {stat} toward nothing: {old_val} → {target.stats[stat]}!")
             if target.stats[stat] == 0:
                 self.tally["zeroed"] += 1
 

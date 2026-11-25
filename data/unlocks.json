@@ -1,0 +1,15 @@
+{
+    "progress": {
+        "timer": {
+            "Slime": 1,
+            "Weakling": 1,
+            "Witch": 1,
+            "Wisp": 1,
+            "Plague Rat": 2,
+            "Bee swarm": 1,
+            "Cat": 1,
+            "Skeleton": 1
+        }
+    },
+    "unlocked": []
+}

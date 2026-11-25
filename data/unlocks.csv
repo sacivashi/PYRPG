@@ -10,10 +10,10 @@ tank_a,class:tank,block,,80,,Block 80 physical damage by defending
 tank_b,class:tank,stat_above,Defense,10,,Raise your defense to 10 or more
 cursed_human,enemy:Cursed Human,quest,townfolk_raid,1,,Do a certain quest involving townsfolk
 cursed_priest,enemy:Cursed Priest,quest,church_betrayal,1,,Do a certain quest involving a priest
-vampire_lord,enemy:Vampire Lord,attack_heal,,45,,"In combat, heal 45 HP from attacking"
-behemoth,enemy:Behemoth,max_hp,,100,,Reach a max HP of 100
-overflow_charm,item:Overflow charm,mana_spent,,55,,Spend 55 mana
-void_shard,item:Void shard,zeroed,,1,,Curse an enemy's stat down to 0
-hunters_trophy,item:Hunter's trophy,encounter,,11,,Encounter the same enemy 11 times
+demon,enemy:Demon,attack_heal,,45,,"In combat, heal 45 HP from attacking"
+golem,enemy:Golem,max_hp,,100,,Reach a max HP of 100
+beam_staff,item:Beam staff,mana_spent,,55,,Spend 55 mana
+nullifier,item:Nullifier,zeroed,,1,,Curse an enemy's stat down to 0
+timer,item:Timer,encounter,,11,,Encounter the same enemy 11 times
 church_betrayal,quest:church_betrayal,quest,test_of_faith,1,,Complete the test of faith quest
 guard_event,event:Halt!,quest,townfolk_raid,1,,Do a certain quest involving townsfolk
