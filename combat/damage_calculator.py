@@ -75,7 +75,30 @@ class DamageCalculator:
         "Backstab": lambda s: int(15 + s.get('Agility', 0) * 0.8),
         "Blade bonk": lambda s: int(5 + s.get('Strength', 0) * 0.55),
         "Shield bash": lambda s: int(s.get('Defense', 0) * 1.5),
+        "Cut": lambda s: int(max(3, abs(s.get('Luck', 0)) * 0.2, abs(s.get('Agility', 0)) * 0.2,
+                                 abs(s.get('Strength', 0)) * 0.2)),
+        "Flintlock": lambda s: int(18 + (abs(s.get('Luck', 0)) + abs(s.get('Agility', 0))) * 0.85),
     }
+
+    @staticmethod
+    def rum_heal(stats):
+        """Rum: heal max(5, abs(lck) * 0.25 + abs(int)) — the drunker you are, the better it works"""
+        return int(max(5, abs(stats.get('Luck', 0)) * 0.25 + abs(stats.get('Intelligence', 0))))
+
+    @staticmethod
+    def rum_int_loss(intelligence):
+        """...and Intelligence drops by max(8, abs(int) * 0.45) for the rest of the fight"""
+        return int(max(8, abs(intelligence) * 0.45))
+
+    @staticmethod
+    def flintlock_gold_chance(luck):
+        """abs(lck) * 0.8 % chance a Flintlock hit knocks some coins loose"""
+        return abs(luck) * 0.8
+
+    @staticmethod
+    def flintlock_gold(luck):
+        """max(3, min(abs(lck) * 0.8, 12)) gold"""
+        return int(max(3, min(abs(luck) * 0.8, 12)))
 
     @staticmethod
     def ability_damage(name, attacker_stats):

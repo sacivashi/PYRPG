@@ -2,7 +2,7 @@ import random
 from combat.damage_calculator import DamageCalculator
 from combat.combat_player import Player
 from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH, DEPTH_BUFF_START
-from spells.spells_data import get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
+from spells.spells_data import uses_per_combat, get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
 
 # Group encounters — v1.0: the odds and sizes both scale with depth.
 # (deepest depth in the tier, group chance %, {group size: weight})
@@ -120,6 +120,7 @@ class Combat:
         self.channel = None  # {"name": ..., "turns_left": n} while a channelled ability (Blade rush) runs
         self.heal_over_time_turns = 0  # Nature's gift ticks remaining
         self.berserk_bonus = 0  # Berserk scream's flat physical damage bonus, once screamed
+        self.bonus_gold = 0  # coins knocked loose mid-fight (Flintlock), paid out on a win
         self.defending = False  # set by Defend, lasts until the player's next turn
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
@@ -422,10 +423,13 @@ class Combat:
     def _cost_label(self, name):
         spell = get_spell(name)
         casts = self.spell_casts.get(name, 0)
-        if spell.get("once_per_combat") and casts:
-            return "used this fight"
+        limit = uses_per_combat(name)
+        if limit and casts >= limit:
+            return "used up this fight"
         if spell["cost"] == "all":
             return "all your mana"
+        if limit:
+            return f"{limit - casts}/{limit} left this fight" + (f", {spell['cost']} mana" if spell["cost"] else "")
         cost = spell_cost(name, casts)
         if spell["kind"] == "cursed":
             hp_cost = DamageCalculator.cursed_hp_cost(self._live_stats().get('Magic', 0), cost)
@@ -468,8 +472,9 @@ class Combat:
         intelligence = stats.get('Intelligence', 0)
         casts = self.spell_casts.get(name, 0)
 
-        if spell.get("once_per_combat") and casts:
-            print(f"{name} can only be cast once per fight.")
+        limit = uses_per_combat(name)
+        if limit and casts >= limit:
+            print(f"{name} can only be used {'once' if limit == 1 else f'{limit} times'} per fight.")
             return None
 
         cost = spell_cost(name, casts, self.player.current_mana)
@@ -491,7 +496,7 @@ class Combat:
                 print(f"Not enough mana for {name} (needs {cost}, you have {self.player.current_mana}).")
                 return None
             spent = cost
-            if self._rolled_waste():
+            if cost and self._rolled_waste():
                 spent = min(self.player.current_mana, int(cost * 1.5))
                 print(f"Your focus slips and you waste mana — {name} costs {spent}!")
             self.player.current_mana -= spent
@@ -507,6 +512,8 @@ class Combat:
             self._tick_heal_over_time()
         elif name == "Berserk scream":
             self._berserk_scream()
+        elif name == "Rum":
+            self._drink_rum()
         elif spell["kind"] == "ability":
             self._cast_ability_hit(name, spell)
         else:
@@ -553,9 +560,32 @@ class Combat:
         if target_index is None:
             return
         damage = DamageCalculator.ability_damage(name, self._live_stats())
+        if name == "Flintlock":
+            print("*BANG* Pearly barks!")
         dealt = self._hit_enemy(self.enemies[target_index], damage, spell["damage_type"])
+        if name == "Flintlock":
+            self._flintlock_coins()
         if self.player.is_alive():
             self._apply_strength_curse(True, dealt)
+
+    def _flintlock_coins(self):
+        """A Flintlock hit may knock some coins loose: paid out with the rewards if you win"""
+        luck = self._live_stats().get('Luck', 0)
+        if random.uniform(0, 100) < DamageCalculator.flintlock_gold_chance(luck):
+            gold = DamageCalculator.flintlock_gold(luck)
+            self.bonus_gold += gold
+            print(f"*clink* The shot knocks {gold} coins loose!")
+
+    def _drink_rum(self):
+        """Rum: heal, then lose Intelligence for the rest of the fight (reset by the stat snapshot)"""
+        stats = self._live_stats()
+        before = self.player.current_hp
+        self.player.heal(DamageCalculator.rum_heal(stats))
+        loss = DamageCalculator.rum_int_loss(stats.get('Intelligence', 0))
+        self.player.stats['Intelligence'] = stats.get('Intelligence', 0) - loss
+        print(f"*glug glug* You heal {self.player.current_hp - before} HP "
+              f"({self.player.current_hp}/{self.player.max_hp}). *hic* "
+              f"Intelligence drops to {self.player.stats['Intelligence']}.")
 
     def _berserk_scream(self):
         """Physical attacks deal +int(max(1, str * 0.45)) until combat ends; Intelligence drops by
@@ -871,6 +901,9 @@ def start_combat(player_data, enemy_name, group_size=1, surprise=False, scaling=
     HP/mana, which come back in the return value."""
     combat = Combat(player_data, enemy_name, group_size, surprise, scaling)
     result = combat.run_combat()
+    if result[0] == "victory" and combat.bonus_gold:
+        player_data.gold += combat.bonus_gold
+        print(f"You pick up the {combat.bonus_gold} coins your shots knocked loose.")
     player_data.loot = combat.player.loot
     player_data.item_state = combat.player.item_state
     return result

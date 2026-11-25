@@ -120,8 +120,8 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
 |Name|Consumable|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|Rarity|Buyable|Droppable|
 |------|-----|----|----|----|----|----|---|---|---|---|---|
 |Prayer card|Yes|0|0|0|0|0|0|0|28|Yes|No|
-|Cut|Yes||0|0|0|0|0|0|0|35|Yes|No|
-- Cut: On use learn "cut" ability, ability cost: 2 mana, on use, deal max(3, abs(lck) * 0.2, abs(agi) * 0.2, abs(str) * 0.2) searing damage
+|Cut|Yes||0|0|0|0|0|0|0|8|Yes|No|
+- Cut: On use learn "cut" ability, ability cost: 2 mana, on use, deal `max(3, abs(lck) * 0.2, abs(agi) * 0.2, abs(str) * 0.2)` searing damage
 - Prayer card: only out of combat, on use receive a random prayer or curse boon
 
 

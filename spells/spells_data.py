@@ -7,7 +7,7 @@
 # target: "single", "aoe" or "self"
 # cost_step / damage_step: added once per earlier cast of the same spell this combat (Mana surge)
 # cost "all": spends the caster's entire current mana (Hyper beam)
-# once_per_combat: can only be cast once per fight
+# once_per_combat: can only be cast once per fight; uses_per_combat: N times per fight (Rum: 2)
 # channel_turns: the ability keeps firing automatically on that many of the caster's turns
 #   (the cast turn included) and the caster can't take other actions meanwhile (Blade rush)
 # heal_per_turn / heal_turns: a heal-over-time on the caster, first tick on the cast turn (Nature's gift)
@@ -32,6 +32,11 @@ SPELLS = {
     "Backstab": {"kind": "ability", "target": "single", "cost": 11, "damage_type": "searing"},
     "Blade bonk": {"kind": "ability", "target": "single", "cost": 5, "damage_type": "physical"},
     "Shield bash": {"kind": "ability", "target": "single", "cost": 13, "damage_type": "physical"},
+    "Cut": {"kind": "ability", "target": "single", "cost": 2, "damage_type": "searing"},
+    # Pirate: free to use, limited per fight instead
+    "Rum": {"kind": "ability", "target": "self", "cost": 0, "uses_per_combat": 2},
+    "Flintlock": {"kind": "ability", "target": "single", "cost": 0, "once_per_combat": True,
+                  "damage_type": "physical"},
 }
 
 # Consumable item -> the spell/ability it teaches. Using the item learns it and uses the item up.
@@ -40,6 +45,7 @@ LEARNING_ITEMS = {
     "scroll of doom": "DOOM",
     "nature's codex": "Nature's gift",
     "blade rush": "Blade rush",
+    "cut": "Cut",
 }
 
 # Equipment -> spell granted for as long as it's worn (never permanently learned).
@@ -69,6 +75,7 @@ LEVEL_UP_SPELLS = {
     "mage": {3: ["Ice shower"]},
     "druid": {3: ["Lava bomb"]},
     "rogue": {5: ["Backstab"]},
+    "pirate": {1: ["Rum"], 3: ["Flintlock"]},  # starts drinking, learns to shoot at level 3
 }
 
 
@@ -76,6 +83,12 @@ def level_up_spells(role, level):
     """Every spell a role should know by this level, lowest level first"""
     by_level = LEVEL_UP_SPELLS.get(role.lower(), {})
     return [spell for lvl in sorted(by_level) if lvl <= level for spell in by_level[lvl]]
+
+
+def uses_per_combat(spell_name):
+    """How many times per fight a spell can be used, or None for no limit"""
+    spell = get_spell(spell_name)
+    return spell.get("uses_per_combat") or (1 if spell.get("once_per_combat") else None)
 
 
 def get_spell(name):

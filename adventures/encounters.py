@@ -231,8 +231,8 @@ def cook(game, row):
 
 # --- wandering merchants (and thieves dressed as one) ------------------------------------------
 
-MERCHANT_SHOP_ITEMS = 2        # items the town shop sells too
-MERCHANT_EXCLUSIVES = (1, 2)   # and always 1 ~ 2 the town shop never sells
+MERCHANT_SHOP_ITEMS = 5        # items the town shop sells too
+MERCHANT_EXCLUSIVES = (0, 3)   # and 0 ~ 3 the town shop never sells
 SELL_RATE = 0.35            # merchants buy your loot for int(35% of its price)
 
 

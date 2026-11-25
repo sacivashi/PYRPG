@@ -395,14 +395,15 @@ def test_potions_sell_against_their_shop_price(monkeypatch):
     assert sell_price(make_game(), "Health potion") == 5
 
 
-def test_merchants_always_carry_exclusives_the_shop_never_sells():
+def test_merchants_carry_shop_items_plus_exclusives_the_shop_never_sells():
+    """Follows MERCHANT_SHOP_ITEMS / MERCHANT_EXCLUSIVES, so retuning them doesn't break this"""
     from items.items_data import is_item_buyable
+    shop, (low, high) = encounters.MERCHANT_SHOP_ITEMS, encounters.MERCHANT_EXCLUSIVES
     for _ in range(50):
-        stock = merchant_stock()
-        names = [name for name, _ in stock]
-        assert 3 <= len(stock) <= 4 and len(set(names)) == len(names)
-        assert all(is_item_buyable(name) for name in names[:2])
-        assert not any(is_item_buyable(name) for name in names[2:])
+        names = [name for name, _ in merchant_stock()]
+        assert shop + low <= len(names) <= shop + high and len(set(names)) == len(names)
+        assert all(is_item_buyable(name) for name in names[:shop])
+        assert not any(is_item_buyable(name) for name in names[shop:])
 
 
 def test_shop_stock_is_weighted_by_rarity(monkeypatch):
