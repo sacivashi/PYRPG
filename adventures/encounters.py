@@ -410,24 +410,24 @@ def sculpture_fail_chance(charisma):
 
 def receive(game, row):
     """Start the row's boon or curse and say what it was. Of growth also heals you to its new max."""
-    from util.effects import add_effect, describe, make_effect
+    from util.effects import add_effect, announce_text, make_effect
     effect = make_effect(row)
     add_effect(game.player_data.effects, effect)
     game._refresh_max_hp()
     if effect["target"] == "max_hp":
         game.player_data.hp = game.player_data.max_hp
     if effect["kind"] == "Curse":
-        print(f"A chill runs down your spine. You've been cursed: {describe(effect)}")
+        print(f"A chill runs down your spine... {announce_text(effect)}")
     else:
-        print(f"Warmth fills you. You've been blessed: {describe(effect)}")
+        print(f"Warmth fills you. {announce_text(effect)}")
     return effect
 
 
 def sculpture(game, row):
     """A prayer sculpture. Which god it belongs to (the row: a boon or a curse) you only find out
     after praying, and 10% of the time nothing answers. Returns the effect, or None."""
-    print("\nAs you walk by, there seems to be an old prayer sculpture. You can't make out whose.")
-    if input("Pray to it? (y/n) ").strip().lower() != "y":
+    print("\nA prayer sculpture stands tall in front of you, yet its effects are unknown.")
+    if input("Pray? (y/n) ").strip().lower() != "y":
         print("You leave the gods to themselves.")
         return None
     game.events.emit("prayed")  # answered or not, you prayed (Test of Faith, the monk unlock)

@@ -96,14 +96,48 @@ def tick(effects, event):
     return ended
 
 
-def describe(effect):
-    """'Of fear (Curse): Charisma -999, 5 explores left'"""
-    op, value = effect["op"], _whole(effect["value"])
-    change = {"+": f"+{value}", "-": f"-{value}", "*": f"x{value}"}[op]
+# How the non-stat targets read in plain words
+BONUS_LABELS = {"rest_chance": "rest odds", "rest_restoration": "healing from rests",
+                "gold": "gold from wins", "EXP": "EXP from wins", "max_hp": "max HP"}
+TICK_UNITS = {"rest": "rest attempt", "rested": "successful rest", "victory": "win", "explore": "explore"}
+
+
+def change_text(effect):
+    """What the effect does, in words: '+15% rest odds', '+12% gold from wins', 'Strength drops to 0'"""
+    op, value, target = effect["op"], effect["value"], effect["target"]
+    label = BONUS_LABELS.get(target, target)
+    if op == "*":
+        if value == 0:
+            return f"{label} drops to 0"
+        return f"{_whole(round((value - 1) * 100, 1)):+}% {label}"
+    sign = "+" if op == "+" else "-"
+    if target == "rest_restoration":                      # a share of max HP & mana per rest
+        return f"{sign}{_whole(round(value * 100, 1))}% {label}"
+    if target == "rest_chance":
+        return f"{sign}{_whole(value)}% {label}"
+    return f"{sign}{_whole(value)} {label}"
+
+
+def lasts_text(effect, upcoming=False):
+    """How long it lasts: 'until you rest', '3 rest attempts left' (or 'for your next 3 rest attempts')"""
     if effect["ticks_on"] == UNTIL_RESTED:
-        lasts = "until you rest"
-    else:
-        unit = {"rest": "rest attempt", "rested": "successful rest", "victory": "win",
-                "explore": "explore"}[effect["ticks_on"][0]]
-        lasts = f"{effect['left']} {unit}{'s' if effect['left'] != 1 else ''} left"
-    return f"{effect['name']} ({effect['kind']}): {effect['target']} {change}, {lasts}"
+        return "until you rest"
+    left = effect["left"]
+    unit = TICK_UNITS[effect["ticks_on"][0]] + ("s" if left != 1 else "")
+    if upcoming:
+        if effect["target"] == "max_hp":          # Of growth: the extra HP lasts until you win
+            return "until your next win" if left == 1 else f"until you win {left} more fights"
+        return f"for your next {unit}" if left == 1 else f"for your next {left} {unit}"
+    return f"{left} {unit} left"
+
+
+def announce_text(effect):
+    """What praying (or the Prayer card) tells you: 'you got blessed: +15% rest odds for your next 3 rest attempts'"""
+    if effect["kind"] == "Curse":
+        return f"You got cursed! {change_text(effect)[0].upper()}{change_text(effect)[1:]} {lasts_text(effect, True)}."
+    return f"You got blessed! You now have {change_text(effect)} {lasts_text(effect, True)}."
+
+
+def describe(effect):
+    """For View Stats: 'Of fear (Curse): Charisma -999, 5 explores left'"""
+    return f"{effect['name']} ({effect['kind']}): {change_text(effect)}, {lasts_text(effect)}"
