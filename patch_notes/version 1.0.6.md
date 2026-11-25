@@ -103,8 +103,8 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
     "As you walk by there seem to be a (chest/merchant), (flavor if hit it). {do you open it? y\n} or {buy\sell\leave}."
 
 ## Abilities:
-Rum: Self heal & nerf ability, once per combat, on use: heal `max(5,(min(abs(lck) * 0.95, 15)))` HP, but lower you intellect by max(8,abs(intel)) for the rest of combat.
-Flintlock: once per combat, on use deal: `18 + ((abs(lck) + abs(agi)) * 0.85)` physical damage. special ability passive; landing this ability has a `abs(lck) * 0.8%` chance to add `max(3,(min(abs(lck) * 0.8,12)))` gold reward vs an enemy. Pirates learn (to shoot) this at level 3, yes they bring guns to a sword fight sort of speak.
+- Rum: Self heal & nerf ability, twice per combat, on use: heal `max(5,abs(lck) * 0.25 + abs(intel))` HP, but lower your intellect by max(8,abs(intel) * 0.45) for the rest of combat. pirates start with that.
+- Flintlock: once per combat, on use deal: `18 + ((abs(lck) + abs(agi)) * 0.85)` physical damage. special ability passive; landing this ability has a `abs(lck) * 0.8%` chance to add `max(3,(min(abs(lck) * 0.8,12)))` gold reward vs an enemy. Pirates learn (to shoot) this at level 3, yes they bring guns to a sword fight sort of speak.
 
 
 ## Mimic added:
@@ -120,8 +120,10 @@ Flintlock: once per combat, on use deal: `18 + ((abs(lck) + abs(agi)) * 0.85)` p
 |Name|Consumable|Strength|Agility|Intelligence|Charisma|Defense|Magic|Luck|Rarity|Buyable|Droppable|
 |------|-----|----|----|----|----|----|---|---|---|---|---|
 |Prayer card|Yes|0|0|0|0|0|0|0|28|Yes|No|
+|Cut|Yes||0|0|0|0|0|0|0|35|Yes|No|
+- Cut: On use learn "cut" ability, ability cost: 2 mana, on use, deal max(3, abs(lck) * 0.2, abs(agi) * 0.2, abs(str) * 0.2) searing damage
+- Prayer card: only out of combat, on use receive a random prayer or curse boon
 
-Prayer card: only out of combat, on use receive a random prayer or curse boon
 
 
 ## New enemies:

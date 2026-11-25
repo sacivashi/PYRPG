@@ -69,3 +69,17 @@ def get_item_price(name):
 def get_buyable_items():
     """(name, price) pairs for every item currently stocked in the shop."""
     return [(name, get_item_price(name)) for name in get_item_names() if is_item_buyable(name)]
+
+
+def rarity_sample(items, k):
+    """Pick k different (name, price) entries, weighted by Rarity like drops are: a Wooden sword (80)
+    shows up far more often than a Rapier (3). Every item gets at least weight 1, so nothing buyable
+    is impossible to find."""
+    import random
+    pool = list(items)
+    picked = []
+    while pool and len(picked) < k:
+        weights = [max(1, get_item_rarity(name)) for name, _ in pool]
+        choice = random.choices(range(len(pool)), weights=weights, k=1)[0]
+        picked.append(pool.pop(choice))
+    return picked

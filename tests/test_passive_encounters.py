@@ -395,15 +395,24 @@ def test_potions_sell_against_their_shop_price(monkeypatch):
     assert sell_price(make_game(), "Health potion") == 5
 
 
-def test_merchants_stock_shop_items_and_sometimes_a_rare_one(monkeypatch):
+def test_merchants_always_carry_exclusives_the_shop_never_sells():
     from items.items_data import is_item_buyable
-    monkeypatch.setattr("adventures.encounters.random.randint", lambda a, b: 1)
-    stock = merchant_stock()
-    assert len(stock) == 4
-    assert all(is_item_buyable(name) for name, _ in stock[:3])
-    assert not is_item_buyable(stock[3][0])
-    monkeypatch.setattr("adventures.encounters.random.randint", lambda a, b: 100)
-    assert len(merchant_stock()) == 3
+    for _ in range(50):
+        stock = merchant_stock()
+        names = [name for name, _ in stock]
+        assert 3 <= len(stock) <= 4 and len(set(names)) == len(names)
+        assert all(is_item_buyable(name) for name in names[:2])
+        assert not any(is_item_buyable(name) for name in names[2:])
+
+
+def test_shop_stock_is_weighted_by_rarity(monkeypatch):
+    from items.items_data import rarity_sample
+    from collections import Counter
+    import random
+    random.seed(3)
+    seen = Counter(name for _ in range(2000) for name, _ in rarity_sample([("Wooden sword", 15), ("Rapier", 40)], 1))
+    assert seen["Wooden sword"] > seen["Rapier"] * 10       # rarity 80 vs 3
+    assert seen["Rapier"] > 0
 
 
 def test_buying_from_a_thief_takes_your_gold_and_starts_a_surprise_fight(monkeypatch):

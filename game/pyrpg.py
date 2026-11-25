@@ -11,7 +11,7 @@ from combat.combat import start_combat, roll_group_size
 from enemies.enemies_data import get_encounter_enemy, get_enemy_difficulty, get_enemy_stats, DEATH
 from players.save import put_new_player
 from combat.combat_player import Player
-from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
+from items.items_data import rarity_sample, get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
 from spells.spells_data import learning_item_spell, can_learn, level_up_spells
 from quests.quests_data import get_quests, quest_progress, quest_unlocked, describe_reward, grant_reward, QUEST_TYPES, FAST_TRAVEL
 from util.charisma import CHARISMA, charisma_price, price_sway_percent
@@ -408,9 +408,8 @@ class PYRPG:
         return self._effective_stats().get(CHARISMA, 0)
 
     def _roll_shop_stock(self):
-        """Pick a random subset of buyable items to stock the shop with"""
-        items = get_buyable_items()
-        return random.sample(items, min(self.SHOP_STOCK_SIZE, len(items)))
+        """Pick the shop's stock from the buyable items, weighted by Rarity (rarer = shows up less)"""
+        return rarity_sample(get_buyable_items(), self.SHOP_STOCK_SIZE)
 
     def _check_shop_item_stats(self, items, index_str):
         """Show an item's stat deltas and price without buying it"""

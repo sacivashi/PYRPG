@@ -231,8 +231,8 @@ def cook(game, row):
 
 # --- wandering merchants (and thieves dressed as one) ------------------------------------------
 
-MERCHANT_STOCK_SIZE = 3
-MERCHANT_RARE_CHANCE = 35   # % a merchant also carries one item the shop never sells
+MERCHANT_SHOP_ITEMS = 2        # items the town shop sells too
+MERCHANT_EXCLUSIVES = (1, 2)   # and always 1 ~ 2 the town shop never sells
 SELL_RATE = 0.35            # merchants buy your loot for int(35% of its price)
 
 
@@ -253,17 +253,12 @@ def sell_price(game, item_name):
 
 
 def merchant_stock():
-    """A few shop items, and sometimes one rare item the shop never sells (droppable but not
-    buyable, weighted by Rarity like a drop). [(name, base price), ...]"""
-    from items.items_data import get_buyable_items, get_droppable_items, is_item_buyable, get_item_price
-    shop = get_buyable_items()
-    stock = random.sample(shop, min(MERCHANT_STOCK_SIZE, len(shop)))
-    rares = [(name, rarity) for name, rarity in get_droppable_items() if not is_item_buyable(name)]
-    if rares and random.randint(1, 100) <= MERCHANT_RARE_CHANCE:
-        names, weights = zip(*rares)
-        rare = random.choices(names, weights=weights, k=1)[0]
-        stock.append((rare, get_item_price(rare)))
-    return stock
+    """2 shop items, plus always 1 ~ 2 exclusives the town shop never sells (droppable but not
+    buyable: Golden ring, Big Bonk...). Both picked by Rarity. [(name, base price), ...]"""
+    from items.items_data import get_buyable_items, get_droppable_items, is_item_buyable, get_item_price, rarity_sample
+    exclusives = [(name, get_item_price(name)) for name, _ in get_droppable_items() if not is_item_buyable(name)]
+    return (rarity_sample(get_buyable_items(), MERCHANT_SHOP_ITEMS)
+            + rarity_sample(exclusives, random.randint(*MERCHANT_EXCLUSIVES)))
 
 
 def merchant_price(game, row, base):
