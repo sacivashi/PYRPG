@@ -153,6 +153,9 @@ So now here are the changes coming up:
 |Golden obol|No|0|0|3|8|1|0|8|4|No|Yes|
 |Rapier|No|4|5|2|2|4|0|4|3|Yes|No|
 
+## Abilities:
+Pearly: 12 mana ability, on use deal: 16 + ((abs(lck) + abs(agi)) * 0.75) physical damage. special ability passive; landing this ability has a `abs(lck) * 0.8` chance to add 2~9 gold reward vs an enemy. 
+
 
 ## Some more enemies (some are special):
 |Name|Corruption|HP|Attack|Defense|Speed|Luck|info|
