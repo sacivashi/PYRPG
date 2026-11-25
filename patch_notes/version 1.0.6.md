@@ -103,7 +103,8 @@ So yeah, there are bad passive encounters. But no worries, your brain can someti
     "As you walk by there seem to be a (chest/merchant), (flavor if hit it). {do you open it? y\n} or {buy\sell\leave}."
 
 ## Abilities:
-Pearly: 12 mana ability, on use deal: `16 + ((abs(lck) + abs(agi)) * 0.75)` physical damage. special ability passive; landing this ability has a `abs(lck) * 0.8` chance to add `max(2,(min(abs(lck) * 0.8,9)))` gold reward vs an enemy. Pirates learn (to shoot) this at level 3.
+Rum: Self heal & nerf ability, once per combat, on use: heal `max(5,(min(abs(lck) * 0.95, 15)))` HP, but lower you intellect by max(8,abs(intel)) for the rest of combat.
+Flintlock: once per combat, on use deal: `18 + ((abs(lck) + abs(agi)) * 0.85)` physical damage. special ability passive; landing this ability has a `abs(lck) * 0.8%` chance to add `max(3,(min(abs(lck) * 0.8,12)))` gold reward vs an enemy. Pirates learn (to shoot) this at level 3, yes they bring guns to a sword fight sort of speak.
 
 
 ## Mimic added:
