@@ -41,6 +41,7 @@ def _get_config_value(node_name):
         "encounters_csv": "data/encounters.csv",
         "unlocks_csv": "data/unlocks.csv",
         "players_json": "data/players.json",
+        "unlocks_json": "data/unlocks.json",
     }
     return defaults.get(node_name.lower())
 

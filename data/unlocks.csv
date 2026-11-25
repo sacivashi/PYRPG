@@ -1,14 +1,19 @@
 id,unlocks,type,target,amount,role,hint
 knight,class:knight,charisma_quest,,5,,Complete 5 quests that gain charisma
 monk,class:monk,use,Sculpture,20,,Pray to a sculpture 20 times
-necromancer_a,class:necromancer,defeat,-lck,15,Mage, defeat 15 enemies with -lck
-necromancer_b,class:necromancer,equip,Necronomicon,1,Mage, equip a certain item
+necromancer_a,class:necromancer,defeat,-lck,15,Mage,Defeat 15 enemies with -lck
+necromancer_b,class:necromancer,equip,Necronomicon,1,Mage,Equip a certain item
 necronomicon,item:Necronomicon,defeat,Zombie,6,,Beat 6 zombies
 forsaken_a,class:forsaken,defeated,,20,,Be defeated 20 times
-forsaken_b,class:forsaken,stat_below,Magic,0,Warrior, lower your magic below 0
+forsaken_b,class:forsaken,stat_below,Magic,0,Warrior,Lower your magic to 0 or below
 tank_a,class:tank,block,,80,,Block 80 physical damage by defending
-tank_b,class:tank,stat_above,Defense,10,,Raise your defense above 10
-cursed_human,enemy:Cursed human,quest,townfolk_raid,1,,Complete the townfolk raid quest
-cursed_priest,enemy:Cursed priest,quest,church_betrayal,1,,Complete the church betrayal quest
+tank_b,class:tank,stat_above,Defense,10,,Raise your defense to 10 or more
+cursed_human,enemy:Cursed Human,quest,townfolk_raid,1,,Do a certain quest involving townsfolk
+cursed_priest,enemy:Cursed Priest,quest,church_betrayal,1,,Do a certain quest involving a priest
+vampire_lord,enemy:Vampire Lord,attack_heal,,45,,"In combat, heal 45 HP from attacking"
+behemoth,enemy:Behemoth,max_hp,,100,,Reach a max HP of 100
+overflow_charm,item:Overflow charm,mana_spent,,55,,Spend 55 mana
+void_shard,item:Void shard,zeroed,,1,,Curse an enemy's stat down to 0
+hunters_trophy,item:Hunter's trophy,encounter,,11,,Encounter the same enemy 11 times
 church_betrayal,quest:church_betrayal,quest,test_of_faith,1,,Complete the test of faith quest
-guard_event,event:Halt!,quest,townfolk_raid,1,,Complete the townfolk raid quest
+guard_event,event:Halt!,quest,townfolk_raid,1,,Do a certain quest involving townsfolk

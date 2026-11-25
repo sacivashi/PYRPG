@@ -10,6 +10,8 @@ Events fired so far (PYRPG):
     town_rest                        a paid rest in town
     victory      enemy, size         a won fight (after the rewards)
     fast_travel  depth               a paid (or free) fast travel
+    defeated     enemy               a lost fight (before the death penalties)
+    prayed                           praying at a sculpture (whether anything answers or not)
 """
 from collections import defaultdict
 

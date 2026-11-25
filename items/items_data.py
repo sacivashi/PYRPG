@@ -46,9 +46,16 @@ def is_item_droppable(name):
     return _is_yes(name, "Droppable")
 
 
+def _unlocked(names):
+    """Leave out items still locked (unlocks.csv `item:` rows) — they don't drop or sell until earned"""
+    from unlocks.unlocks import locked_names
+    locked = locked_names("item")
+    return [name for name in names if name.lower() not in locked]
+
+
 def get_droppable_items():
-    """(name, rarity) pairs for every item eligible to drop as loot — rarity used as drop weight."""
-    return [(name, get_item_rarity(name)) for name in get_item_names() if is_item_droppable(name)]
+    """(name, rarity) pairs for every (unlocked) item eligible to drop as loot — rarity used as drop weight."""
+    return [(name, get_item_rarity(name)) for name in _unlocked(get_item_names()) if is_item_droppable(name)]
 
 
 def is_item_consumable(name):
@@ -67,8 +74,8 @@ def get_item_price(name):
 
 
 def get_buyable_items():
-    """(name, price) pairs for every item currently stocked in the shop."""
-    return [(name, get_item_price(name)) for name in get_item_names() if is_item_buyable(name)]
+    """(name, price) pairs for every (unlocked) item the shop can stock."""
+    return [(name, get_item_price(name)) for name in _unlocked(get_item_names()) if is_item_buyable(name)]
 
 
 def rarity_sample(items, k):

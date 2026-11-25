@@ -17,6 +17,8 @@ from quests.quests_data import get_quests, quest_progress, quest_unlocked, descr
 from util.charisma import CHARISMA, charisma_price, price_sway_percent
 from util.effects import apply_effects, bonus, describe, tick
 from util.events import EventBus
+from util.flavor import say, win_moment
+from unlocks import unlocks
 
 
 class PYRPG:
@@ -41,6 +43,11 @@ class PYRPG:
             self._events.on("victory", lambda enemy, size: self.quest_event("defeat", enemy, size))
             self._events.on("explore", lambda distance: self.quest_event("reach", distance))
             self._events.on("fast_travel", lambda depth: self.quest_event("use", FAST_TRAVEL))
+            self._events.on("prayed", lambda: self.quest_event("use", "sculpture"))
+            # unlocks (v1.0.7): progress shared by every character
+            self._events.on("victory", lambda enemy, size: unlocks.record("defeat", enemy, size, self.player_data.role))
+            self._events.on("defeated", lambda enemy: unlocks.record("defeated", enemy, role=self.player_data.role))
+            self._events.on("prayed", lambda: unlocks.record("use", "Sculpture", role=self.player_data.role))
             for event in ("explore", "rest", "rested", "town_rest", "victory"):
                 self._events.on(event, lambda event=event, **_: self._tick_effects(event))
         return self._events
@@ -56,6 +63,7 @@ class PYRPG:
     def main_menu(self):
         """Main game loop — dispatches to the town or wild menu depending on location"""
         while True:
+            self._check_unlocks()
             action = self.town_menu() if self.player_data.in_town else self.wild_menu()
             if action == "exit":
                 print("Thanks for playing PyRPG!")
@@ -72,8 +80,9 @@ class PYRPG:
         print("[5] Quest Board")
         print("[6] View Stats")
         print("[7] Manage Loot")
-        print("[8] Save Game")
-        print("[9] Exit Game")
+        print("[8] Journal")
+        print("[9] Save Game")
+        print("[10] Exit Game")
 
         choice = input("\nChoose an option: ").strip()
 
@@ -92,11 +101,13 @@ class PYRPG:
         elif choice == "7":
             self.manage_loot()
         elif choice == "8":
-            self.save_game()
+            self.journal()
         elif choice == "9":
+            self.save_game()
+        elif choice == "10":
             return "exit"
         else:
-            print("Invalid choice. Please enter a number between 1 and 9.")
+            print("Invalid choice. Please enter a number between 1 and 10.")
 
     def wild_menu(self):
         """Menu shown while out in the wild"""
@@ -249,11 +260,16 @@ class PYRPG:
         gold_lost = int(self.player_data.gold * self.DEATH_GOLD_LOSS)
         self.player_data.gold -= gold_lost
         print(f"You lost {gold_lost} gold.")
+        if gold_lost > 0:
+            say("lost_gold", gold=gold_lost)
+        else:
+            say("broke")
 
         if self.player_data.loot and random.randint(1, 100) <= self.DEATH_ITEM_LOSS_CHANCE:
             lost_item = random.choice(self.player_data.loot)
             self.player_data.loot.remove(lost_item)
             print(f"Your {lost_item} was lost!")
+            say("lost_item", item=lost_item)
             if lost_item == self.player_data.equipped and lost_item not in self.player_data.loot:
                 self.player_data.equipped = None
                 self._apply_equipment_hp_change()
@@ -275,6 +291,7 @@ class PYRPG:
             self.player_data.in_town = True
             self.player_data.distance = 0
             print(f"Game Over! You wake up back in town with {self.player_data.hp}/{self.player_data.max_hp} HP.")
+            say("town_revival", name=self.player_data.name)
         else:
             knockback = random.randint(1, self.player_data.distance)
             self.player_data.distance -= knockback
@@ -427,11 +444,13 @@ class PYRPG:
         print(f"  Price: {self._shop_price(price)} gold")
         input("\nPress Enter to continue...")
 
-    def enter_combat(self):
-        """Start a combat encounter"""
+    def enter_combat(self, flavor=None):
+        """Start a combat encounter. `flavor`: a util/flavor.py moment to (maybe) say first, with the enemy's name"""
         depth = self.player_data.distance
         enemy_name = get_encounter_enemy(self._player_power(), depth)
         group_size = 1 if enemy_name == DEATH else roll_group_size(depth)
+        if flavor:
+            say(flavor, enemy=enemy_name, name=self.player_data.name)
         if enemy_name == DEATH:
             print("\nThe air goes cold. Death has come for you...")
         elif group_size > 1:
@@ -455,6 +474,7 @@ class PYRPG:
         self.player_data.mana = current_mana
 
         if result == "victory":
+            say(win_moment(current_hp, self.player_data.max_hp))
             # Rewards are per-enemy, summed independently rather than one roll * group_size,
             # so a group's payout has the same variance as fighting each member separately.
             gold_reward = sum(self.calculate_gold_reward() for _ in range(group_size))
@@ -476,6 +496,8 @@ class PYRPG:
             if on_victory:
                 on_victory()
         elif result == "defeat":
+            say("slain", enemy=enemy_name, name=self.player_data.name)
+            self.events.emit("defeated", enemy=enemy_name)
             self._apply_death_penalties()
             self._handle_defeat_respawn()
         # "fled": no rewards, no penalty — nothing to do beyond the HP sync already above
@@ -534,6 +556,7 @@ class PYRPG:
                 return False
             self.player_data.known_spells.append(spell)
             print(f"You study the {item_name} and learn {spell}!")
+            say("learn_item", item=item_name)
         else:
             print(f"{item_name} can only be used in combat.")
             return False
@@ -674,6 +697,8 @@ class PYRPG:
         if option["charisma"]:
             stats = self.player_data.stats
             stats[CHARISMA] = stats.get(CHARISMA, 0) + option["charisma"]
+            if option["charisma"] > 0:
+                unlocks.record("charisma_quest", quest_id, role=self.player_data.role)
         if quest_id not in self.player_data.accepted_quests:
             self.player_data.accepted_quests.append(quest_id)
         if option["label"]:
@@ -684,6 +709,7 @@ class PYRPG:
         print(f"Quest complete!{f' Reward: {reward}.' if reward else ''}")
         if option["charisma"]:
             print(f"Charisma {option['charisma']:+d} (now {self.player_data.stats[CHARISMA]}).")
+        self._check_unlocks()
         input("\nPress Enter to continue...")
 
     def calculate_rest_chance(self):
@@ -757,11 +783,12 @@ class PYRPG:
             print(f"You rest peacefully and recover {heal_amount} HP and {mana_amount} mana.")
             print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
             print(f"Mana: {self.player_data.mana}/{max_mana}")
+            say("rested")
             self.events.emit("rested")
             input("\nPress Enter to continue...")
         else:
             print("Your rest is interrupted!")
-            self.enter_combat()
+            self.enter_combat(flavor="rest_fail")
 
     def calculate_gold_reward(self):
         """Gold scales with Luck: low = max(5, luck * 0.42), high = max(low + 5, luck * 1.8)"""
@@ -794,6 +821,7 @@ class PYRPG:
             self.player_data.exp -= 100
             self.player_data.level += 1
             print(f"\n*** LEVEL UP! You are now level {self.player_data.level}! ***")
+            say("level_up")
             self._allocate_level_up_points(self.LEVEL_UP_POINTS)
             self._learn_level_up_spells()
 
@@ -805,6 +833,7 @@ class PYRPG:
             if spell not in self.player_data.known_spells and can_learn(spell, magic):
                 self.player_data.known_spells.append(spell)
                 print(f"You learned {spell}!")
+                say("learn_level")
 
     def _allocate_level_up_points(self, points):
         """Let the player spend ability points one at a time, raising or lowering any of the
@@ -869,6 +898,25 @@ class PYRPG:
         amount = self.DROP_STACK_SIZES.get(item_name.lower(), 1)
         self.player_data.loot.extend([item_name] * amount)
         print(f"{source} {item_name}{f' (x{amount})' if amount > 1 else ''}!")
+
+    def _check_unlocks(self):
+        """The unlocks that depend on where your character stands (gear, stats, max HP, quests done)"""
+        pd = self.player_data
+        unlocks.check_state(pd.role, pd.equipped, self._gear_stats(), pd.max_hp, pd.completed_quests)
+
+    def journal(self):
+        """The Journal: everything you've unlocked, and everything you haven't (yet). Your quest
+        choices close it off."""
+        print()
+        print("\n".join(unlocks.journal_lines()))
+        choices = self.player_data.quest_choices
+        if choices:
+            quests = get_quests()
+            print("\n[Your choices]")
+            for quest_id, label in choices.items():
+                title = quests.get(quest_id, {}).get("title", quest_id)
+                print(f"  {title:<20}{label}")
+        input("\nPress Enter to continue...")
 
     def view_stats(self):
         """Display player stats"""

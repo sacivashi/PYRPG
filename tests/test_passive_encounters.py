@@ -8,6 +8,7 @@ from adventures.encounters import (chest, cook, eligible, is_bad, meets, notice_
 from combat.combat import Combat, Enemy
 from game.pyrpg import PYRPG
 from players.player_data import PlayerData
+from unlocks.unlocks import grant
 from util.charisma import charisma_range, odds_sway_percent
 
 STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Charisma': 0, 'Defense': 5, 'Magic': 5, 'Luck': 5}
@@ -69,6 +70,8 @@ def test_depth_and_town_rows():
     assert not eligible(make_game(distance=4), COOK)
     assert eligible(make_game(distance=5), COOK)
     assert not eligible(make_game(charisma=-5), HALT)                   # town rows never out there
+    assert not eligible(make_game(charisma=-5), HALT, in_town=True)     # v1.0.7: locked at first
+    grant("event:Halt!")
     assert eligible(make_game(charisma=-5), HALT, in_town=True)
     assert not eligible(make_game(charisma=0), HALT, in_town=True)      # Halt! is -Charisma only
 
@@ -278,6 +281,7 @@ def test_not_eating_is_safe(monkeypatch):
 def test_halt_only_stops_the_ugly_on_the_way_back(monkeypatch):
     monkeypatch.setattr(encounters, "get_encounters", lambda: [HALT])
     monkeypatch.setattr("adventures.encounters.random.uniform", lambda a, b: 4.9)
+    grant("event:Halt!")
     assert roll_town_encounter(make_game(charisma=-1, in_town=True)) is HALT
     assert roll_town_encounter(make_game(charisma=0, in_town=True)) is None
     monkeypatch.setattr("adventures.encounters.random.uniform", lambda a, b: 5.0)

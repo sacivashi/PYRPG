@@ -62,7 +62,9 @@ def eligible(game, row, in_town=False):
     if not in_town and game.player_data.distance < int(depth or 0):
         return False
     pd = game.player_data
+    from unlocks.unlocks import is_unlocked
     return (handler(row) is not None
+            and is_unlocked(f"event:{row.get('Description', '')}")
             and meets(row.get("Charisma_req"), game._charisma())
             and meets(row.get("HP_req"), pd.hp, pd.max_hp))
 
@@ -428,6 +430,7 @@ def sculpture(game, row):
     if input("Pray to it? (y/n) ").strip().lower() != "y":
         print("You leave the gods to themselves.")
         return None
+    game.events.emit("prayed")  # answered or not, you prayed (Test of Faith, the monk unlock)
     if random.randint(1, 100) <= sculpture_fail_chance(game._charisma()):
         print("You pray... and nothing answers. The gods have their own reasons.")
         input("\nPress Enter to continue...")

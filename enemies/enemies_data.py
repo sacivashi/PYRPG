@@ -107,12 +107,14 @@ def get_encounter_weight(threat, player_power, target_ratio=ENCOUNTER_TARGET_RAT
 
 
 def get_encounter_weights(player_power, depth=None):
-    """[(name, weight), ...] for every randomly-encounterable enemy, reading the CSV once.
+    """[(name, weight), ...] for every randomly-encounterable (and unlocked) enemy, reading the CSV once.
     With a depth, the target ratio comes from DEPTH_TARGET_RATIOS instead of the flat default."""
+    from unlocks.unlocks import locked_names
     target_ratio = ENCOUNTER_TARGET_RATIO if depth is None else encounter_target_ratio(depth)
+    locked = locked_names("enemy")  # v1.0.7: enemies you haven't unlocked yet never show up
     weights = []
     for row in read_csv(get_data("enemies_csv")):
-        if row["Name"].lower() in NEVER_RANDOM_ENEMIES:
+        if row["Name"].lower() in NEVER_RANDOM_ENEMIES or row["Name"].lower() in locked:
             continue
         stats = _parse_enemy_row(row)
         weights.append((stats["Name"], get_encounter_weight(get_enemy_threat(stats), player_power, target_ratio)))

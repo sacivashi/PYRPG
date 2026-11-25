@@ -108,7 +108,7 @@ def test_of_resting_adds_15_to_rest_odds_for_3_attempts(monkeypatch):
     base = game.calculate_rest_chance()
     bless(game, "Of resting")
     assert game.calculate_rest_chance() == base + 15
-    monkeypatch.setattr(PYRPG, "enter_combat", lambda self: None)
+    monkeypatch.setattr(PYRPG, "enter_combat", lambda self, **_: None)
     monkeypatch.setattr("game.pyrpg.random.randint", lambda a, b: 100)   # every rest fails
     replies(monkeypatch)
     for _ in range(3):
@@ -120,7 +120,7 @@ def test_of_survival_rests_heal_45_percent_and_only_successes_count(monkeypatch)
     game = make_game(hp=1)
     bless(game, "Of survival")
     replies(monkeypatch)
-    monkeypatch.setattr(PYRPG, "enter_combat", lambda self: None)
+    monkeypatch.setattr(PYRPG, "enter_combat", lambda self, **_: None)
     monkeypatch.setattr("game.pyrpg.random.randint", lambda a, b: 100)   # a failed rest...
     game.rest()
     assert game.player_data.effects[0]["left"] == 3                     # ...doesn't use it up

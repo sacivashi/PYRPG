@@ -1,14 +1,24 @@
 from roles.roles_data import RolesExtract
 from roles.roles import Roles
+from unlocks.unlocks import locked_names, locked_role_lines
 
 
 class InputRole:
     @staticmethod
     def choose_role():
-        roles = RolesExtract.get_role_stats_by_name()
+        locked = locked_names("class")  # v1.0.7: some classes have to be unlocked first
+        roles = {role: stats for role, stats in RolesExtract.get_role_stats_by_name().items()
+                 if role.lower() not in locked}
+
+        print("\nChoose a role:")
+        print("  " + ", ".join(roles))
+        hints = locked_role_lines()
+        if hints:
+            print("\nLocked:")
+            print("\n".join(hints))
 
         while True:
-            player_input = input(f"Choose a role {RolesExtract.get_role_names()}: ").strip().lower()
+            player_input = input("\nRole: ").strip().lower()
 
             if player_input in roles:
                 stats_display = ", ".join(f"{stat}: {value}" for stat, value in roles[player_input].items())
@@ -21,5 +31,4 @@ class InputRole:
                 else:
                     print("Okay, let's choose again.\n")
             else:
-                print("Invalid role. Please choose a valid role.\n")
-
+                print(f"Invalid role. Please choose one of: {', '.join(roles)}")

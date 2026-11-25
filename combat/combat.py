@@ -2,6 +2,7 @@ import random
 from combat.damage_calculator import DamageCalculator
 from combat.combat_player import Player
 from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH, DEPTH_BUFF_START
+from util.flavor import say
 from spells.spells_data import uses_per_combat, get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
 
 # Group encounters — v1.0: the odds and sizes both scale with depth.
@@ -122,6 +123,8 @@ class Combat:
         self.berserk_bonus = 0  # Berserk scream's flat physical damage bonus, once screamed
         self.bonus_gold = 0  # coins knocked loose mid-fight (Flintlock), paid out on a win
         self.defending = False  # set by Defend, lasts until the player's next turn
+        # What this fight counts toward unlocks (unlocks/unlocks.py), reported by start_combat()
+        self.tally = {"block": 0, "attack_heal": 0, "mana_spent": 0, "zeroed": 0}
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
         self.original_player_max_hp = self.player.max_hp
@@ -252,7 +255,8 @@ class Combat:
                 break
             elif choice == "6":
                 if self.cannot_flee:
-                    print("There is no escaping Death.")
+                    if not say("flee_death"):
+                        print("You cannot flee.")
                     continue
                 if not self.attempt_flee():
                     self.advance_turn()  # failed flee costs the turn, same as a missed attack
@@ -318,11 +322,13 @@ class Combat:
 
         if roll <= flee_chance:
             print("You successfully flee from combat!")
+            say("flee", name=self.player.name, enemy=self.enemies[0].name)
             self.player_fled = True
             self.combat_ongoing = False
             return True
 
         print("You fail to escape!")
+        say("flee_fail", name=self.player.name, enemy=self.enemies[0].name)
         return False
 
     # --- Damage the player deals ------------------------------------------------------------------
@@ -333,6 +339,7 @@ class Combat:
         it heals them. Everyone else goes through Defense (physical/spell/item, see
         DamageCalculator.enemy_defence_adjustment), and -Defense can reflect physical hits.
         Searing damage (Backstab) can't be blocked or reduced at all — not by Defense, not by corruption."""
+        from_full = target.hp >= target.max_hp
         if damage_type == "searing":
             target.hp = max(0, round(target.hp - damage))
             print(f"You deal {round(damage)} searing damage to the {target.name}!")
@@ -356,6 +363,8 @@ class Combat:
 
         if target.hp <= 0:
             print(f"The {target.name} is defeated!")
+            if from_full:
+                say("one_hit", enemy=target.name)
             self._check_victory()
         return dealt
 
@@ -373,7 +382,9 @@ class Combat:
         if landed:
             missing_hp = self.player.max_hp - self.player.current_hp
             heal = DamageCalculator.strength_heal(strength, missing_hp, damage_done)
+            before = self.player.current_hp
             self.player.heal(heal)
+            self.tally["attack_heal"] += self.player.current_hp - before
             print(f"You heal {heal} HP from the blow!")
 
     def player_attack(self):
@@ -382,6 +393,7 @@ class Combat:
         if target_index is None:
             return False
         target = self.enemies[target_index]
+        say("attack")
 
         damage, unavoidable = DamageCalculator.calculate_player_damage(self._live_stats())
         landed = False
@@ -389,11 +401,13 @@ class Combat:
 
         if damage <= 0:
             print("Your attack completely misses!")
+            say("missed", enemy=target.name)
         else:
             damage += self.berserk_bonus  # Berserk scream: flat bonus on physical attacks until combat ends
             dodged, countered = (False, False) if unavoidable else DamageCalculator.roll_dodge(target.dodge_bonus)
             if dodged:
                 print(f"The {target.name} dodges your attack!")
+                say("missed", enemy=target.name)
             else:
                 landed = True
                 dealt = self._hit_enemy(target, damage, "physical")
@@ -500,9 +514,12 @@ class Combat:
                 spent = min(self.player.current_mana, int(cost * 1.5))
                 print(f"Your focus slips and you waste mana — {name} costs {spent}!")
             self.player.current_mana -= spent
+            self.tally["mana_spent"] += spent
 
         self.spell_casts[name] = casts + 1
         print(f"You use {name}!")
+        if spell["kind"] in ("spell", "cursed"):
+            say("magic" if spell["kind"] == "spell" else "cursed_spell", item=name)
 
         if name == "Blade rush":
             self.channel = {"name": name, "turns_left": spell["channel_turns"]}
@@ -784,6 +801,7 @@ class Combat:
         if self.defending and final_damage > 0:
             block = DamageCalculator.defend_block(self._live_stats().get('Defense', 0))
             if block > 0:
+                self.tally["block"] += min(block, final_damage)
                 final_damage = round(max(0, final_damage - block), 2)
                 print(f"Your guard blocks {round(block, 1)} damage!")
 
@@ -792,6 +810,7 @@ class Combat:
         for effect_type, value in counter_effects:
             if effect_type == "dodged":
                 print("You dodge the enemy's attack!")
+                say("evade", enemy=enemy.name)
                 return
 
         # Apply the hit first — damage lands before any reaction to it
@@ -836,6 +855,8 @@ class Combat:
             old_val = target.stats[stat]
             target.stats[stat] = max(0, old_val - debuff_amount)
             print(f"Your curse weakens the {target.name}: {stat} drops from {old_val} to {target.stats[stat]}!")
+            if target.stats[stat] == 0:
+                self.tally["zeroed"] += 1
 
     def apply_curse_to_player(self, curse_amount):
         """Apply stat curse from enemy negative luck — temporary, reversed after combat"""
@@ -899,8 +920,13 @@ def start_combat(player_data, enemy_name, group_size=1, surprise=False, scaling=
     """Initialize and run a combat encounter. Items used up and item progress (Thunder use counts)
     are written back onto player_data — they're the only combat changes that persist besides
     HP/mana, which come back in the return value."""
+    from unlocks.unlocks import record
+    role = player_data.role
+    record("encounter", enemy_name, role=role)
     combat = Combat(player_data, enemy_name, group_size, surprise, scaling)
     result = combat.run_combat()
+    for kind, amount in combat.tally.items():
+        record(kind, amount=amount, role=role)
     if result[0] == "victory" and combat.bonus_gold:
         player_data.gold += combat.bonus_gold
         print(f"You pick up the {combat.bonus_gold} coins your shots knocked loose.")
