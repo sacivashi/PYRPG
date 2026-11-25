@@ -34,9 +34,9 @@ Name:""").strip()
 				while True:
 					choice = input(f"A save for '{player_info.name}' already exists. [1] Load [2] Delete [3] Cancel: ").strip()
 					if choice == "1":
-						print(f"Welcome back, {player_info.name.capitalize()}!")
-						print(f"Role: {player_info.role.capitalize()}, Level: {player_info.level}")
-						print("Stats:", player_info.stats)
+						print(f"\nWelcome back, {player_info.name.capitalize()}! "
+						      f"Level {player_info.level} {player_info.role.capitalize()}.")
+						print("  " + ", ".join(f"{stat} {value}" for stat, value in player_info.stats.items()))
 						saving_enabled = input("Would you like your progress to be auto-saved this session? (Y/n): ").strip().lower() != "n"
 						return player_info, saving_enabled
 					elif choice == "2":

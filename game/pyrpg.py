@@ -18,6 +18,7 @@ from util.charisma import CHARISMA, charisma_price, price_sway_percent
 from util.effects import apply_effects, bonus, describe, tick
 from util.events import EventBus
 from util.flavor import say, win_moment
+from util.display import gauge
 from unlocks import unlocks
 
 
@@ -465,7 +466,6 @@ class PYRPG:
         `surprise`: every enemy acts first. `scaling`: flat bonus to the enemy's positive stats
         (Mimics, thief merchants). `on_victory`: extra payout, run after the usual rewards."""
         # Auto-save before risky combat
-        print("💾 Auto-saving before combat...")
         self.auto_save_player_state()
 
         extras = {k: v for k, v in (("surprise", surprise), ("scaling", scaling)) if v}
@@ -921,23 +921,23 @@ class PYRPG:
     def view_stats(self):
         """Display player stats"""
         effective_stats = self._effective_stats()
-        print(f"\n=== Player Stats ===")
-        print(f"Name: {self.player_data.name}")
-        print(f"Role: {self.player_data.role.capitalize()}")
-        print(f"Level: {self.player_data.level} ({self.player_data.exp:.1f}% to next level)")
-        print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
-        print(f"Mana: {self._current_mana()}/{self._max_mana()}")
-        print(f"Gold: {self.player_data.gold}")
-        print(f"Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")
-        print(f"Equipped: {self.player_data.equipped or 'Nothing'}")
-        print(f"Spells & Abilities: {', '.join(self.player_data.known_spells) or 'None'}")
-        print("Stats:")
-        for stat, value in effective_stats.items():
-            print(f"  {stat}: {value}")
-        if self.player_data.effects:
-            print("Boons & curses:")
-            for effect in self.player_data.effects:
-                print(f"  {describe(effect)}")
+        pd = self.player_data
+        print(f"\n=== {pd.name}, level {pd.level} {pd.role.capitalize()} ===")
+        print(f"  {gauge('HP', pd.hp, pd.max_hp)}")
+        print(f"  {gauge('MP', self._current_mana(), self._max_mana())}")
+        print(f"  EXP {pd.exp:.1f}% to next level")
+        print(f"  Gold {pd.gold}")
+        print("\n  Stats:")
+        cells = [f"{stat:<13}{value:>4}" for stat, value in effective_stats.items()]
+        for i in range(0, len(cells), 2):
+            print("    " + "     ".join(cells[i:i + 2]))
+        print(f"\n  Equipped: {pd.equipped or 'Nothing'}")
+        print(f"  Spells & Abilities: {', '.join(pd.known_spells) or 'None'}")
+        print(f"  Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")
+        if pd.effects:
+            print("\n  Boons & curses:")
+            for effect in pd.effects:
+                print(f"    {describe(effect)}")
 
         input("\nPress Enter to continue...")
 
@@ -1049,25 +1049,24 @@ class PYRPG:
         """A boon or curse started or ended: same as a gear change (the cap moves, current only clamps)"""
         self._apply_equipment_hp_change()
 
-    def _do_save(self):
+    def _do_save(self, quiet=False):
         """Shared save logic used by save_game and auto_save"""
         player = Player(self.player_data)
-        put_new_player(player)
+        put_new_player(player, quiet=quiet)
 
     def save_game(self):
         """Save the current game state"""
-        print("\n=== Saving Game ===")
-        self._do_save()
-        print("Game saved successfully!")
+        self._do_save(quiet=True)
+        print("\nGame saved.")
         input("\nPress Enter to continue...")
 
     def auto_save_player_state(self):
-        """Auto-save before risky actions like combat, unless the player opted out this session"""
+        """Auto-save before risky actions like combat, unless the player opted out this session.
+        Quiet: one small "(auto-saved)" line, nothing at all when saving is off."""
         if not self.saving_enabled:
-            print("Skipping auto-save (disabled for this session).")
             return
-        self._do_save()
-        print("Auto-save complete.")
+        self._do_save(quiet=True)
+        print("  (auto-saved)")
 
 
 if __name__ == "__main__":

@@ -113,6 +113,8 @@ Prayer sculptures (`Boon`/`Curse` rows, `sculpture()`) and the Prayer card (`pra
 
 `util/flavor.py`: `FLAVOR` maps a moment to `(chance %, lines)`; `say(moment, enemy=, name=, item=, gold=)` rolls and prints one. It has its own `random.Random`, so flavor never shifts the game's dice (tests that patch `random.*` are unaffected). Enemy-flee lines are held for 1.1 (enemies can't flee yet).
 
+`util/display.py` holds the plain-text layout helpers (`bar`, `gauge`, `divider`, `options`, `number` for rounding displayed damage). Combat's turn header (`Combat.print_status()`), its action grid (`Combat.ACTION_MENU`) and View Stats go through it. The planned Rich terminal update should replace these helpers rather than add a second style. Auto-saves are quiet (`put_new_player(..., quiet=True)`, a single "(auto-saved)" line).
+
 ### Negative Stat System
 
 The core mechanic. Any stat can be negative. Each negative stat gives a debuff + a compensating benefit:

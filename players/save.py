@@ -5,7 +5,7 @@ from players.player_data import saved_fields
 from util.file_io import get_data, read_json, write_json
 
 
-def put_new_player(new_player_obj):
+def put_new_player(new_player_obj, quiet=False):
     players_json_path = get_data("players_json")
     data = read_json(players_json_path)
 
@@ -30,4 +30,5 @@ def put_new_player(new_player_obj):
 
     write_json(players_json_path, data)
 
-    print(f"Player '{name}' {'updated' if found else 'saved'} successfully!")
+    if not quiet:
+        print(f"Saved {name}.")

@@ -53,3 +53,7 @@ Following the solutions enemies encountered now have their nuggings installed to
 
 > With that, adding some more to enemy def:
 >> Enemies choosing to defend, will block; `def% + min(10, max(0,def * 0.65))` physical damage
+
+## Fixes:
+- Cursed spells (-Magic debuff) now also raise enemies' -stats up to 0, same as enemy -lck curses do to you (for some unknown reason it wasn't made like so since alpha II)
+- Terminal text is now looking sharper than before

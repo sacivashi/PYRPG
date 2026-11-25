@@ -1,12 +1,12 @@
 {
     "progress": {
         "timer": {
-            "Slime": 1,
+            "Slime": 3,
             "Weakling": 2,
-            "Witch": 2,
+            "Witch": 3,
             "Wisp": 3,
-            "Plague Rat": 3,
-            "Bee swarm": 1,
+            "Plague Rat": 4,
+            "Bee swarm": 2,
             "Cat": 6,
             "Skeleton": 1,
             "Thief": 3,
@@ -24,9 +24,12 @@
             "Jester": 1,
             "Zombie": 1,
             "Mole king": 1,
-            "Rustbound Automaton": 2
+            "Rustbound Automaton": 2,
+            "Bandit": 2,
+            "Fairy": 1,
+            "Vampire": 1
         },
-        "forsaken_a": 6,
+        "forsaken_a": 9,
         "beam_staff": 47,
         "tank_a": 13.030000000000001,
         "necronomicon": 1,
