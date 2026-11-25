@@ -2,14 +2,37 @@
     "progress": {
         "timer": {
             "Slime": 1,
-            "Weakling": 1,
-            "Witch": 1,
-            "Wisp": 1,
-            "Plague Rat": 2,
+            "Weakling": 2,
+            "Witch": 2,
+            "Wisp": 3,
+            "Plague Rat": 3,
             "Bee swarm": 1,
-            "Cat": 1,
-            "Skeleton": 1
-        }
+            "Cat": 6,
+            "Skeleton": 1,
+            "Thief": 3,
+            "Bat": 1,
+            "Elf": 1,
+            "Gremlin": 1,
+            "Goblin": 1,
+            "Anaconda": 1,
+            "Mole": 1,
+            "Banshee": 1,
+            "Unicorn": 1,
+            "Werewolf": 1,
+            "Giant Ant": 1,
+            "Feral Cultist": 1,
+            "Jester": 1,
+            "Zombie": 1,
+            "Mole king": 1,
+            "Rustbound Automaton": 2
+        },
+        "forsaken_a": 6,
+        "beam_staff": 47,
+        "tank_a": 13.030000000000001,
+        "necronomicon": 1,
+        "monk": 1
     },
-    "unlocked": []
+    "unlocked": [
+        "class:tank"
+    ]
 }
