@@ -5,7 +5,7 @@ from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH, DEPTH
 from combat import enemy_brain
 from combat.enemy_brain import BRAIN, CHARGE_BIDING, CHARGE_READY
 from util.flavor import line as flavor_line, say, fled_line
-from util.display import divider, gauge, number, options
+from util.display import divider, framed, number, options
 from spells.spells_data import uses_per_combat, get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
 
 # Group encounters — v1.0: the odds and sizes both scale with depth.
@@ -334,14 +334,14 @@ class Combat:
         names = [self.player.name] + [self._label(i) for i in range(len(self.enemies))]
         width = max(len(name) for name in names) + 3
         print(f"\n{divider(f'Turn {self.player_turns_taken}')}")
-        print(f"  {self.player.name:<{width}}{gauge('HP', self.player.current_hp, self.player.max_hp)}")
-        print(f"  {'':<{width}}{gauge('MP', self.player.current_mana, self.player.max_mana)}")
+        print(framed([(f"  {self.player.name:<{width}}", "HP", self.player.current_hp, self.player.max_hp),
+                      (f"  {'':<{width}}", "MP", self.player.current_mana, self.player.max_mana)]))
         print()  # a gap between you and the enemies
         for i, enemy in enumerate(self.enemies):
             if enemy.is_alive():
                 tags = [tag for tag, on in (("charging!", enemy.charge), ("guarding", enemy.defending)) if on]
                 status = f"  ({', '.join(tags)})" if tags else ""
-                print(f"  {self._label(i):<{width}}{gauge('HP', enemy.hp, enemy.max_hp)}{status}")
+                print(framed([(f"  {self._label(i):<{width}}", "HP", enemy.hp, enemy.max_hp, status)]))
             else:
                 print(f"  {self._label(i):<{width}}{'(fled)' if enemy.fled else '(defeated)'}")
 

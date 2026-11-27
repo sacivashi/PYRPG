@@ -141,19 +141,15 @@ def highlight(text):
 # --- bars --------------------------------------------------------------------------------------------
 
 def bar(current, maximum, width=BAR_WIDTH, kind="HP"):
-    """'▕██████░░░░░░▏' — how full current/maximum is, in a thin gray frame. HP goes green/yellow/red
-    as it drains; MP is blue."""
+    """'██████░░░░░░' — how full current/maximum is. HP goes green/yellow/red as it drains; MP is blue."""
     share = 0 if not maximum else max(0.0, min(1.0, current / maximum))
     filled = round(share * width)
     if current > 0 and filled == 0:
         filled = 1          # still alive: never show an empty bar
-    left, right = FRAME
     if not ENABLED:
-        return left + "█" * filled + "░" * (width - filled) + right
+        return "█" * filled + "░" * (width - filled)
     color = "dodger_blue1" if kind == "MP" else "green3" if share > 0.5 else "yellow3" if share > 0.25 else "red3"
-    frame = FRAME_STYLE
-    return (paint(left, frame) + paint("█" * filled, color) + paint("░" * (width - filled), "grey35")
-            + paint(right, frame))
+    return paint("█" * filled, color) + paint("░" * (width - filled), "grey35")
 
 
 def number(value):
@@ -162,8 +158,33 @@ def number(value):
 
 
 def gauge(label, current, maximum):
-    """'HP 12/25  ▕██████░░░░░░▏'"""
+    """'HP 12/25  ██████░░░░░░' — one bar on one line, no frame"""
     return f"{label} {number(current):>3}/{number(maximum):<3} {bar(current, maximum, kind=label)}"
+
+
+def framed(rows):
+    """Bars in a thin frame that wraps them, one frame around all the rows given:
+
+                               ▁▁▁▁▁▁▁▁▁▁▁▁
+          Flood   HP   6/22   ▕███░░░░░░░░░▏
+                  MP  45/45   ▕████████████▏
+                               ▔▔▔▔▔▔▔▔▔▔▔▔
+
+    rows: (prefix, label, current, maximum) or (prefix, label, current, maximum, suffix). Prefixes
+    are plain text and get padded to the same width so the bars line up."""
+    rows = [tuple(row) + ("",) * (5 - len(row)) for row in rows]
+    lefts = [f"{prefix}{label} {number(current):>3}/{number(maximum):<3} "
+             for prefix, label, current, maximum, _ in rows]
+    width = max(len(left) for left in lefts)
+    paint_frame = (lambda text: paint(text, FRAME_STYLE)) if ENABLED else (lambda text: text)
+    side_l, side_r = FRAME
+    edge = " " * (width + len(side_l))
+    lines = [edge + paint_frame("▁" * BAR_WIDTH)]
+    for left, (prefix, label, current, maximum, suffix) in zip(lefts, rows):
+        lines.append(left.ljust(width) + paint_frame(side_l) + bar(current, maximum, kind=label)
+                     + paint_frame(side_r) + suffix)
+    lines.append(edge + paint_frame("▔" * BAR_WIDTH))
+    return "\n".join(lines)
 
 
 def divider(title="", width=44):

@@ -18,7 +18,7 @@ from util.charisma import CHARISMA, charisma_price, price_sway_percent
 from util.effects import apply_effects, bonus, describe, tick
 from util.events import EventBus
 from util.flavor import say, win_moment
-from util.display import gauge, menu, table
+from util.display import framed, menu, table
 from unlocks import unlocks
 
 
@@ -303,8 +303,8 @@ class PYRPG:
         self.player_data.hp = self.player_data.max_hp
         self.player_data.mana = self._max_mana()
         print(f"\nYou pay {self.REST_COST} gold and rest fully, recovering all your HP and mana.")
-        print(f"  {gauge('HP', self.player_data.hp, self.player_data.max_hp)}")
-        print(f"  {gauge('MP', self.player_data.mana, self._max_mana())}")
+        print(framed([("  ", "HP", self.player_data.hp, self.player_data.max_hp),
+                      ("  ", "MP", self.player_data.mana, self._max_mana())]))
         input("\nPress Enter to continue...")
 
     SHOP_STOCK_SIZE = 4
@@ -773,8 +773,8 @@ class PYRPG:
             mana_amount = round(max_mana * restoration)
             self.player_data.mana = min(max_mana, self._current_mana() + mana_amount)
             print(f"You rest peacefully and recover {heal_amount} HP and {mana_amount} mana.")
-            print(f"  {gauge('HP', self.player_data.hp, self.player_data.max_hp)}")
-            print(f"  {gauge('MP', self.player_data.mana, max_mana)}")
+            print(framed([("  ", "HP", self.player_data.hp, self.player_data.max_hp),
+                          ("  ", "MP", self.player_data.mana, max_mana)]))
             say("rested")
             self.events.emit("rested")
             input("\nPress Enter to continue...")
@@ -915,8 +915,7 @@ class PYRPG:
         effective_stats = self._effective_stats()
         pd = self.player_data
         print(f"\n=== {pd.name}, level {pd.level} {pd.role.capitalize()} ===")
-        print(f"  {gauge('HP', pd.hp, pd.max_hp)}")
-        print(f"  {gauge('MP', self._current_mana(), self._max_mana())}")
+        print(framed([("  ", "HP", pd.hp, pd.max_hp), ("  ", "MP", self._current_mana(), self._max_mana())]))
         print(f"  EXP {pd.exp:.1f}% to next level")
         print(f"  Gold {pd.gold}")
         print()
