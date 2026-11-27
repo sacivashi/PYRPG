@@ -11,9 +11,15 @@ from combat.combat import start_combat, roll_group_size
 from enemies.enemies_data import get_encounter_enemy, get_enemy_difficulty, get_enemy_stats, DEATH
 from players.save import put_new_player
 from combat.combat_player import Player
-from items.items_data import get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
+from items.items_data import rarity_sample, get_item_stats, get_buyable_items, get_droppable_items, is_item_consumable, STAT_COLUMNS
 from spells.spells_data import learning_item_spell, can_learn, level_up_spells
-from quests.quests_data import get_quests, quest_progress, describe_reward, FAST_TRAVEL
+from quests.quests_data import get_quests, quest_progress, quest_unlocked, describe_reward, grant_reward, QUEST_TYPES, FAST_TRAVEL
+from util.charisma import CHARISMA, charisma_price, price_sway_percent
+from util.effects import apply_effects, bonus, describe, tick
+from util.events import EventBus
+from util.flavor import say, win_moment
+from util.display import gauge
+from unlocks import unlocks
 
 
 class PYRPG:
@@ -29,9 +35,36 @@ class PYRPG:
         # Main game loop
         self.main_menu()
 
+    @property
+    def events(self):
+        """This game's event bus (util/events.py), built on first use with the game's own listeners:
+        quests count kills, depth and fast travel from it, and boons & curses wear off on it."""
+        if getattr(self, "_events", None) is None:
+            self._events = EventBus()
+            self._events.on("victory", lambda enemy, size: self.quest_event("defeat", enemy, size))
+            self._events.on("explore", lambda distance: self.quest_event("reach", distance))
+            self._events.on("fast_travel", lambda depth: self.quest_event("use", FAST_TRAVEL))
+            self._events.on("prayed", lambda: self.quest_event("use", "sculpture"))
+            # unlocks (v1.0.7): progress shared by every character
+            self._events.on("victory", lambda enemy, size: unlocks.record("defeat", enemy, size, self.player_data.role))
+            self._events.on("defeated", lambda enemy: unlocks.record("defeated", enemy, role=self.player_data.role))
+            self._events.on("prayed", lambda: unlocks.record("use", "Sculpture", role=self.player_data.role))
+            for event in ("explore", "rest", "rested", "town_rest", "victory"):
+                self._events.on(event, lambda event=event, **_: self._tick_effects(event))
+        return self._events
+
+    def _tick_effects(self, event):
+        """Count one `event` against the active boons & curses, and say which ones just wore off"""
+        ended = tick(self.player_data.effects, event)
+        for effect in ended:
+            print(f"{effect['name']} wears off.")
+        if ended:
+            self._refresh_max_hp()
+
     def main_menu(self):
         """Main game loop — dispatches to the town or wild menu depending on location"""
         while True:
+            self._check_unlocks()
             action = self.town_menu() if self.player_data.in_town else self.wild_menu()
             if action == "exit":
                 print("Thanks for playing PyRPG!")
@@ -48,8 +81,9 @@ class PYRPG:
         print("[5] Quest Board")
         print("[6] View Stats")
         print("[7] Manage Loot")
-        print("[8] Save Game")
-        print("[9] Exit Game")
+        print("[8] Journal")
+        print("[9] Save Game")
+        print("[10] Exit Game")
 
         choice = input("\nChoose an option: ").strip()
 
@@ -68,11 +102,13 @@ class PYRPG:
         elif choice == "7":
             self.manage_loot()
         elif choice == "8":
-            self.save_game()
+            self.journal()
         elif choice == "9":
+            self.save_game()
+        elif choice == "10":
             return "exit"
         else:
-            print("Invalid choice. Please enter a number between 1 and 9.")
+            print("Invalid choice. Please enter a number between 1 and 10.")
 
     def wild_menu(self):
         """Menu shown while out in the wild"""
@@ -116,7 +152,28 @@ class PYRPG:
         """Venture further out, increasing distance from town, and risk a combat encounter"""
         self.player_data.distance += 1
         self.player_data.depth_reached = max(self.player_data.depth_reached, self.player_data.distance)
-        self.enter_combat()
+        self.events.emit("explore", distance=self.player_data.distance)
+        if not self.passive_encounter():
+            self.enter_combat()
+
+    def passive_encounter(self):
+        """25% of explores: something from encounters.csv instead of a fight (a chest, the Cook, an
+        adventure...). Returns True if one happened."""
+        from adventures.encounters import roll_wild_encounter, run_encounter
+        row = roll_wild_encounter(self)
+        if row is None:
+            return False
+        run_encounter(self, row)
+        return True
+
+    def town_encounter(self):
+        """On the way back into town: the town rows of encounters.csv (Halt!). Returns True if one happened."""
+        from adventures.encounters import roll_town_encounter, run_encounter
+        row = roll_town_encounter(self)
+        if row is None:
+            return False
+        run_encounter(self, row)
+        return True
 
     FREE_FAST_TRAVEL = "free_fast_travel"
 
@@ -169,7 +226,7 @@ class PYRPG:
             print(f"Your free trip takes you to depth {depth} at no cost!")
         else:
             print(f"You pay {cost} gold and arrive at depth {depth}.")
-        self._record_quest_use(FAST_TRAVEL)
+        self.events.emit("fast_travel", depth=depth)
         input("\nPress Enter to continue...")
 
     def return_to_town(self):
@@ -184,7 +241,8 @@ class PYRPG:
             self.player_data.in_town = True
             self.player_data.distance = 0
             self.player_data.failed_attempts = 0
-            input("\nPress Enter to continue...")
+            if not self.town_encounter():
+                input("\nPress Enter to continue...")
         else:
             print("You lose your way and are ambushed!")
             self.player_data.failed_attempts += 1
@@ -203,11 +261,16 @@ class PYRPG:
         gold_lost = int(self.player_data.gold * self.DEATH_GOLD_LOSS)
         self.player_data.gold -= gold_lost
         print(f"You lost {gold_lost} gold.")
+        if gold_lost > 0:
+            say("lost_gold", gold=gold_lost)
+        else:
+            say("broke")
 
         if self.player_data.loot and random.randint(1, 100) <= self.DEATH_ITEM_LOSS_CHANCE:
             lost_item = random.choice(self.player_data.loot)
             self.player_data.loot.remove(lost_item)
             print(f"Your {lost_item} was lost!")
+            say("lost_item", item=lost_item)
             if lost_item == self.player_data.equipped and lost_item not in self.player_data.loot:
                 self.player_data.equipped = None
                 self._apply_equipment_hp_change()
@@ -229,6 +292,7 @@ class PYRPG:
             self.player_data.in_town = True
             self.player_data.distance = 0
             print(f"Game Over! You wake up back in town with {self.player_data.hp}/{self.player_data.max_hp} HP.")
+            say("town_revival", name=self.player_data.name)
         else:
             knockback = random.randint(1, self.player_data.distance)
             self.player_data.distance -= knockback
@@ -246,6 +310,7 @@ class PYRPG:
             return
 
         self.player_data.gold -= self.REST_COST
+        self.events.emit("town_rest")  # lifts curses first, so the heal is to the uncursed max
         self.player_data.hp = self.player_data.max_hp
         self.player_data.mana = self._max_mana()
         print(f"\nYou pay {self.REST_COST} gold and rest fully, recovering all your HP and mana.")
@@ -274,14 +339,17 @@ class PYRPG:
             print(f"Gold: {self.player_data.gold}")
             if has_voucher:
                 print("(Voucher active: 15% off your next purchase)")
+            sway = price_sway_percent(self._charisma())
+            if sway:
+                print(f"(Charisma: prices {sway}% {'lower' if self._charisma() > 0 else 'higher'} for you)")
             for i, (name, price) in enumerate(stock, 1):
                 if (i - 1) in sold_out:
                     print(f"  [{i}] {name} - SOLD OUT")
                 else:
-                    print(f"  [{i}] {name} - {self._apply_voucher_discount(price, has_voucher)} gold")
+                    print(f"  [{i}] {name} - {self._shop_price(price, has_voucher)} gold")
             print(f"  [5] Reroll stock - {reroll_cost} gold")
             for slot, (name, price) in enumerate(self.ALWAYS_STOCKED, 6):
-                print(f"  [{slot}] {name} - {self._apply_voucher_discount(price, has_voucher)} gold (always in stock)")
+                print(f"  [{slot}] {name} - {self._shop_price(price, has_voucher)} gold (always in stock)")
             print("  [0] Leave shop")
 
             choice = input("\nChoose an item to buy, 'c' + number to check its stats (e.g. c1), 5 to reroll, 6/7 for potions, or 0 to leave: ").strip()
@@ -330,8 +398,9 @@ class PYRPG:
                 sold_out.add(index)
 
     def _buy(self, item_name, price, has_voucher):
-        """Charge for one item (Voucher discount applied and used up). Returns True if bought."""
-        final_price = self._apply_voucher_discount(price, has_voucher)
+        """Charge for one item (Charisma sway, then the Voucher discount, which gets used up).
+        Returns True if bought."""
+        final_price = self._shop_price(price, has_voucher)
         if self.player_data.gold < final_price:
             print("You don't have enough gold.")
             input("\nPress Enter to continue...")
@@ -349,10 +418,16 @@ class PYRPG:
     def _apply_voucher_discount(self, price, has_voucher):
         return round(price * (1 - self.VOUCHER_DISCOUNT)) if has_voucher else price
 
+    def _shop_price(self, price, has_voucher=False):
+        """What the shop actually charges: swayed by your Charisma, then the Voucher on top"""
+        return self._apply_voucher_discount(charisma_price(price, self._charisma()), has_voucher)
+
+    def _charisma(self):
+        return self._effective_stats().get(CHARISMA, 0)
+
     def _roll_shop_stock(self):
-        """Pick a random subset of buyable items to stock the shop with"""
-        items = get_buyable_items()
-        return random.sample(items, min(self.SHOP_STOCK_SIZE, len(items)))
+        """Pick the shop's stock from the buyable items, weighted by Rarity (rarer = shows up less)"""
+        return rarity_sample(get_buyable_items(), self.SHOP_STOCK_SIZE)
 
     def _check_shop_item_stats(self, items, index_str):
         """Show an item's stat deltas and price without buying it"""
@@ -367,37 +442,51 @@ class PYRPG:
 
         item_name, price = items[index]
         self._print_item_stats(item_name)
-        print(f"  Price: {price} gold")
+        print(f"  Price: {self._shop_price(price)} gold")
         input("\nPress Enter to continue...")
 
-    def enter_combat(self):
-        """Start a combat encounter"""
+    def enter_combat(self, flavor=None):
+        """Start a combat encounter. `flavor`: a util/flavor.py moment to (maybe) say first, with the enemy's name"""
         depth = self.player_data.distance
         enemy_name = get_encounter_enemy(self._player_power(), depth)
         group_size = 1 if enemy_name == DEATH else roll_group_size(depth)
+        if flavor:
+            say(flavor, enemy=enemy_name, name=self.player_data.name)
         if enemy_name == DEATH:
             print("\nThe air goes cold. Death has come for you...")
         elif group_size > 1:
             print(f"\nA group of {group_size} {enemy_name}s appears!")
         else:
             print(f"\nA wild {enemy_name} appears!")
+        return self.fight(enemy_name, group_size, special=enemy_name == DEATH)
 
+    def fight(self, enemy_name, group_size=1, surprise=False, scaling=0, on_victory=None, special=True):
+        """Run one fight and settle it: rewards on a win, death penalties on a loss. Shared by
+        random encounters and adventures, so a fight pays out the same wherever it happens.
+        `surprise`: every enemy acts first. `scaling`: flat bonus to the enemy's positive stats
+        (Mimics, thief merchants). `on_victory`: extra payout, run after the usual rewards."""
         # Auto-save before risky combat
-        print("💾 Auto-saving before combat...")
         self.auto_save_player_state()
 
-        result, current_hp, current_mana = start_combat(self.player_data, enemy_name, group_size)
+        extras = {k: v for k, v in (("surprise", surprise), ("scaling", scaling), ("special", special)) if v}
+        outcome = start_combat(self.player_data, enemy_name, group_size, **extras)
+        result, current_hp, current_mana = outcome
         self.player_data.hp = current_hp
         self.player_data.mana = current_mana
+        # v1.1: enemies that fled give no gold, EXP or loot rolls, and don't count as defeated
+        group_size -= getattr(outcome, "fled", 0)
 
         if result == "victory":
+            say(win_moment(current_hp, self.player_data.max_hp))
             # Rewards are per-enemy, summed independently rather than one roll * group_size,
             # so a group's payout has the same variance as fighting each member separately.
             gold_reward = sum(self.calculate_gold_reward() for _ in range(group_size))
+            gold_reward = int(bonus(self.player_data.effects, "gold", gold_reward))
             self.player_data.gold += gold_reward
             print(f"You gained {gold_reward} gold!")
 
             exp_reward = sum(self.calculate_exp_reward(enemy_name) for _ in range(group_size))
+            exp_reward = bonus(self.player_data.effects, "EXP", exp_reward)
             self.player_data.exp += exp_reward
             print(f"You gained {exp_reward:.1f}% EXP!")
             self._process_level_ups()
@@ -405,14 +494,19 @@ class PYRPG:
             for _ in range(group_size):
                 self._roll_for_loot()
 
-            self._update_quest_progress(enemy_name, group_size)
+            self.events.emit("victory", enemy=enemy_name, size=group_size)
             self._sleight_of_stats_progress()
+            if on_victory:
+                on_victory()
         elif result == "defeat":
+            say("slain", enemy=enemy_name, name=self.player_data.name)
+            self.events.emit("defeated", enemy=enemy_name)
             self._apply_death_penalties()
             self._handle_defeat_respawn()
         # "fled": no rewards, no penalty — nothing to do beyond the HP sync already above
 
         input("\nPress Enter to continue...")
+        return result
 
     SLEIGHT_OF_STATS = "sleight of stats"
     SLEIGHT_WINS_PER_POINT = 3
@@ -452,6 +546,9 @@ class PYRPG:
         elif key == "nuts":
             self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + self.NUTS_HEAL)
             print(f"You munch some Nuts. HP: {self.player_data.hp}/{self.player_data.max_hp}")
+        elif key == "prayer card":
+            from adventures.encounters import prayer_card
+            prayer_card(self)
         elif learning_item_spell(item_name):
             spell = learning_item_spell(item_name)
             if spell in self.player_data.known_spells:
@@ -462,65 +559,183 @@ class PYRPG:
                 return False
             self.player_data.known_spells.append(spell)
             print(f"You study the {item_name} and learn {spell}!")
+            say("learn_item", item=item_name)
         else:
             print(f"{item_name} can only be used in combat.")
             return False
         self.player_data.loot.remove(item_name)
         return True
 
-    def _update_quest_progress(self, enemy_name, defeated=1):
-        """Called after every victory — counts the fight toward every unfinished "defeat" quest
-        (data/quests.csv) whose target it was. A group counts every enemy in it."""
-        self._advance_quests("defeat", enemy_name, defeated)
-
-    def _record_quest_use(self, action):
-        """Called when the player does something a "use" quest can ask for (e.g. FAST_TRAVEL)"""
-        self._advance_quests("use", action, 1)
-
-    def _advance_quests(self, quest_type, target, amount):
+    def quest_event(self, quest_type, value, amount=1):
+        """Report something that happened — a won fight ("defeat", enemy name, group size), an action
+        ("use", FAST_TRAVEL), a depth ("reach", distance) — and count it toward every accepted,
+        unfinished quest of that type whose target it matches (QUEST_TYPES in quests/quests_data.py).
+        Quests you haven't accepted yet don't count anything."""
+        matches = QUEST_TYPES[quest_type]
         flags = self.player_data.quest_flags
         for quest_id, quest in get_quests().items():
-            if quest_id in self.player_data.completed_quests or quest["type"] != quest_type:
-                continue
-            if target.lower() == quest["target"].lower():
+            if (quest["type"] == quest_type and quest_id in self.player_data.accepted_quests
+                    and quest_id not in self.player_data.completed_quests
+                    and matches(quest["target"], value)):
                 flags[quest_id] = min(quest["amount"], quest_progress(quest_id, quest, flags) + amount)
 
+    def _quest_status(self, quest_id, quest):
+        """"completed", "new" (not accepted yet), "in progress" or "ready" (to claim). Spend quests
+        have nothing to do out in the world, so you make their choice the moment you open them."""
+        if quest_id in self.player_data.completed_quests:
+            return "completed"
+        if quest["type"] == "spend":
+            return "choose"
+        if quest_id not in self.player_data.accepted_quests:
+            return "new"
+        if quest_progress(quest_id, quest, self.player_data.quest_flags) >= quest["amount"]:
+            return "ready"
+        return "in progress"
+
+    def _quest_status_label(self, quest_id, quest):
+        status = self._quest_status(quest_id, quest)
+        if status == "in progress":
+            return f"In progress ({quest_progress(quest_id, quest, self.player_data.quest_flags)}/{quest['amount']})"
+        return {"completed": "Completed", "choose": "New", "new": "New", "ready": "Ready to claim!"}[status]
+
+    def _visible_quests(self):
+        """The board's quests, minus quest-chain ones whose earlier quest isn't done yet"""
+        return [(quest_id, quest) for quest_id, quest in get_quests().items()
+                if quest_unlocked(quest_id, self.player_data.completed_quests)]
+
     def quest_board(self):
-        """Town quest board — lists every quest, lets you turn in ones that are ready"""
-        print("\n=== Quest Board ===")
-        for quest_id, quest in get_quests().items():
-            print(f"\n{quest['title']}: {quest['description']}")
-            progress = quest_progress(quest_id, quest, self.player_data.quest_flags)
+        """Town quest board: pick a quest to read it, accept it, fight for it or claim it"""
+        while True:
+            quests = self._visible_quests()
+            print("\n=== Quest Board ===")
+            print(f"Gold: {self.player_data.gold}")
+            for i, (quest_id, quest) in enumerate(quests, 1):
+                print(f"  [{i}] {quest['title']} - {self._quest_status_label(quest_id, quest)}")
+            print("  [0] Leave")
 
-            if quest_id in self.player_data.completed_quests:
-                print("  Status: Completed.")
-            elif progress >= quest["amount"]:
-                reward = quest["reward"]
-                choice = input(f"  Ready to turn in for {describe_reward(reward)}! Claim it now? (yes/no): ").strip().lower()
-                if choice in ("y", "yes"):
-                    if isinstance(reward, int):
-                        self.player_data.gold += reward
-                    else:
-                        self.player_data.perks.append(reward)
-                    self.player_data.completed_quests.append(quest_id)
-                    print(f"  Quest complete! Reward: {describe_reward(reward)}.")
+            choice = input("\nChoose a quest (0 or Enter to leave): ").strip()
+            if choice in ("0", ""):
+                return
+            try:
+                index = int(choice) - 1
+                if index < 0 or index >= len(quests):
+                    raise ValueError
+            except ValueError:
+                print("Invalid choice.")
+                continue
+            self._open_quest(*quests[index])
+
+    def _open_quest(self, quest_id, quest):
+        """One quest's page: what it says and whatever you can do with it right now"""
+        print(f"\n--- {quest['title']} ---")
+        print(quest["description"] or "...")
+        status = self._quest_status(quest_id, quest)
+
+        if status == "completed":
+            made = self.player_data.quest_choices.get(quest_id)
+            print(f"Completed{f' (you chose: {made})' if made else ''}.")
+            input("\nPress Enter to continue...")
+        elif status == "new":
+            self._offer_quest(quest_id, quest)
+        elif status == "in progress":
+            print(f"{self._quest_status_label(quest_id, quest)}.")
+            if quest["spawn"]:
+                name, count = quest["spawn"]
+                if input(f"[1] Fight ({count} {name})  [0] Back: ").strip() == "1":
+                    self._quest_fight(quest)
             else:
-                print(f"  Status: In progress ({progress}/{quest['amount']}).")
+                input("\nPress Enter to continue...")
+        else:
+            self._complete_quest(quest_id, quest)
 
+    def _offer_quest(self, quest_id, quest):
+        """Accept a quest, or leave it for later. Quests with a spawn start their fight right away."""
+        options = quest["options"]
+        if len(options) > 1:
+            print("Reward: depends on what you choose...")
+        elif describe_reward(options[0]["reward"]):
+            print(f"Reward: {describe_reward(options[0]['reward'])}")
+        if input("[1] Accept  [0] Not now: ").strip() != "1":
+            return
+        self.player_data.accepted_quests.append(quest_id)
+        print("Quest accepted!")
+        if quest["spawn"]:
+            self._quest_fight(quest)
+        else:
+            input("\nPress Enter to continue...")
+
+    def _quest_fight(self, quest):
+        """Fight a quest's own enemies, right here in town"""
+        name, count = quest["spawn"]
+        stats = get_enemy_stats(name)
+        name = stats["Name"] if stats else name
+        if count > 1:
+            print(f"\n{count} {name}s step up. Fight!")
+        else:
+            print(f"\nA {name} steps up. Fight!")
+        self.fight(name, count)
+
+    def _option_label(self, option):
+        """'Give (20 gold)', 'Accept (costs 55 gold, Dice machine)', 'Claim (30 gold)', 'Decline'"""
+        details = [f"costs {option['cost']} gold" if option["cost"] else None, describe_reward(option["reward"])]
+        details = ", ".join(d for d in details if d)
+        return f"{option['label'] or 'Claim'}{f' ({details})' if details else ''}"
+
+    def _complete_quest(self, quest_id, quest):
+        """Claim a finished quest, or make a choice quest's choice. Every choice completes the quest:
+        pay its cost (spend quests), get its reward, and take its Charisma change."""
+        options = quest["options"]
+        menu = "  ".join(f"[{i}] {self._option_label(option)}" for i, option in enumerate(options, 1))
+        choice = input(f"{menu}  [0] Not now: ").strip()
+        if not choice.isdigit() or not 1 <= int(choice) <= len(options):
+            return
+        option = options[int(choice) - 1]
+        if option["cost"] > self.player_data.gold:
+            print(f"You need {option['cost']} gold for that (you have {self.player_data.gold}).")
+            input("\nPress Enter to continue...")
+            return
+
+        self.player_data.gold -= option["cost"]
+        grant_reward(self.player_data, option["reward"])
+        if option["charisma"]:
+            stats = self.player_data.stats
+            stats[CHARISMA] = stats.get(CHARISMA, 0) + option["charisma"]
+            if option["charisma"] > 0:
+                unlocks.record("charisma_quest", quest_id, role=self.player_data.role)
+        if quest_id not in self.player_data.accepted_quests:
+            self.player_data.accepted_quests.append(quest_id)
+        if option["label"]:
+            self.player_data.quest_choices[quest_id] = option["label"]
+        self.player_data.completed_quests.append(quest_id)
+
+        reward = describe_reward(option["reward"])
+        print(f"Quest complete!{f' Reward: {reward}.' if reward else ''}")
+        if option["charisma"]:
+            print(f"Charisma {option['charisma']:+d} (now {self.player_data.stats[CHARISMA]}).")
+        self._check_unlocks()
         input("\nPress Enter to continue...")
 
     def calculate_rest_chance(self):
         """min(60, max(30, Luck + 15))% for Luck >= 0; max(15, 25 - abs(Luck) * 0.48)% for -Luck"""
         luck = self._effective_stats().get('Luck', 0)
         if luck < 0:
-            return round(max(15, 25 - abs(luck) * 0.48), 1)
-        return min(60, max(30, luck + 15))
+            chance = round(max(15, 25 - abs(luck) * 0.48), 1)
+        else:
+            chance = min(60, max(30, luck + 15))
+        return bonus(self.player_data.effects, "rest_chance", chance)  # Of resting: +15
 
     def _effective_stats(self):
         """Base stats with the equipped item's deltas applied — what the character actually has
         right now. Everything outside combat that reads a stat (rest odds, rewards, encounters,
         max HP) goes through this so gear counts everywhere, not just in fights."""
+        return apply_effects(self._gear_stats(), self.player_data.effects)
+
+    def _gear_stats(self):
+        """Base stats + gear, without boons & curses"""
         return Player.apply_equipment(self.player_data.stats, self.player_data.equipped)
+
+    def _max_hp(self):
+        return Player.max_hp_with_effects(self._effective_stats(), self.player_data.effects)
 
     def _unequip_consumable(self):
         """Consumables can't be worn — a save from before the Dice machine became one gets it unequipped"""
@@ -530,8 +745,10 @@ class PYRPG:
             self._apply_equipment_hp_change()
 
     def _player_power(self):
-        """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched against"""
-        return sum(abs(int(v)) for v in self._effective_stats().values())
+        """Sum of the player's absolute stats with gear applied — the yardstick encounters are matched
+        against. Charisma doesn't count: it never makes you stronger in a fight. Neither do boons &
+        curses: a crippled character still meets what their gear says they can handle."""
+        return sum(abs(int(v)) for k, v in self._gear_stats().items() if k != CHARISMA)
 
     def _max_mana(self):
         """Max mana from gear-adjusted stats — never stored, always derived, like max HP in combat"""
@@ -545,30 +762,36 @@ class PYRPG:
     def _sync_max_hp_after_growth(self):
         """Recompute max HP (gear included) after a permanent stat gain. Raises the cap only — no free
         heal, same as mana; clamps in case the stat change lowered max HP."""
-        new_max_hp = Player.calculate_hp(self._effective_stats())
+        new_max_hp = self._max_hp()
         self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
+
+    REST_RESTORATION = 0.30  # of max HP & mana per successful rest out there
 
     def rest(self):
         """Attempt to rest: Luck-based odds to succeed and recover 30% max HP and mana, otherwise ambushed into combat"""
         success_chance = self.calculate_rest_chance()
+        restoration = bonus(self.player_data.effects, "rest_restoration", self.REST_RESTORATION)
         roll = random.randint(1, 100)
+        self.events.emit("rest")
 
         print(f"\nYou attempt to rest... ({success_chance:g}% chance of success)")
 
         if roll <= success_chance:
-            heal_amount = round(self.player_data.max_hp * 0.30)
+            heal_amount = round(self.player_data.max_hp * restoration)
             self.player_data.hp = min(self.player_data.max_hp, self.player_data.hp + heal_amount)
             max_mana = self._max_mana()
-            mana_amount = round(max_mana * 0.30)
+            mana_amount = round(max_mana * restoration)
             self.player_data.mana = min(max_mana, self._current_mana() + mana_amount)
             print(f"You rest peacefully and recover {heal_amount} HP and {mana_amount} mana.")
             print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
             print(f"Mana: {self.player_data.mana}/{max_mana}")
+            say("rested")
+            self.events.emit("rested")
             input("\nPress Enter to continue...")
         else:
             print("Your rest is interrupted!")
-            self.enter_combat()
+            self.enter_combat(flavor="rest_fail")
 
     def calculate_gold_reward(self):
         """Gold scales with Luck: low = max(5, luck * 0.42), high = max(low + 5, luck * 1.8)"""
@@ -601,6 +824,7 @@ class PYRPG:
             self.player_data.exp -= 100
             self.player_data.level += 1
             print(f"\n*** LEVEL UP! You are now level {self.player_data.level}! ***")
+            say("level_up")
             self._allocate_level_up_points(self.LEVEL_UP_POINTS)
             self._learn_level_up_spells()
 
@@ -612,6 +836,7 @@ class PYRPG:
             if spell not in self.player_data.known_spells and can_learn(spell, magic):
                 self.player_data.known_spells.append(spell)
                 print(f"You learned {spell}!")
+                say("learn_level")
 
     def _allocate_level_up_points(self, points):
         """Let the player spend ability points one at a time, raising or lowering any of the
@@ -651,7 +876,17 @@ class PYRPG:
 
     DROP_STACK_SIZES = {"nuts": 4}  # items that drop as a stack instead of one copy
 
-    def _roll_for_loot(self):
+    CHEST_GOLD = (5, 13)
+
+    def open_chest(self):
+        """A real treasure chest: 5 ~ 13 gold and a loot roll. Whether a chest is a Mimic is
+        decided before this — by the encounter roll — so anything that calls this is safe."""
+        gold = random.randint(*self.CHEST_GOLD)
+        self.player_data.gold += gold
+        print(f"You open the chest and find {gold} gold!")
+        self._roll_for_loot(source="The chest held")
+
+    def _roll_for_loot(self, source="The enemy dropped"):
         """On a successful roll, award one item drawn from the droppable pool, weighted by Rarity"""
         droppable = get_droppable_items()
         if not droppable:
@@ -665,24 +900,47 @@ class PYRPG:
         item_name = random.choices(names, weights=weights, k=1)[0]
         amount = self.DROP_STACK_SIZES.get(item_name.lower(), 1)
         self.player_data.loot.extend([item_name] * amount)
-        print(f"The enemy dropped {item_name}{f' (x{amount})' if amount > 1 else ''}!")
+        print(f"{source} {item_name}{f' (x{amount})' if amount > 1 else ''}!")
+
+    def _check_unlocks(self):
+        """The unlocks that depend on where your character stands (gear, stats, max HP, quests done)"""
+        pd = self.player_data
+        unlocks.check_state(pd.role, pd.equipped, self._gear_stats(), pd.max_hp, pd.completed_quests)
+
+    def journal(self):
+        """The Journal: everything you've unlocked, and everything you haven't (yet). Your quest
+        choices close it off."""
+        print()
+        print("\n".join(unlocks.journal_lines()))
+        choices = self.player_data.quest_choices
+        if choices:
+            quests = get_quests()
+            print("\n[Your choices]")
+            for quest_id, label in choices.items():
+                title = quests.get(quest_id, {}).get("title", quest_id)
+                print(f"  {title:<20}{label}")
+        input("\nPress Enter to continue...")
 
     def view_stats(self):
         """Display player stats"""
         effective_stats = self._effective_stats()
-        print(f"\n=== Player Stats ===")
-        print(f"Name: {self.player_data.name}")
-        print(f"Role: {self.player_data.role.capitalize()}")
-        print(f"Level: {self.player_data.level} ({self.player_data.exp:.1f}% to next level)")
-        print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
-        print(f"Mana: {self._current_mana()}/{self._max_mana()}")
-        print(f"Gold: {self.player_data.gold}")
-        print(f"Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")
-        print(f"Equipped: {self.player_data.equipped or 'Nothing'}")
-        print(f"Spells & Abilities: {', '.join(self.player_data.known_spells) or 'None'}")
-        print("Stats:")
-        for stat, value in effective_stats.items():
-            print(f"  {stat}: {value}")
+        pd = self.player_data
+        print(f"\n=== {pd.name}, level {pd.level} {pd.role.capitalize()} ===")
+        print(f"  {gauge('HP', pd.hp, pd.max_hp)}")
+        print(f"  {gauge('MP', self._current_mana(), self._max_mana())}")
+        print(f"  EXP {pd.exp:.1f}% to next level")
+        print(f"  Gold {pd.gold}")
+        print("\n  Stats:")
+        cells = [f"{stat:<13}{value:>4}" for stat, value in effective_stats.items()]
+        for i in range(0, len(cells), 2):
+            print("    " + "     ".join(cells[i:i + 2]))
+        print(f"\n  Equipped: {pd.equipped or 'Nothing'}")
+        print(f"  Spells & Abilities: {', '.join(pd.known_spells) or 'None'}")
+        print(f"  Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")
+        if pd.effects:
+            print("\n  Boons & curses:")
+            for effect in pd.effects:
+                print(f"    {describe(effect)}")
 
         input("\nPress Enter to continue...")
 
@@ -785,30 +1043,33 @@ class PYRPG:
 
     def _apply_equipment_hp_change(self):
         """Recompute max HP and mana after equipping/unequipping. Clamp only — no free heal or refill from gear."""
-        new_max_hp = Player.calculate_hp(self._effective_stats())
+        new_max_hp = self._max_hp()
         self.player_data.hp = min(self.player_data.hp, new_max_hp)
         self.player_data.max_hp = new_max_hp
         self.player_data.mana = self._current_mana()
 
-    def _do_save(self):
+    def _refresh_max_hp(self):
+        """A boon or curse started or ended: same as a gear change (the cap moves, current only clamps)"""
+        self._apply_equipment_hp_change()
+
+    def _do_save(self, quiet=False):
         """Shared save logic used by save_game and auto_save"""
         player = Player(self.player_data)
-        put_new_player(player)
+        put_new_player(player, quiet=quiet)
 
     def save_game(self):
         """Save the current game state"""
-        print("\n=== Saving Game ===")
-        self._do_save()
-        print("Game saved successfully!")
+        self._do_save(quiet=True)
+        print("\nGame saved.")
         input("\nPress Enter to continue...")
 
     def auto_save_player_state(self):
-        """Auto-save before risky actions like combat, unless the player opted out this session"""
+        """Auto-save before risky actions like combat, unless the player opted out this session.
+        Quiet: one small "(auto-saved)" line, nothing at all when saving is off."""
         if not self.saving_enabled:
-            print("Skipping auto-save (disabled for this session).")
             return
-        self._do_save()
-        print("Auto-save complete.")
+        self._do_save(quiet=True)
+        print("  (auto-saved)")
 
 
 if __name__ == "__main__":

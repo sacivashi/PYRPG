@@ -1,7 +1,7 @@
 import csv
 import json
 import os
-from players.player_data import PlayerData
+from players.player_data import PlayerData, saved_fields
 
 # Navigate from util/file_io.py up to the project root
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,7 +38,10 @@ def _get_config_value(node_name):
         "enemies_csv": "data/enemies.csv",
         "items_csv": "data/items.csv",
         "quests_csv": "data/quests.csv",
+        "encounters_csv": "data/encounters.csv",
+        "unlocks_csv": "data/unlocks.csv",
         "players_json": "data/players.json",
+        "unlocks_json": "data/unlocks.json",
     }
     return defaults.get(node_name.lower())
 
@@ -56,12 +59,10 @@ def get_data(node_name):
 
 
 def read_csv(file_name):
-    data = []
+    """Every row as a dict keyed by the header, e.g. row["Defense"] — columns are found by name,
+    so adding or reordering columns never shifts the others. Blank lines are skipped."""
     with open(file_name, newline='', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            data.insert(len(data), row)
-        return data
+        return [row for row in csv.DictReader(file) if any(cell and cell.strip() for cell in row.values())]
 
 
 def read_json(file_name):
@@ -82,34 +83,48 @@ def write_json(file_name, data):
         json.dump(data, file, indent=4)
 
 
+def _migrate_stats(stats, role=None):
+    """Old saves: read the pre-rename Defence key as Defense, and give characters from before
+    Charisma existed their class's Charisma (placed in roles.csv's column order, so it shows up
+    in the same spot as on a new character)."""
+    if "Defence" in stats:
+        stats = {("Defense" if k == "Defence" else k): v for k, v in stats.items()}
+    from util.charisma import CHARISMA
+    if CHARISMA not in stats:
+        from roles.roles_data import RolesExtract
+        role_stats = RolesExtract.get_role_stats_by_name().get((role or "").lower(), {})
+        stats = {**stats, CHARISMA: role_stats.get(CHARISMA, 0)}
+        order = list(role_stats)
+        if order:
+            stats = {k: stats[k] for k in sorted(stats, key=lambda k: order.index(k) if k in order else len(order))}
+    return stats
+
+
+def _rescue_item_rewards(perks, loot):
+    """Quest item rewards (e.g. the Nasty Thieves voucher) used to be filed under perks, where
+    nothing ever used them — move them into loot. Returns (perks, loot)."""
+    from quests.quests_data import reward_item
+    items = [reward_item(perk) for perk in perks]
+    return ([perk for perk, item in zip(perks, items) if not item],
+            loot + [item for item in items if item])
+
+
 def get_player(player_name):
     players_json_path = get_data("players_json")
     data = read_json(players_json_path)
 
     for player in data["players"]:
         if player["name"].strip().lower() == player_name.strip().lower():
-            return PlayerData(
-                name=player["name"],
-                role=player["role"],
-                level=player["level"],
-                hp=player["hp"],
-                mana=player.get("mana"),
-                stats=player["stats"],
-                max_hp=player.get("max_hp"),  # None for saves predating max_hp tracking
-                gold=player.get("gold", 0),
-                loot=player.get("loot", []),
-                equipped=player.get("equipped"),
-                exp=player.get("exp", 0),
-                in_town=player.get("in_town", True),
-                distance=player.get("distance", 0),
-                depth_reached=player.get("depth_reached", player.get("distance", 0)),  # older saves: start from where they are
-                failed_attempts=player.get("failed_attempts", 0),
-                quest_flags=player.get("quest_flags", {}),
-                completed_quests=player.get("completed_quests", []),
-                known_spells=player.get("known_spells", []),
-                item_state=player.get("item_state", {}),
-                perks=player.get("perks", []),
-            )
+            # every field the save has; anything missing (older saves) gets the PlayerData default
+            saved = {f.name: player[f.name] for f in saved_fields() if f.name in player}
+            saved.setdefault("depth_reached", player.get("distance", 0))  # older saves: start from where they are
+            saved["stats"] = _migrate_stats(saved["stats"], saved.get("role"))
+            saved["perks"], saved["loot"] = _rescue_item_rewards(saved.get("perks", []), saved.get("loot", []))
+            if "accepted_quests" not in player:  # from before quests were opt-in
+                from quests.quests_data import started_quests
+                saved["accepted_quests"] = started_quests(saved.get("completed_quests", []),
+                                                          saved.get("quest_flags", {}))
+            return PlayerData(**saved)
 
     return None
 

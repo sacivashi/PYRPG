@@ -1,7 +1,7 @@
 from game.pyrpg import PYRPG
 from players.player_data import PlayerData
 
-STATS = {'Strength': 9, 'Agility': 5, 'Intelligence': 10, 'Defence': 8, 'Magic': 2, 'Luck': 4}
+STATS = {'Strength': 9, 'Agility': 5, 'Intelligence': 10, 'Defense': 8, 'Magic': 2, 'Luck': 4}
 
 
 def make_game(**overrides):

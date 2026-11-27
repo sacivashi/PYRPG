@@ -2,7 +2,7 @@ from combat.combat_player import Player
 from game.pyrpg import PYRPG
 from players.player_data import PlayerData
 
-BASE_STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defence': 5, 'Magic': 5, 'Luck': 5}
+BASE_STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defense': 5, 'Magic': 5, 'Luck': 5}
 
 
 def make_game(**stat_overrides):
@@ -113,7 +113,7 @@ def test_max_hp_growth_uses_gear_adjusted_stats(monkeypatch):
     game = make_game()                                 # Str 5, Def 5 -> max HP floor of 22
     game.player_data.hp = 22
     game.player_data.max_hp = 22
-    with_gear(monkeypatch, Defence=10)                 # effective Def 15 -> 39 max HP
+    with_gear(monkeypatch, Defense=10)                 # effective Def 15 -> 39 max HP
     game._sync_max_hp_after_growth()
     assert game.player_data.max_hp == 39
     assert game.player_data.hp == 22                   # cap rises, current HP doesn't — no free heal

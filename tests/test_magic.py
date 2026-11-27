@@ -7,8 +7,8 @@ from players.player_data import PlayerData
 from roles.roles_data import RolesExtract
 from spells.spells_data import STARTING_ITEMS, can_learn, spell_cost, spell_base_damage
 
-MAGE = {'Strength': 3, 'Agility': 4, 'Intelligence': 10, 'Defence': 3, 'Magic': 9, 'Luck': 5}   # 45 max mana
-NECRO = {'Strength': 1, 'Agility': 2, 'Intelligence': 6, 'Defence': 4, 'Magic': -8, 'Luck': 5}  # 27 max mana
+MAGE = {'Strength': 3, 'Agility': 4, 'Intelligence': 10, 'Defense': 3, 'Magic': 9, 'Luck': 5}   # 45 max mana
+NECRO = {'Strength': 1, 'Agility': 2, 'Intelligence': 6, 'Defense': 4, 'Magic': -8, 'Luck': 5}  # 27 max mana
 
 
 def make_combat(stats, enemy="Bandit", size=1, **overrides):
@@ -188,7 +188,7 @@ def test_starting_items_belong_to_real_roles():
 
 # --- level-up learning (Cursed strike) ---------------------------------------------------------
 
-FORSAKEN = {'Strength': -1, 'Agility': 5, 'Intelligence': 3, 'Defence': 9, 'Magic': -4, 'Luck': 4}
+FORSAKEN = {'Strength': -1, 'Agility': 5, 'Intelligence': 3, 'Defense': 9, 'Magic': -4, 'Luck': 4}
 
 
 def test_forsaken_starts_knowing_cursed_strike():
@@ -231,7 +231,7 @@ def test_ice_shower_hits_every_enemy(monkeypatch):
 
 def test_lava_bomb_hits_its_target_harder_and_splashes_everyone(monkeypatch):
     no_waste(monkeypatch)
-    druid = {'Strength': 4, 'Agility': 4, 'Intelligence': 6, 'Defence': 4, 'Magic': 6, 'Luck': 4}
+    druid = {'Strength': 4, 'Agility': 4, 'Intelligence': 6, 'Defense': 4, 'Magic': 6, 'Luck': 4}
     combat = make_combat(druid, enemy="Dragon", size=3, known_spells=["Lava bomb"])
     monkeypatch.setattr("builtins.input", lambda *_: "1")      # target enemy #1
     combat.cast("Lava bomb")
@@ -241,7 +241,7 @@ def test_lava_bomb_hits_its_target_harder_and_splashes_everyone(monkeypatch):
 
 def test_shocks_cost_and_damage(monkeypatch):
     no_waste(monkeypatch)
-    elf = {'Strength': 4, 'Agility': 7, 'Intelligence': 6, 'Defence': 4, 'Magic': 5, 'Luck': 2}
+    elf = {'Strength': 4, 'Agility': 7, 'Intelligence': 6, 'Defense': 4, 'Magic': 5, 'Luck': 2}
     combat = make_combat(elf, enemy="Dragon", known_spells=["Light shock"])
     combat.cast("Light shock")
     assert combat.player.current_mana == 27 - 12

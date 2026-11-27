@@ -20,6 +20,16 @@ class PlayerData:
     failed_attempts: int = 0
     quest_flags: dict = field(default_factory=dict)  # progress markers, e.g. {"defeated_cat": True}
     completed_quests: list = field(default_factory=list)  # quest ids already turned in — can't reclaim
+    accepted_quests: list = field(default_factory=list)  # quest ids taken from the board — only these count progress
+    quest_choices: dict = field(default_factory=dict)  # quest id -> the choice made on completion, e.g. {"lost_wallet": "Give"}
     known_spells: list = field(default_factory=list)  # learned spells/abilities (spells/spells_data.py names)
     item_state: dict = field(default_factory=dict)  # per-item progress, e.g. Thunder use counts, Sleight of stats wins
     perks: list = field(default_factory=list)  # unspent quest perks, e.g. "free_fast_travel" (quests/quests_data.py PERKS)
+    # active boons & curses (util/effects.py) — never saved, so quitting always lifts a curse
+    effects: list = field(default_factory=list, metadata={"saved": False})
+
+
+def saved_fields():
+    """The PlayerData fields that go into players.json (everything but the saved=False ones)"""
+    from dataclasses import fields
+    return [f for f in fields(PlayerData) if f.metadata.get("saved", True)]

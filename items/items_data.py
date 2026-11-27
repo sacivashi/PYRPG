@@ -1,79 +1,66 @@
+from util.charisma import CHARISMA
 from util.file_io import get_data, read_csv
 
-STAT_COLUMNS = ['Strength', 'Agility', 'Intelligence', 'Defence', 'Magic', 'Luck']
+# The stats that level-ups, Sleight of stats and combat work with. Charisma isn't one of them: it only
+# changes through quests and gear, so it's added separately for item deltas (ITEM_STAT_COLUMNS).
+STAT_COLUMNS = ['Strength', 'Agility', 'Intelligence', 'Defense', 'Magic', 'Luck']
+ITEM_STAT_COLUMNS = STAT_COLUMNS + [CHARISMA]
+
+
+def _get_item_row(name):
+    """The items.csv row for this item (matched case-insensitively), or None"""
+    return next((row for row in read_csv(get_data("items_csv")) if row["Name"].lower() == name.lower()), None)
+
+
+def _is_yes(name, column):
+    """Whether the item's `column` says Yes. False for unknown items or a missing column."""
+    row = _get_item_row(name)
+    return bool(row and (row.get(column) or "").strip().lower() == "yes")
 
 
 def get_item_names():
-    reader = read_csv(get_data("items_csv"))
-    return [row[0] for row in reader[1:] if row]
+    return [row["Name"] for row in read_csv(get_data("items_csv"))]
 
 
 def get_item_stats(name):
     """Stat deltas only — non-stat columns (e.g. Rarity) are excluded by name, not position."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]  # First row is the header
-    for row in reader[1:]:  # Skip the header
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return {stat: int(row_by_header[stat]) for stat in STAT_COLUMNS if stat in row_by_header}
-    return None
+    row = _get_item_row(name)
+    if row is None:
+        return None
+    return {stat: int(row[stat]) for stat in ITEM_STAT_COLUMNS if row.get(stat) is not None}
 
 
 def get_item_rarity(name):
     """Drop weight — higher means more common. Defaults to 1 if no Rarity column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Rarity" not in headers:
-        return 1
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return int(row_by_header["Rarity"])
-    return 1
+    row = _get_item_row(name)
+    return int(row["Rarity"]) if row and row.get("Rarity") else 1
 
 
 def is_item_buyable(name):
     """Whether the item can appear in the shop. Defaults to False if no Buyable column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Buyable" not in headers:
-        return False
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return row_by_header["Buyable"].strip().lower() == "yes"
-    return False
+    return _is_yes(name, "Buyable")
 
 
 def is_item_droppable(name):
     """Whether the item can appear as a random loot drop. Defaults to False if no Droppable column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Droppable" not in headers:
-        return False
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return row_by_header["Droppable"].strip().lower() == "yes"
-    return False
+    return _is_yes(name, "Droppable")
+
+
+def _unlocked(names):
+    """Leave out items still locked (unlocks.csv `item:` rows) — they don't drop or sell until earned"""
+    from unlocks.unlocks import locked_names
+    locked = locked_names("item")
+    return [name for name in names if name.lower() not in locked]
 
 
 def get_droppable_items():
-    """(name, rarity) pairs for every item eligible to drop as loot — rarity used as drop weight."""
-    return [(name, get_item_rarity(name)) for name in get_item_names() if is_item_droppable(name)]
+    """(name, rarity) pairs for every (unlocked) item eligible to drop as loot — rarity used as drop weight."""
+    return [(name, get_item_rarity(name)) for name in _unlocked(get_item_names()) if is_item_droppable(name)]
 
 
 def is_item_consumable(name):
     """Whether the item is used-and-removed rather than equipped. Defaults to False if no Consumable column exists yet."""
-    reader = read_csv(get_data("items_csv"))
-    headers = reader[0]
-    if "Consumable" not in headers:
-        return False
-    for row in reader[1:]:
-        if row[0].lower() == name.lower():
-            row_by_header = dict(zip(headers, row))
-            return row_by_header["Consumable"].strip().lower() == "yes"
-    return False
+    return _is_yes(name, "Consumable")
 
 
 PRICE_PIVOT_RARITY = 65  # fixed reference point — adding a very common item no longer reprices the whole shop
@@ -87,5 +74,19 @@ def get_item_price(name):
 
 
 def get_buyable_items():
-    """(name, price) pairs for every item currently stocked in the shop."""
-    return [(name, get_item_price(name)) for name in get_item_names() if is_item_buyable(name)]
+    """(name, price) pairs for every (unlocked) item the shop can stock."""
+    return [(name, get_item_price(name)) for name in _unlocked(get_item_names()) if is_item_buyable(name)]
+
+
+def rarity_sample(items, k):
+    """Pick k different (name, price) entries, weighted by Rarity like drops are: a Wooden sword (80)
+    shows up far more often than a Rapier (3). Every item gets at least weight 1, so nothing buyable
+    is impossible to find."""
+    import random
+    pool = list(items)
+    picked = []
+    while pool and len(picked) < k:
+        weights = [max(1, get_item_rarity(name)) for name, _ in pool]
+        choice = random.choices(range(len(pool)), weights=weights, k=1)[0]
+        picked.append(pool.pop(choice))
+    return picked

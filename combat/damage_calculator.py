@@ -5,7 +5,7 @@ import math
 class DamageCalculator:
     """Damage calculation system — v1.0 patch notes formulas (physical/magic split)"""
 
-    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck', 'Defence']
+    PHYSICAL_STATS = ['Strength', 'Agility', 'Luck', 'Defense']
 
     # No source of evasion can push a dodge chance past this. Anything that adds evasion later
     # (e.g. gear) should be summed into calculate_evasion_chance so this cap covers it too.
@@ -36,7 +36,7 @@ class DamageCalculator:
     @staticmethod
     def calculate_base_damage(attacker_stats, weapon_bonus=0):
         """v1.0 physical damage: int(sqrt(abs(Str) + abs(Agi) + abs(Lck) + abs(Def) + 15) * 2.2).
-        Every physical stat counts (Defence too — you can hit with your shield), each by its size,
+        Every physical stat counts (Defense too — you can hit with your shield), each by its size,
         so a negative stat adds as much as a positive one. The square root keeps high-stat roles
         from running away with it; the +15 gives everyone a floor of 8."""
         stats = {k: int(v) for k, v in attacker_stats.items()}
@@ -74,8 +74,31 @@ class DamageCalculator:
         "Arrowshot": lambda s: int(s.get('Agility', 0) * 0.7 + abs(s.get('Magic', 0)) * 0.3),
         "Backstab": lambda s: int(15 + s.get('Agility', 0) * 0.8),
         "Blade bonk": lambda s: int(5 + s.get('Strength', 0) * 0.55),
-        "Shield bash": lambda s: int(s.get('Defence', 0) * 1.5),
+        "Shield bash": lambda s: int(s.get('Defense', 0) * 1.5),
+        "Cut": lambda s: int(max(3, abs(s.get('Luck', 0)) * 0.2, abs(s.get('Agility', 0)) * 0.2,
+                                 abs(s.get('Strength', 0)) * 0.2)),
+        "Flintlock": lambda s: int(18 + (abs(s.get('Luck', 0)) + abs(s.get('Agility', 0))) * 0.85),
     }
+
+    @staticmethod
+    def rum_heal(stats):
+        """Rum: heal max(5, abs(lck) * 0.25 + abs(int)) — the drunker you are, the better it works"""
+        return int(max(5, abs(stats.get('Luck', 0)) * 0.25 + abs(stats.get('Intelligence', 0))))
+
+    @staticmethod
+    def rum_int_loss(intelligence):
+        """...and Intelligence drops by max(8, abs(int) * 0.45) for the rest of the fight"""
+        return int(max(8, abs(intelligence) * 0.45))
+
+    @staticmethod
+    def flintlock_gold_chance(luck):
+        """abs(lck) * 0.8 % chance a Flintlock hit knocks some coins loose"""
+        return abs(luck) * 0.8
+
+    @staticmethod
+    def flintlock_gold(luck):
+        """max(3, min(abs(lck) * 0.8, 12)) gold"""
+        return int(max(3, min(abs(luck) * 0.8, 12)))
 
     @staticmethod
     def ability_damage(name, attacker_stats):
@@ -89,8 +112,42 @@ class DamageCalculator:
 
     @staticmethod
     def defend_block(defence):
-        """Defending: on top of the usual Defence %, block a flat min(10, max(0, def * 0.75))"""
+        """Defending: on top of the usual Defense %, block a flat min(10, max(0, def * 0.75))"""
         return min(10, max(0, defence * 0.75))
+
+    # --- v1.1 enemy brains (combat/enemy_brain.py decides, these are the numbers) ---------------
+    CHARGE_MULTIPLIER = 1.5        # a charged attack hits for Attack * 1.5
+    CHARGE_SIPHON_SEAR = 1.3       # -Attack enemies' charge: their usual hit + 1.3x the siphon as searing
+    ENEMY_COUNTER_CHANCE = 15      # % a defending enemy strikes back at a physical hit
+    ENEMY_HEAL_SHARE = 0.12        # of the healed member's max HP
+    FLEE_DROP_CHANCE = 30          # % a fleeing enemy drops something (gold or loot, a coin flip)
+    FLEE_DROP_GOLD = (3, 8)
+
+    @staticmethod
+    def enemy_defend_block(defence):
+        """A defending enemy blocks int(def * 0.07 + 1) from each physical hit, on top of its usual
+        Defense %. -Defense enemies are too reckless to guard: 0."""
+        return 0 if defence < 0 else int(defence * 0.07 + 1)
+
+    @staticmethod
+    def enemy_counter_bonus(defence):
+        """A defending enemy's counter: its usual hit + int(max(0, min(12, def * 0.45)))"""
+        return int(max(0, min(12, defence * 0.45)))
+
+    @staticmethod
+    def enemy_flee_chance(speed, luck):
+        """At 45% HP or less: int(max(0, min(15, spd * 0.44 + lck * 0.44)))% each turn"""
+        return int(max(0, min(15, speed * 0.44 + luck * 0.44)))
+
+    @staticmethod
+    def enemy_heal_chance(luck, speed):
+        """A support member's heal lands min(75, 35 + max(0, lck + spd) * 0.5)% of the time"""
+        return min(75, 35 + max(0, luck + speed) * 0.5)
+
+    @staticmethod
+    def siphon_amount(attack):
+        """What a -Attack enemy siphons per hit: max(5, abs(atk) * 0.46)"""
+        return round(max(5, abs(attack) * 0.46), 1)
 
     @staticmethod
     def apply_luck_modifier(damage, luck_stat):
@@ -186,7 +243,7 @@ class DamageCalculator:
 
     @staticmethod
     def player_damage_reduction(defence):
-        """+Defence: take min(25, 2 + def * 0.7)% less damage. 0 or -Defence: no reduction."""
+        """+Defense: take min(25, 2 + def * 0.7)% less damage. 0 or -Defense: no reduction."""
         return min(25, 2 + defence * 0.7) / 100 if defence > 0 else 0
 
     @staticmethod
@@ -195,9 +252,9 @@ class DamageCalculator:
             if is_enemy:
                 final_damage, reflected = DamageCalculator.enemy_defence_adjustment(incoming_damage, defence, "physical")
                 return final_damage, ("reflect_damage", reflected)
-            # Player -Defence: max(max_hp * 0.05, abs(-def)) bonus damage taken
+            # Player -Defense: max(max_hp * 0.05, abs(-def)) bonus damage taken
             extra_damage = max(max_hp * 0.05, abs(defence))
-            # Player -Defence: reflect max(15, min(35, max(damage_taken, abs(-def)) * 0.35))% of flat damage (pre-bonus)
+            # Player -Defense: reflect max(15, min(35, max(damage_taken, abs(-def)) * 0.35))% of flat damage (pre-bonus)
             reflect_percent = max(15, min(35, max(incoming_damage, abs(defence)) * 0.35)) / 100
             return incoming_damage + extra_damage, ("reflect_damage", incoming_damage * reflect_percent)
         if is_enemy:
@@ -210,10 +267,8 @@ class DamageCalculator:
         counter_effects = []
         final_damage = incoming_damage
 
-        # Defence (enemies use 'Defense', players use 'Defence')
-        defence_key = 'Defense' if is_enemy else 'Defence'
         final_damage, defence_effect = DamageCalculator.apply_defence_modifier(
-            final_damage, stats.get(defence_key, 0), is_enemy, max_hp
+            final_damage, stats.get('Defense', 0), is_enemy, max_hp
         )
         if defence_effect:
             counter_effects.append(defence_effect)

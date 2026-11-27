@@ -304,3 +304,4 @@ fast travel cost: `int(5 * depth * 0.5)`
 - Sort descriptions alphabetically (by roles)
 - Add new roles descriptions
 - Fix inventory bug where 0 always unequips your equipment. (replaced by u).
+- Make repeat inventory stack instead of flooding your bag slots

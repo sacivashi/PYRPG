@@ -12,10 +12,19 @@ class InputName:
 	def input_name():
 		global player
 
+		print("""=== PYRPG ===
+Welcome adventurer!
+
+What's new:
+  - Unlocks: some classes, enemies and items have to be earned now. Progress is shared
+    between all your characters, so check the Journal in town to see what's left.
+  - The game talks back: winning, losing, resting, fleeing... it has something to say.
+  - Cursed spells now drag negative enemy stats up toward 0, not just positive ones down.
+""")
+
 		while True:
 			your_name = input(
-				"""PyRPG v1.0 — welcome (back?) to the age of magic.
-New here? Pick a role, learn a spell, try not to die.
+				"""New here? Pick a role, learn a spell, try not to die.
 Been here before? Type your name to load your save.
 
 Name:""").strip()
@@ -25,9 +34,9 @@ Name:""").strip()
 				while True:
 					choice = input(f"A save for '{player_info.name}' already exists. [1] Load [2] Delete [3] Cancel: ").strip()
 					if choice == "1":
-						print(f"Welcome back, {player_info.name.capitalize()}!")
-						print(f"Role: {player_info.role.capitalize()}, Level: {player_info.level}")
-						print("Stats:", player_info.stats)
+						print(f"\nWelcome back, {player_info.name.capitalize()}! "
+						      f"Level {player_info.level} {player_info.role.capitalize()}.")
+						print("  " + ", ".join(f"{stat} {value}" for stat, value in player_info.stats.items()))
 						saving_enabled = input("Would you like your progress to be auto-saved this session? (Y/n): ").strip().lower() != "n"
 						return player_info, saving_enabled
 					elif choice == "2":

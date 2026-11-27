@@ -3,7 +3,7 @@ import random
 from combat.combat import Combat, Enemy, GROUP_SIZES, group_chance, group_size_weights, roll_group_size
 from players.player_data import PlayerData
 
-STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defence': 5, 'Magic': 5, 'Luck': 5}
+STATS = {'Strength': 5, 'Agility': 5, 'Intelligence': 0, 'Defense': 5, 'Magic': 5, 'Luck': 5}
 
 
 def make_group_combat(size=3, enemy="Bandit", hp=999):
@@ -116,7 +116,7 @@ def test_negative_intelligence_no_longer_confuses_physical_attacks(monkeypatch):
     # v1.0: -Int's debuff moved to wasting mana on spells/abilities — physical attacks always
     # go where you aim them, even with every random roll forced to its "worst" value.
     pd = PlayerData(name="T", role="warrior", level=1, hp=999,
-                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defence': 5,
+                    stats={'Strength': 5, 'Agility': 5, 'Intelligence': -100, 'Defense': 5,
                            'Magic': 5, 'Luck': 5}, max_hp=999)
     combat = Combat(pd, "Bandit", group_size=3)
     monkeypatch.setattr("builtins.input", lambda *_: "1")  # target enemy #1 (index 0)
@@ -178,7 +178,7 @@ def test_corruption_ticks_only_for_the_acting_enemy():
 
 def test_full_group_fight_ends_in_victory_for_an_overwhelming_player(monkeypatch):
     pd = PlayerData(name="T", role="warrior", level=1, hp=9999,
-                     stats={'Strength': 50, 'Agility': 50, 'Intelligence': 0, 'Defence': 50,
+                     stats={'Strength': 50, 'Agility': 50, 'Intelligence': 0, 'Defense': 50,
                             'Magic': 0, 'Luck': 0}, max_hp=9999)
     combat = Combat(pd, "Bandit", group_size=2)
     combat.player.current_hp = 9999

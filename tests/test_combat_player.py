@@ -3,20 +3,20 @@ from players.player_data import PlayerData
 
 
 def test_calculate_hp_normal_stats():
-    # 10 Strength, 10 Defence -> abs(10)*0.95 + abs(10)*2.3 = 9.5 + 23 = 32.5 -> int() truncates to 32
-    stats = {'Strength': 10, 'Defence': 10}
+    # 10 Strength, 10 Defense -> abs(10)*0.95 + abs(10)*2.3 = 9.5 + 23 = 32.5 -> int() truncates to 32
+    stats = {'Strength': 10, 'Defense': 10}
     assert Player.calculate_hp(stats) == 32
 
 
 def test_calculate_hp_floor_applies_at_zero():
-    # 0 Strength, 0 Defence -> formula gives 0, but HP can never go below the 22 floor
-    stats = {'Strength': 0, 'Defence': 0}
+    # 0 Strength, 0 Defense -> formula gives 0, but HP can never go below the 22 floor
+    stats = {'Strength': 0, 'Defense': 0}
     assert Player.calculate_hp(stats) == 22
 
 
 def test_calculate_hp_uses_absolute_value_for_negative_stats():
     # Negative stats should contribute the same HP as their positive counterparts
-    stats = {'Strength': -10, 'Defence': -10}
+    stats = {'Strength': -10, 'Defense': -10}
     assert Player.calculate_hp(stats) == 32
 
 
@@ -27,7 +27,7 @@ def test_player_data_round_trip_preserves_exp():
     # that bug for `exp` when it was first added.
     original = PlayerData(
         name='RoundTrip', role='mage', level=3, hp=20, max_hp=25,
-        stats={'Strength': 4, 'Agility': 4, 'Intelligence': 12, 'Defence': 4, 'Magic': 6, 'Luck': 3},
+        stats={'Strength': 4, 'Agility': 4, 'Intelligence': 12, 'Defense': 4, 'Magic': 6, 'Luck': 3},
         gold=50, loot=['Iron Sword'], equipped=None, exp=42.5,
     )
 
