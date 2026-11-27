@@ -43,18 +43,19 @@ Following the solutions enemies encountered now have their nuggings installed to
 >>>> odds: 60 normal, 20 charged, 20 defend
 >> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
 >>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a 15% chance to counter attack
->>> - counter attack: The enemy strikes the player for attack value + a portion of defense value int(max(0,def * 0.45))
+>>> - counter attack: The enemy strikes the player for attack/-attack value + a portion of defense value int(max(0,min(12,def * 0.45)))
 >> - 45% and less:
 >>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp. nor count towards a defeat x number quest
 >>> - An enemy fleeing still counts as a win, but to be fair it doesn't tick any "per win" passives (sculpture boons/curses, Sleight of stats, etc).
 
 > enemy thought process, but it's groups:
 >> - all members at 100% ~ 80% of HP, the leader (the healthiest member) uses the solo phase 1 odds (60/20/20)
->>> other member or 2 members may support attack, or defend themselves (60 norm/30 charge/10 def)
+>>> other member or 2 members may support attack, or defend themselves (60 norm/20 charge/20 def)
 >> - any single member at 80% ~ 45% of HP, choose between attempting to defend and attacking
 >>> other member or 2 members might attack, defend, or attempt to heal the most injured, non -attack member (45 atk/15 charge/20 def/20 heal), can't heal selves.
 >>>> healers go for the member with the least HP (65%) or the leader (35%).
 >>>> successful heal attempts heal the injured enemy for 12% MAX HP.
+>>>> Heal success rate is min(75, 35 + max(0, lck + spd) * 0.5)%
 >> - single member at 45% and less:
 >>> Same as singular, just if that one flees, the rest stay. The others use the phase 2 support odds, so they may still heal it.
 
