@@ -201,7 +201,7 @@ def table(headers, rows, title=None):
             grid.add_column(header)
         for row in rows:
             grid.add_row(*row)
-        return _render(grid)
+        return _render(grid).rstrip("\n")
     widths = [max(len(str(cell)) for cell in column) for column in zip(headers, *rows)]
     line = lambda cells: "  " + "   ".join(cell.ljust(width) for cell, width in zip(cells, widths)).rstrip()
     out = [title] if title else []

@@ -16,7 +16,7 @@ Must be run from the project root — imports are root-relative.
 pytest
 ```
 
-`tests/` holds the automated suite (357 tests as of this writing). `conftest.py` at the project root holds one autouse fixture (it points `unlocks_json` at a temp file, so no test writes the real unlock progress) — its presence also tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
+`tests/` holds the automated suite (369 tests as of this writing). `conftest.py` at the project root holds one autouse fixture (it points `players_json`/`unlocks_json` at temp files and makes `"Tester"` the active player, so no test writes the real saves or unlock progress) — its presence also tells pytest to add the project root to `sys.path` so test files can use the same root-relative imports as the game itself. There's also a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`/`beta-1` and on PRs: it import-checks `game.pyrpg`, `combat.combat`, and `combat.damage_calculator`, then installs `requirements-dev.txt` (which pulls in `requirements.txt`: Rich) and runs `pytest -v`. Beyond the automated suite, testing is still manual too (`python main.py` and play through it).
 
 ## Working with Patch Notes
 
@@ -31,7 +31,7 @@ When the conversation's intent is discussing/brainstorming a patch (ideas, direc
 ```
 main.py
   └── game/pyrpg.py (PYRPG class)
-        ├── players/input_name.py (InputName.input_name() — player creation / load)
+        ├── players/input_name.py (InputName.input_name() — title screen, player + adventurer choice)
         ├── combat/combat.py (Combat class, start_combat())
         └── players/save.py (put_new_player())
 ```
@@ -49,7 +49,8 @@ CSV file paths resolve through `util/file_io.py`'s `get_data(node_name)`. Code n
 def get_data(node_name):   # resolves path from env var or default, returns absolute path
 def read_csv(file_name):   # csv.DictReader rows: one dict per row, keyed by header (row["Defense"]) — never index columns by position
 def read_json(file_name) / write_json(file_name, data)  # player save data
-def get_player(player_name):  # checks data/players.json, returns PlayerData or None
+def get_player(player_name, player=None):  # one of the active player's adventurers as PlayerData, or None
+def get_adventurers(player=None):  # every adventurer a player owns
 def delete_player(player_name):  # removes a player entry, returns True/False
 ```
 
@@ -109,13 +110,17 @@ Prayer sculptures (`Boon`/`Curse` rows, `sculpture()`) and the Prayer card (`pra
 
 `util/events.py`'s `EventBus` is the game's event listener: `PYRPG.events` (built on first use, since tests skip `__init__`) gets `explore`, `rest`, `rested`, `town_rest`, `victory` (enemy, size), `fast_travel` (depth), `defeated` (enemy) and `prayed` (a sculpture, answered or not). Quests listen to it (`victory` -> `quest_event("defeat")`, `explore` -> `"reach"`, `fast_travel` -> `"use"`, `prayed` -> `"use", "sculpture"` for Test of Faith), unlocks count on it, and effects tick on it (`_tick_effects()`). New reactions should be listeners, not calls added where things happen.
 
+### Players & Adventurers (v1.1.1)
+
+A **player** (the person, `players/profiles.py`) owns **adventurers** (characters, `PlayerData`) and their own unlock progress. `data/players.json` is `{"Players": {"<player>": {"Adventurers": [{...every saved PlayerData field...}], "Unlocks": {"progress": {}, "unlocked": []}}}}`. Player and adventurer names aren't case sensitive (found in any case, shown as first written); adventurer names only clash within one player. `profiles.ACTIVE` is who's playing, set by the start menu: `get_player()`/`put_new_player()`/`delete_player()` and unlocks all go to them. The start flow (`players/input_name.py`): the banner, then `[1] New Player` (a player name, straight into their first adventurer), `[2] My Adventurers` (player name, then a table of their adventurers to load/delete, or create one; an unknown name offers to make that player), `[3] Exit`. Empty answers go back a step; deleting needs the adventurer's name typed out. New adventurers are saved at once and saving is always on. Saves from before players (`{"players": [...]}`) are never read: `archive_old_saves()` renames them to `players_old.json` (and the old shared `unlocks.json` to `unlocks_old.json`) at startup, numbering the name if a backup already exists.
+
 ### Unlocks & Flavor (v1.0.7)
 
-`unlocks/unlocks.py` reads `data/unlocks.csv` (`id, unlocks, type, target, amount, role, hint`; `quest:` rows are per-character quest chains, skipped here). `unlocks` is `class:` / `enemy:` / `item:` / `event:` + a name; several rows can unlock the same thing (any one is enough); `role` limits a row to one class. Anything no row unlocks is never locked. Progress is **shared by every character** and lives in `data/unlocks.json` (`get_data("unlocks_json")`, gitignored), not in a save. Two kinds of row (the module docstring lists every type): counters, fed by `record(type, value, amount, role)` — `defeat`/`defeated`/`use` from the event bus, `charisma_quest` from `_complete_quest()`, and `encounter`/`block`/`attack_heal`/`mana_spent`/`zeroed` from `start_combat()` (`Combat.tally`); and thresholds (`equip`, `stat_below`/`stat_above` on gear stats, `max_hp`, `quest`), checked by `check_state()` via `PYRPG._check_unlocks()` at every menu and after claiming a quest. Locks are applied where things are picked: `get_encounter_weights()` (enemies), `get_droppable_items()`/`get_buyable_items()` (items), `encounters.eligible()` (`event:<Description>`, e.g. Halt!), and `InputRole.choose_role()` (classes, shown as `???` with hint and progress). Enemy/event unlocks are announced quietly (`QUIET`). `grant(key)` unlocks something outright. The Journal (town menu [8]) prints `journal_lines()` plus the character's quest choices.
+`unlocks/unlocks.py` reads `data/unlocks.csv` (`id, unlocks, type, target, amount, role, hint`; `quest:` rows are per-character quest chains, skipped here). `unlocks` is `class:` / `enemy:` / `item:` / `event:` + a name; several rows can unlock the same thing (any one is enough); `role` limits a row to one class. Anything no row unlocks is never locked. Progress belongs to the **player** (v1.1.1; shared by everyone before) and lives in their `Unlocks` entry in `data/players.json` (`profiles.load_unlocks()`/`save_unlocks()`), next to their adventurers; with no active player it's kept in memory only. Two kinds of row (the module docstring lists every type): counters, fed by `record(type, value, amount, role)` — `defeat`/`defeated`/`use` from the event bus, `charisma_quest` from `_complete_quest()`, and `encounter`/`block`/`attack_heal`/`mana_spent`/`zeroed` from `start_combat()` (`Combat.tally`); and thresholds (`equip`, `stat_below`/`stat_above` on gear stats, `max_hp`, `quest`), checked by `check_state()` via `PYRPG._check_unlocks()` at every menu and after claiming a quest. Locks are applied where things are picked: `get_encounter_weights()` (enemies), `get_droppable_items()`/`get_buyable_items()` (items), `encounters.eligible()` (`event:<Description>`, e.g. Halt!), and `InputRole.choose_role()` (classes, shown as `???` with hint and progress). Enemy/event unlocks are announced quietly (`QUIET`). `grant(key)` unlocks something outright. The Journal (town menu [8]) prints `journal_lines()` plus the character's quest choices.
 
 `util/flavor.py`: `FLAVOR` maps a moment to `(chance %, lines)`; `say(moment, enemy=, name=, item=, gold=)` rolls and prints one. It has its own `random.Random`, so flavor never shifts the game's dice (tests that patch `random.*` are unaffected). Enemy-flee lines are held for 1.1 (enemies can't flee yet).
 
-`util/display.py` holds the plain-text layout helpers (`bar`, `gauge`, `divider`, `options`, `number` for rounding displayed damage). Combat's turn header (`Combat.print_status()`), its action grid (`Combat.ACTION_MENU`) and View Stats go through it. The planned Rich terminal update should replace these helpers rather than add a second style. Auto-saves are quiet (`put_new_player(..., quiet=True)`, a single "(auto-saved)" line).
+`util/display.py` (v1.1.1) is the whole terminal look: `bar`, `gauge`, `divider`, `options`, `menu`, `table`, `banner`, `paint`, `number` for rounding displayed damage. Color comes from Rich (`requirements.txt`) and is switched on once by `display.enable()` in `main.py`, only when Rich is installed and stdout is a real terminal; otherwise (tests, pipes, no Rich) every helper returns the same plain text as before, so tests never see escape codes. Once on, `sys.stdout` is wrapped so every printed line goes through `highlight()`: `HIGHLIGHTS` (regex -> Rich style) colors damage, HP, gold, EXP, headers, option keys and enemy tags without the printing code knowing — new message styles are a `HIGHLIGHTS` line, not color codes in game code. Combat's turn header (`Combat.print_status()`), its action grid (`Combat.ACTION_MENU`), the town/wild menus (`PYRPG.TOWN_MENU`/`WILD_MENU`) and View Stats go through it. The title screen's version is `version.py`'s `VERSION`. Auto-saves are quiet (`put_new_player(..., quiet=True)`, a single "(auto-saved)" line).
 
 ### Negative Stat System
 
@@ -140,7 +145,7 @@ Enemies have a parallel negative-stat system documented in `patch_notes/Alpha II
 
 - Roles: `data/roles.csv` — columns: `Class, Strength, Agility, Intelligence, Defense, Magic, Luck`
 - Enemies: `data/enemies.csv` — columns: `Name, Corruption, HP, Attack, Defense, Speed, Luck`
-- Save data: `data/players.json` (gitignored) — `{"players": [{"name", "role", "level", "hp", "max_hp", "mana", "stats", "gold", "loot", ...}, ...]}` (every `PlayerData` field). `max_hp` is optional for backward compatibility with older saves (`None` if absent); when present, it lets `Player` detect max_hp increases (formula tweaks, stat changes) on load and heal the character by the difference instead of leaving them stranded below the new cap. `gold`/`loot` are similarly optional, defaulting to `0`/`[]` for saves that predate them.
+- Save data: `data/players.json` (gitignored) — players, each with their adventurers (every saved `PlayerData` field) and unlocks; see Players & Adventurers above. `max_hp` is optional for backward compatibility with older saves (`None` if absent); when present, it lets `Player` detect max_hp increases (formula tweaks, stat changes) on load and heal the character by the difference instead of leaving them stranded below the new cap. `gold`/`loot` are similarly optional, defaulting to `0`/`[]` for saves that predate them.
 
 Roles/enemies stats are read via `RolesExtract` (`roles/roles_data.py`) and `get_enemy_stats()` (`enemies/enemies_data.py`), both built on `get_data()` + `read_csv()`. Player saves use `get_data()` + `read_json()`/`write_json()` instead (`util/file_io.py`).
 

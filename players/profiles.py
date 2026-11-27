@@ -116,8 +116,9 @@ def load_unlocks():
 
 def save_unlocks(data):
     if ACTIVE is None:
-        _memory_unlocks.clear()
-        _memory_unlocks.update(data)
+        if data is not _memory_unlocks:
+            _memory_unlocks.clear()
+            _memory_unlocks.update(data)
         return
     players = load_all()
     _profile(players, ACTIVE)["Unlocks"] = data

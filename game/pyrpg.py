@@ -921,9 +921,13 @@ class PYRPG:
         print(f"  Gold {pd.gold}")
         print()
         base = pd.stats
-        print(table(["Stat", "Value", "Base"],
-                    [[stat, value, "" if base.get(stat, value) == value else base.get(stat, value)]
-                     for stat, value in effective_stats.items()]))
+        if any(base.get(stat, value) != value for stat, value in effective_stats.items()):
+            # gear or a boon/curse is changing something: show what it was without them
+            print(table(["Stat", "Value", "Base"],
+                        [[stat, value, "" if base.get(stat, value) == value else base.get(stat, value)]
+                         for stat, value in effective_stats.items()]))
+        else:
+            print(table(["Stat", "Value"], [[stat, value] for stat, value in effective_stats.items()]))
         print(f"\n  Equipped: {pd.equipped or 'Nothing'}")
         print(f"  Spells & Abilities: {', '.join(pd.known_spells) or 'None'}")
         print(f"  Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")
