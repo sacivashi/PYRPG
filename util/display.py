@@ -25,6 +25,8 @@ except ImportError:  # the game still runs without Rich, just in plain text
 
 ENABLED = False
 BAR_WIDTH = 12
+FRAME = ("▕", "▏")  # thin edges that hug the bar
+FRAME_STYLE = "grey58"  # a middle gray: shows on dark and light terminals alike
 
 BANNER = r"""
  ____   __   __  ____    ____     ____
@@ -139,15 +141,19 @@ def highlight(text):
 # --- bars --------------------------------------------------------------------------------------------
 
 def bar(current, maximum, width=BAR_WIDTH, kind="HP"):
-    """'██████░░░░░░' — how full current/maximum is. HP goes green/yellow/red as it drains; MP is blue."""
+    """'▕██████░░░░░░▏' — how full current/maximum is, in a thin gray frame. HP goes green/yellow/red
+    as it drains; MP is blue."""
     share = 0 if not maximum else max(0.0, min(1.0, current / maximum))
     filled = round(share * width)
     if current > 0 and filled == 0:
         filled = 1          # still alive: never show an empty bar
+    left, right = FRAME
     if not ENABLED:
-        return "█" * filled + "░" * (width - filled)
+        return left + "█" * filled + "░" * (width - filled) + right
     color = "dodger_blue1" if kind == "MP" else "green3" if share > 0.5 else "yellow3" if share > 0.25 else "red3"
-    return paint("█" * filled, color) + paint("░" * (width - filled), "grey35")
+    frame = FRAME_STYLE
+    return (paint(left, frame) + paint("█" * filled, color) + paint("░" * (width - filled), "grey35")
+            + paint(right, frame))
 
 
 def number(value):
@@ -156,7 +162,7 @@ def number(value):
 
 
 def gauge(label, current, maximum):
-    """'HP 12/25  ██████░░░░░░'"""
+    """'HP 12/25  ▕██████░░░░░░▏'"""
     return f"{label} {number(current):>3}/{number(maximum):<3} {bar(current, maximum, kind=label)}"
 
 
@@ -169,10 +175,25 @@ def divider(title="", width=44):
 # --- menus and tables ------------------------------------------------------------------------------------
 
 def options(choices, columns=3):
-    """A grid of '[1] Attack' entries, `columns` per row, padded so they line up"""
+    """A grid of '[1] Attack' entries, numbered down each column, padded so they line up:
+
+        [1] Explore          [4] View Stats
+        [2] Rest             [5] Manage Loot
+        [3] Return to Town   [6] Save Game
+                  [7] Exit Game
+
+    Whatever doesn't fill a whole row goes centered on a last row."""
     cells = [f"[{key}] {label}" for key, label in choices]
-    rows = [cells[i:i + columns] for i in range(0, len(cells), columns)]
-    widths = [max(len(row[c]) for row in rows if c < len(row)) + 3 for c in range(columns)]
+    height = len(cells) // columns
+    if height == 0:  # fewer than one row's worth: just one row
+        height, columns = 1, len(cells)
+    grid, rest = cells[:height * columns], cells[height * columns:]
+    rows = [[grid[c * height + r] for c in range(columns)] for r in range(height)]
+    widths = [max(len(row[c]) for row in rows) + 3 for c in range(columns)]
+    if rest:
+        leftover = "   ".join(rest)
+        full = sum(widths) - 3
+        rows.append([" " * max(0, (full - len(leftover)) // 2) + leftover])
     lines = []
     for row in rows:
         line = "".join(cell.ljust(widths[c]) for c, cell in enumerate(row)).rstrip()

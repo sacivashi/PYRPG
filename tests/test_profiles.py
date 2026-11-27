@@ -140,3 +140,10 @@ def test_without_color_everything_stays_plain_text():
     assert "\x1b" not in display.table(["#", "Name"], [["[1]", "Bee"]]) + display.banner("1.1.1")
     assert display.highlight("You deal 11 damage!") == "You deal 11 damage!"
     assert display.banner("1.1.1").endswith("v1.1.1")
+
+
+def test_option_grids_number_down_each_column_and_center_the_leftover():
+    lines = display.options([(str(n), f"Opt{n}") for n in range(1, 8)], columns=2).splitlines()
+    assert [line.split() for line in lines] == [["[1]", "Opt1", "[4]", "Opt4"], ["[2]", "Opt2", "[5]", "Opt5"],
+                                                ["[3]", "Opt3", "[6]", "Opt6"], ["[7]", "Opt7"]]
+    assert lines[3].index("[7]") > lines[0].index("[1]") + 4      # centered, not on the left

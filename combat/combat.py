@@ -4,7 +4,7 @@ from combat.combat_player import Player
 from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH, DEPTH_BUFF_START, NEVER_RANDOM_ENEMIES
 from combat import enemy_brain
 from combat.enemy_brain import BRAIN, CHARGE_BIDING, CHARGE_READY
-from util.flavor import say, fled_line
+from util.flavor import line as flavor_line, say, fled_line
 from util.display import divider, gauge, number, options
 from spells.spells_data import uses_per_combat, get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
 
@@ -336,6 +336,7 @@ class Combat:
         print(f"\n{divider(f'Turn {self.player_turns_taken}')}")
         print(f"  {self.player.name:<{width}}{gauge('HP', self.player.current_hp, self.player.max_hp)}")
         print(f"  {'':<{width}}{gauge('MP', self.player.current_mana, self.player.max_mana)}")
+        print()  # a gap between you and the enemies
         for i, enemy in enumerate(self.enemies):
             if enemy.is_alive():
                 tags = [tag for tag, on in (("charging!", enemy.charge), ("guarding", enemy.defending)) if on]
@@ -403,9 +404,9 @@ class Combat:
                 self._check_player_defeated()
 
         if target.hp <= 0:
-            print(f"The {target.name} is defeated!")
-            if from_full:
-                say("one_hit", enemy=target.name)
+            # a one-hit kill's flavor line says it better, so it takes the defeat line's place
+            comment = flavor_line("one_hit", enemy=target.name) if from_full else None
+            print(f"  » {comment}" if comment else f"The {target.name} is defeated!")
             self._check_victory()
         elif damage_type == "physical" and target.defending and self.player.is_alive():
             self._maybe_counter(target)

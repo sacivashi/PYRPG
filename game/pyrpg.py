@@ -303,8 +303,8 @@ class PYRPG:
         self.player_data.hp = self.player_data.max_hp
         self.player_data.mana = self._max_mana()
         print(f"\nYou pay {self.REST_COST} gold and rest fully, recovering all your HP and mana.")
-        print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
-        print(f"Mana: {self.player_data.mana}/{self._max_mana()}")
+        print(f"  {gauge('HP', self.player_data.hp, self.player_data.max_hp)}")
+        print(f"  {gauge('MP', self.player_data.mana, self._max_mana())}")
         input("\nPress Enter to continue...")
 
     SHOP_STOCK_SIZE = 4
@@ -773,8 +773,8 @@ class PYRPG:
             mana_amount = round(max_mana * restoration)
             self.player_data.mana = min(max_mana, self._current_mana() + mana_amount)
             print(f"You rest peacefully and recover {heal_amount} HP and {mana_amount} mana.")
-            print(f"HP: {self.player_data.hp}/{self.player_data.max_hp}")
-            print(f"Mana: {self.player_data.mana}/{max_mana}")
+            print(f"  {gauge('HP', self.player_data.hp, self.player_data.max_hp)}")
+            print(f"  {gauge('MP', self.player_data.mana, max_mana)}")
             say("rested")
             self.events.emit("rested")
             input("\nPress Enter to continue...")
