@@ -4,7 +4,7 @@ from combat.combat_player import Player
 from enemies.enemies_data import get_enemy_stats, apply_depth_buff, DEATH, DEPTH_BUFF_START, NEVER_RANDOM_ENEMIES
 from combat import enemy_brain
 from combat.enemy_brain import BRAIN, CHARGE_BIDING, CHARGE_READY
-from util.flavor import line as flavor_line, say, fled_line
+from util.flavor import say, fled_line
 from util.display import divider, framed, number, options
 from spells.spells_data import uses_per_combat, get_spell, spell_cost, spell_base_damage, blade_rush_damage, equipment_spell
 
@@ -268,8 +268,7 @@ class Combat:
                 break
             elif choice == "6":
                 if self.cannot_flee:
-                    if not say("flee_death"):
-                        print("You cannot flee.")
+                    say("flee_death", instead="You cannot flee.")
                     continue
                 if not self.attempt_flee():
                     self.advance_turn()  # failed flee costs the turn, same as a missed attack
@@ -358,14 +357,13 @@ class Combat:
         print(f"\nYou attempt to flee... ({flee_chance:g}% chance of success)")
 
         if roll <= flee_chance:
-            print("You successfully flee from combat!")
-            say("flee", name=self.player.name, enemy=self.enemies[0].name)
+            say("flee", instead="You successfully flee from combat!",
+                name=self.player.name, enemy=self.enemies[0].name)
             self.player_fled = True
             self.combat_ongoing = False
             return True
 
-        print("You fail to escape!")
-        say("flee_fail", name=self.player.name, enemy=self.enemies[0].name)
+        say("flee_fail", instead="You fail to escape!", name=self.player.name, enemy=self.enemies[0].name)
         return False
 
     # --- Damage the player deals ------------------------------------------------------------------
@@ -405,8 +403,11 @@ class Combat:
 
         if target.hp <= 0:
             # a one-hit kill's flavor line says it better, so it takes the defeat line's place
-            comment = flavor_line("one_hit", enemy=target.name) if from_full else None
-            print(f"  » {comment}" if comment else f"The {target.name} is defeated!")
+            defeated = f"The {target.name} is defeated!"
+            if from_full:
+                say("one_hit", instead=defeated, enemy=target.name)
+            else:
+                print(defeated)
             self._check_victory()
         elif damage_type == "physical" and target.defending and self.player.is_alive():
             self._maybe_counter(target)

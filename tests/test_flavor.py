@@ -73,3 +73,14 @@ def test_rest_ambush_names_the_enemy(monkeypatch, always, capsys):
     monkeypatch.setattr(flavor._rng, "choice", lambda seq: next((s for s in seq if "{enemy}" in s), seq[0]))
     game.enter_combat(flavor="rest_fail")
     assert "Wolf" in capsys.readouterr().out.split("\n")[0]
+
+
+def test_a_line_takes_the_plain_messages_place(always, capsys):
+    say("flee_fail", instead="You fail to escape!", name="Bob", enemy="Wolf")
+    out = capsys.readouterr().out
+    assert "»" in out and "You fail to escape!" not in out
+
+
+def test_the_plain_message_when_no_line_comes_up(never, capsys):
+    say("flee_fail", instead="You fail to escape!", name="Bob", enemy="Wolf")
+    assert capsys.readouterr().out == "You fail to escape!\n"

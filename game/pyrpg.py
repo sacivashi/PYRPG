@@ -249,17 +249,16 @@ class PYRPG:
         HP and mana are restored against the post-loss max — losing gear can lower both."""
         gold_lost = int(self.player_data.gold * self.DEATH_GOLD_LOSS)
         self.player_data.gold -= gold_lost
-        print(f"You lost {gold_lost} gold.")
+        lost = f"You lost {gold_lost} gold."
         if gold_lost > 0:
-            say("lost_gold", gold=gold_lost)
+            say("lost_gold", instead=lost, gold=gold_lost)
         else:
-            say("broke")
+            say("broke", instead=lost)
 
         if self.player_data.loot and random.randint(1, 100) <= self.DEATH_ITEM_LOSS_CHANCE:
             lost_item = random.choice(self.player_data.loot)
             self.player_data.loot.remove(lost_item)
-            print(f"Your {lost_item} was lost!")
-            say("lost_item", item=lost_item)
+            say("lost_item", instead=f"Your {lost_item} was lost!", item=lost_item)
             if lost_item == self.player_data.equipped and lost_item not in self.player_data.loot:
                 self.player_data.equipped = None
                 self._apply_equipment_hp_change()
@@ -434,13 +433,14 @@ class PYRPG:
         print(f"  Price: {self._shop_price(price)} gold")
         input("\nPress Enter to continue...")
 
-    def enter_combat(self, flavor=None):
-        """Start a combat encounter. `flavor`: a util/flavor.py moment to (maybe) say first, with the enemy's name"""
+    def enter_combat(self, flavor=None, instead=None):
+        """Start a combat encounter. `flavor`: a util/flavor.py moment to (maybe) say first, with the
+        enemy's name; `instead`: the plain line to print when the flavor line doesn't come up"""
         depth = self.player_data.distance
         enemy_name = get_encounter_enemy(self._player_power(), depth)
         group_size = 1 if enemy_name == DEATH else roll_group_size(depth)
         if flavor:
-            say(flavor, enemy=enemy_name, name=self.player_data.name)
+            say(flavor, instead=instead, enemy=enemy_name, name=self.player_data.name)
         if enemy_name == DEATH:
             print("\nThe air goes cold. Death has come for you...")
         elif group_size > 1:
@@ -779,8 +779,7 @@ class PYRPG:
             self.events.emit("rested")
             input("\nPress Enter to continue...")
         else:
-            print("Your rest is interrupted!")
-            self.enter_combat(flavor="rest_fail")
+            self.enter_combat(flavor="rest_fail", instead="Your rest is interrupted!")
 
     def calculate_gold_reward(self):
         """Gold scales with Luck: low = max(5, luck * 0.42), high = max(low + 5, luck * 1.8)"""

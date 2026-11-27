@@ -297,11 +297,17 @@ def line(moment, **values):
     return _rng.choice(lines).format_map(_Blank(values))
 
 
-def say(moment, **values):
-    """Print a flavor line for this moment, if the chance hits. Returns the line (or None)."""
+def say(moment, instead=None, **values):
+    """Print a flavor line for this moment, if the chance hits. Returns the line (or None).
+
+    instead: the plain message the line stands in for ("You fail to escape!"). It's printed only when
+    no flavor line comes up, so the two never say the same thing twice. Only for moments where every
+    line already says what the plain message does."""
     text = line(moment, **values)
     if text:
         print(f"  » {text}")
+    elif instead:
+        print(instead)
     return text
 
 
