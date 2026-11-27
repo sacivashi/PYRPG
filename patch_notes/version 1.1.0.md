@@ -61,7 +61,7 @@ Following the solutions enemies encountered now have their nuggings installed to
 **Special encounters (mimics, death, guards, thieves, quest enemies...) get the nuggings too, they attack, defend and charge, but never flee. They don't care that you are ugly.** 
 
 > With that, adding some more to enemy def:
->> Enemies choosing to defend, will block; `last patches def% formula + int(max(10 - def, def + def / def))` physical damage (ineffective vs searing)
+>> Enemies choosing to defend, will block; `last patches def% formula + int(def * 0.07 + 1)` physical damage (ineffective vs searing, spell damage, and item damage).
 
 ## Fixes & misc:
 - Cursed spells (-Magic debuff) now also raise enemies' -stats up to 0, same as enemy -lck curses do to you (for some unknown reason it wasn't made like so since alpha II)
