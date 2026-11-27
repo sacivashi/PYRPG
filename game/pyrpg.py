@@ -18,11 +18,17 @@ from util.charisma import CHARISMA, charisma_price, price_sway_percent
 from util.effects import apply_effects, bonus, describe, tick
 from util.events import EventBus
 from util.flavor import say, win_moment
-from util.display import gauge
+from util.display import gauge, menu, table
 from unlocks import unlocks
 
 
 class PYRPG:
+    TOWN_MENU = [("1", "Travel Outside"), ("2", "Fast Travel"), ("3", "Rest"), ("4", "Shop"),
+                 ("5", "Quest Board"), ("6", "View Stats"), ("7", "Manage Loot"), ("8", "Journal"),
+                 ("9", "Save Game"), ("10", "Exit Game")]
+    WILD_MENU = [("1", "Explore"), ("2", "Rest"), ("3", "Return to Town"), ("4", "View Stats"),
+                 ("5", "Manage Loot"), ("6", "Save Game"), ("7", "Exit Game")]
+
     def __init__(self):
         # Initialize player and this session's save consent (asked once, inside InputName.input_name())
         self.player_data, self.saving_enabled = InputName.input_name()
@@ -72,18 +78,7 @@ class PYRPG:
 
     def town_menu(self):
         """Menu shown while in town"""
-        print(f"\n=== Town ===")
-        print(f"Welcome, {self.player_data.name}!")
-        print("[1] Travel Outside")
-        print("[2] Fast Travel")
-        print("[3] Rest")
-        print("[4] Shop")
-        print("[5] Quest Board")
-        print("[6] View Stats")
-        print("[7] Manage Loot")
-        print("[8] Journal")
-        print("[9] Save Game")
-        print("[10] Exit Game")
+        print(menu("Town", self.TOWN_MENU, subtitle=f"Welcome, {self.player_data.name}!"))
 
         choice = input("\nChoose an option: ").strip()
 
@@ -112,15 +107,9 @@ class PYRPG:
 
     def wild_menu(self):
         """Menu shown while out in the wild"""
-        print(f"\n=== Out in the Wild ===")
-        print(f"Distance from town: {self.player_data.distance} (deepest reached: {self.player_data.depth_reached})")
-        print("[1] Explore")
-        print("[2] Rest")
-        print("[3] Return to Town")
-        print("[4] View Stats")
-        print("[5] Manage Loot")
-        print("[6] Save Game")
-        print("[7] Exit Game")
+        print(menu("Out in the Wild", self.WILD_MENU,
+                   subtitle=f"Distance from town: {self.player_data.distance} "
+                            f"(deepest reached: {self.player_data.depth_reached})"))
 
         choice = input("\nChoose an option: ").strip()
 
@@ -930,10 +919,11 @@ class PYRPG:
         print(f"  {gauge('MP', self._current_mana(), self._max_mana())}")
         print(f"  EXP {pd.exp:.1f}% to next level")
         print(f"  Gold {pd.gold}")
-        print("\n  Stats:")
-        cells = [f"{stat:<13}{value:>4}" for stat, value in effective_stats.items()]
-        for i in range(0, len(cells), 2):
-            print("    " + "     ".join(cells[i:i + 2]))
+        print()
+        base = pd.stats
+        print(table(["Stat", "Value", "Base"],
+                    [[stat, value, "" if base.get(stat, value) == value else base.get(stat, value)]
+                     for stat, value in effective_stats.items()]))
         print(f"\n  Equipped: {pd.equipped or 'Nothing'}")
         print(f"  Spells & Abilities: {', '.join(pd.known_spells) or 'None'}")
         print(f"  Loot: {', '.join(self._stack_label(n, c) for n, c in self._stacked_loot()) or 'None'}")

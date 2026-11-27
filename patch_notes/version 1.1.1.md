@@ -65,7 +65,6 @@ abc
 Welcome abc, let's create your first adventurer.
 A new adventure rises in the dawn for player's name, what shall the adventurer name be?
 ```
-- After so prompts the usual choose a name and role, only that choosing an existing adventurer name will just say "This character exists, please use a different name or load it"
 
 - That matters because I want that different player name may be able to use a similar adventurer name that is separate from the one who started it.
 
@@ -93,6 +92,8 @@ your name?:
 ```
 
 > json levels
+
+```
 {
 "Players" : {
     "Player's name" : {
@@ -147,6 +148,16 @@ D: Delete: prompts the character name as confirmation, then deletes it
 2
 
 A new adventure rises in the dawn for player's name, what shall the adventurer name be? (the rest is the same as the usual "Type your name to load your save. Name:" as before.)
+
+
+and same as before, let's say player has a character named bee:
+
+What shall the adventurer name be?
+
+bee (or Bee since names aren't case sensitive)
+
+This character exists, please use a different name or load it
+What shall the adventurer name be?
 ```
 
 > No load name? [insert mega mind no redacted? meme here]:
@@ -166,5 +177,17 @@ A new adventure rises in the dawn for player's name, what shall the adventurer n
 n
 
 Then we continue...
+Input your name to load data from (leave empty to go back to main):
+
+after creation and saving;
+
 Input your name to load data from (leave empty to go back):
+
+unaffiliated (or Unaffiliated)
+
+Welcome back unaffiliated.
+Which character shall we touch?
 ```
+
+## into the void:
+honestly, the only save data in here is my own play testing saves, as much as I will miss what I did so far, I will void it all, and start a new journey c:. If somehow you got old saves for yourselves I recommend erasing them too, but rejoice in the fact that this save data will now be "players_old.json", added in with "unlocks_old.json" since unlocks are now individual to a player.

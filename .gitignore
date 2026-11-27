@@ -5,4 +5,7 @@ data/players.csv
 data/players.json
 .idea/
 .env
-scripts/auto_commit.logdata/unlocks.json
+scripts/auto_commit.log
+data/unlocks.json
+data/players_old*.json
+data/unlocks_old*.json

@@ -6,7 +6,8 @@ can unlock the same thing, and finishing any one of them is enough. `role` limit
 (`Mage`: only a mage's progress counts). `quest:` rows are quest chains — per character, handled by
 quests_data.quest_unlocked(), not here.
 
-Progress is shared by every character: it lives in data/unlocks.json, not in a save.
+Progress belongs to the player (v1.1.1; it was shared by everyone before): it lives in their
+entry in data/players.json, next to their adventurers (players/profiles.py).
 
 Two kinds of rows:
     counters    the game reports what happened with record(type, value, amount) and it adds up
@@ -27,8 +28,7 @@ Two kinds of rows:
                 quest       target = a quest id you've completed
 Anything not unlocked by a row is never locked.
 """
-from util.file_io import get_data, read_csv, read_json, write_json
-import os
+from util.file_io import get_data, read_csv
 
 THRESHOLD_TYPES = {"equip", "stat_below", "stat_above", "max_hp", "quest"}
 CATEGORIES = [("class", "Classes"), ("enemy", "Enemies"), ("item", "Items"), ("event", "Events")]
@@ -50,23 +50,17 @@ def get_unlock_rows():
     return rows
 
 
-# --- progress file -------------------------------------------------------------------------------
-
-def _path():
-    return get_data("unlocks_json")
-
+# --- progress (each player's own, v1.1.1) ----------------------------------------------------------
 
 def load_progress():
     """{"progress": {row id: count, or {enemy: count} for blank-target encounters}, "unlocked": [keys]}"""
-    data = read_json(_path()) if os.path.exists(_path()) else {}
-    data = data if isinstance(data, dict) else {}
-    data.setdefault("progress", {})
-    data.setdefault("unlocked", [])
-    return data
+    from players.profiles import load_unlocks
+    return load_unlocks()
 
 
 def _save(data):
-    write_json(_path(), data)
+    from players.profiles import save_unlocks
+    save_unlocks(data)
 
 
 def unlocked_keys():

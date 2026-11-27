@@ -278,10 +278,10 @@ def test_quest_state_survives_save_and_load(monkeypatch, tmp_path):
 def test_old_saves_keep_the_quests_they_had_started(monkeypatch, tmp_path):
     import json
     save_path = tmp_path / "players.json"
-    save_path.write_text(json.dumps({"players": [{
+    save_path.write_text(json.dumps({"Players": {"Tester": {"Adventurers": [{
         "name": "OldSave", "role": "warrior", "level": 1, "hp": 30, "max_hp": 30, "stats": STATS,
         "quest_flags": {"pest_control": 2, "defeated_cat": True}, "completed_quests": ["spooky_area"],
-    }]}))
+    }]}}}))
     monkeypatch.setenv("PLAYERS_JSON", str(save_path))
 
     loaded = get_player("OldSave")
@@ -292,9 +292,9 @@ def test_old_saves_keep_the_quests_they_had_started(monkeypatch, tmp_path):
 def test_old_saves_without_quest_fields_default_cleanly(monkeypatch, tmp_path):
     import json
     save_path = tmp_path / "players.json"
-    save_path.write_text(json.dumps({"players": [{
+    save_path.write_text(json.dumps({"Players": {"Tester": {"Adventurers": [{
         "name": "OldSave", "role": "warrior", "level": 1, "hp": 30, "max_hp": 30, "stats": STATS,
-    }]}))
+    }]}}}))
     monkeypatch.setenv("PLAYERS_JSON", str(save_path))
 
     loaded = get_player("OldSave")

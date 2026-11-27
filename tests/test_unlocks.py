@@ -1,4 +1,4 @@
-"""v1.0.7 unlocks: shared progress, what each row type counts, and what stays locked until earned"""
+"""v1.0.7 unlocks (each player's own since 1.1.1): what each row type counts, and what stays locked until earned"""
 import json
 
 from combat.combat import Combat, start_combat
@@ -76,15 +76,17 @@ def test_locked_classes_cant_be_picked(monkeypatch, capsys):
 
 # --- counting ----------------------------------------------------------------------------------
 
-def test_progress_is_saved_and_shared(monkeypatch, tmp_path):
+def test_progress_is_saved_with_the_player_and_not_shared(monkeypatch, tmp_path):
     use_rows(monkeypatch, tmp_path, "z,item:Thing,defeat,Zombie,6,,Beat zombies")
     record("defeat", "Zombie", 4)
     record("defeat", "zombie", 1)
     assert load_progress()["progress"] == {"z": 5}
     assert record("defeat", "Zombie", 3) == ["item:Thing"]      # unlocking says so once...
     assert record("defeat", "Zombie", 3) == []                  # ...and stops counting
-    with open(unlocks._path(), encoding="utf-8") as file:
-        assert json.load(file)["unlocked"] == ["item:Thing"]
+    with open(tmp_path / "players.json", encoding="utf-8") as file:
+        assert json.load(file)["Players"]["Tester"]["Unlocks"]["unlocked"] == ["item:Thing"]
+    monkeypatch.setattr("players.profiles.ACTIVE", "Someone else")
+    assert not is_unlocked("item:Thing") and load_progress()["progress"] == {}
 
 
 def test_role_rows_only_count_for_that_role(monkeypatch, tmp_path):

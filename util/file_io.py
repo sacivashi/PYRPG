@@ -67,13 +67,13 @@ def read_csv(file_name):
 
 def read_json(file_name):
     if not os.path.exists(file_name):
-        return {"players": []}
+        return {}
 
     with open(file_name, encoding="utf-8") as file:
         content = file.read().strip()
 
     if not content:
-        return {"players": []}
+        return {}
 
     return json.loads(content)
 
@@ -109,34 +109,35 @@ def _rescue_item_rewards(perks, loot):
             loot + [item for item in items if item])
 
 
-def get_player(player_name):
-    players_json_path = get_data("players_json")
-    data = read_json(players_json_path)
-
-    for player in data["players"]:
-        if player["name"].strip().lower() == player_name.strip().lower():
-            # every field the save has; anything missing (older saves) gets the PlayerData default
-            saved = {f.name: player[f.name] for f in saved_fields() if f.name in player}
-            saved.setdefault("depth_reached", player.get("distance", 0))  # older saves: start from where they are
-            saved["stats"] = _migrate_stats(saved["stats"], saved.get("role"))
-            saved["perks"], saved["loot"] = _rescue_item_rewards(saved.get("perks", []), saved.get("loot", []))
-            if "accepted_quests" not in player:  # from before quests were opt-in
-                from quests.quests_data import started_quests
-                saved["accepted_quests"] = started_quests(saved.get("completed_quests", []),
-                                                          saved.get("quest_flags", {}))
-            return PlayerData(**saved)
-
+def get_player(player_name, player=None):
+    """One of a player's adventurers (the active player by default) as PlayerData, or None"""
+    from players.profiles import adventurer_entries
+    for adventurer in adventurer_entries(player):
+        if adventurer["name"].strip().lower() == player_name.strip().lower():
+            return _player_data(adventurer)
     return None
 
 
-def delete_player(player_name):
-    players_json_path = get_data("players_json")
-    data = read_json(players_json_path)
+def _player_data(adventurer):
+    """A saved adventurer dict -> PlayerData: every field the save has, the dataclass default for the rest"""
+    saved = {f.name: adventurer[f.name] for f in saved_fields() if f.name in adventurer}
+    saved.setdefault("depth_reached", adventurer.get("distance", 0))  # older saves: start from where they are
+    saved["stats"] = _migrate_stats(saved["stats"], saved.get("role"))
+    saved["perks"], saved["loot"] = _rescue_item_rewards(saved.get("perks", []), saved.get("loot", []))
+    if "accepted_quests" not in adventurer:  # from before quests were opt-in
+        from quests.quests_data import started_quests
+        saved["accepted_quests"] = started_quests(saved.get("completed_quests", []),
+                                                  saved.get("quest_flags", {}))
+    return PlayerData(**saved)
 
-    for i, player in enumerate(data["players"]):
-        if player["name"].strip().lower() == player_name.strip().lower():
-            del data["players"][i]
-            write_json(players_json_path, data)
-            return True
 
-    return False
+def get_adventurers(player=None):
+    """Every adventurer a player owns, as PlayerData"""
+    from players.profiles import adventurer_entries
+    return [_player_data(adventurer) for adventurer in adventurer_entries(player)]
+
+
+def delete_player(player_name, player=None):
+    """Delete one of a player's adventurers. True if it existed."""
+    from players.profiles import delete_adventurer
+    return delete_adventurer(player_name, player)
