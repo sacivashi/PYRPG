@@ -52,7 +52,7 @@ Please choose an option:
 [1] New Player; [2] Load/Delete;
 ```
 
-> "New game"
+> "New Player"
 - I want this part to change this part to prompt you to input a name the player will use along all their saved adventures, like example:
 ```
 You chose to start a new game.
@@ -100,4 +100,23 @@ name:
 }
 ```
 
-> "Load"
+> "Load/Delete"
+Choosing Load will ask you to type your own player name, and show a list of adventurers you own:
+
+```
+Welcome back [player name].
+Which character shall we touch?
+[1]; char name, char role, level, HP/MP, currently at depth x/in town.
+[2]; {Create new adventurer}
+
+1
+
+Load or delete (L\D)?
+
+L: throws you in where you left, other data like stats and etc can be checked in game
+D: Delete: prompts the character name as confirmation, then deletes it
+
+2
+
+A new adventure rises in the dawn for player's name, what shall the adventurer name be? (the rest is the same as the usual "Type your name to load your save. Name:" as before.)
+```
