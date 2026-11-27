@@ -52,16 +52,16 @@ Following the solutions enemies encountered now have their nuggings installed to
 >> - all members at 100% ~ 80% of HP, the leader (the healthiest member) uses the solo phase 1 odds (60/20/20)
 >>> other member or 2 members may support attack, or defend themselves (60 norm/30 charge/10 def)
 >> - any single member at 80% ~ 45% of HP, choose between attempting to defend and attacking
->>> other member or 2 members might attack, defend, or attempt to heal the most injured, non -attack member (45 atk/15 chrg/20 def/20 heal), can't heal selves.
+>>> other member or 2 members might attack, defend, or attempt to heal the most injured, non -attack member (45 atk/15 charge/20 def/20 heal), can't heal selves.
 >>>> healers go for the member with the least HP (65%) or the leader (35%).
->>>> successful heal attempts heal the injured enemy for 12% missing HP.
+>>>> successful heal attempts heal the injured enemy for 12% MAX HP.
 >> - single member at 45% and less:
 >>> Same as singular, just if that one flees, the rest stay. The others use the phase 2 support odds, so they may still heal it.
 
 **Special encounters (mimics, death, guards, thieves, quest enemies...) get the nuggings too, they attack, defend and charge, but never flee. They don't care that you are ugly.** 
 
 > With that, adding some more to enemy def:
->> Enemies choosing to defend, will block; `def% + min(10, max(0,def * 0.65))` physical damage
+>> Enemies choosing to defend, will block; `last patches def% formula + int(max(10 - def, def + def / def))` physical damage (ineffective vs searing)
 
 ## Fixes & misc:
 - Cursed spells (-Magic debuff) now also raise enemies' -stats up to 0, same as enemy -lck curses do to you (for some unknown reason it wasn't made like so since alpha II)
