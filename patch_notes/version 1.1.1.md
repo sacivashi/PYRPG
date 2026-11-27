@@ -49,22 +49,50 @@ Honestly the game's start is strange, you are recognized to load your adventurer
                                 vx.x.x
 
 Please choose an option:
-[1] New Player; [2] Load/Delete;
+
+[1] New Player; [2] My Adventurers; [3] Exit;
 ```
 
 > "New Player"
 - I want this part to change this part to prompt you to input a name the player will use along all their saved adventures, like example:
 ```
-You chose to start a new game.
+You chose to create a new user.
 To start you off, please input a name to save your adventures behind
-name:
+your name?:
+
+abc
+
+Welcome abc, let's create your first adventurer.
+A new adventure rises in the dawn for player's name, what shall the adventurer name be?
 ```
-- After so prompts the usual choose a name and role, only that choosing an existing name will just say "This character exists, please use a different name"
+- After so prompts the usual choose a name and role, only that choosing an existing adventurer name will just say "This character exists, please use a different name or load it"
 
 - That matters because I want that different player name may be able to use a similar adventurer name that is separate from the one who started it.
 
-> json levels
+> Has another player name?:
 ```
+You chose to create a new user.
+To start you off, please input a name to save your adventures behind
+your name?:
+
+flood
+
+Apparently, this user name is in existence, would you like to load your data instead? (y/n/leave empty to go back to main) 
+
+y
+
+go to load flow with player's name
+
+n
+
+then we continue....
+
+To start you off, please input a name to save your adventures behind
+your name?:
+
+```
+
+> json levels
 {
 "Players" : {
     "Player's name" : {
@@ -119,4 +147,24 @@ D: Delete: prompts the character name as confirmation, then deletes it
 2
 
 A new adventure rises in the dawn for player's name, what shall the adventurer name be? (the rest is the same as the usual "Type your name to load your save. Name:" as before.)
+```
+
+> No load name? [insert mega mind no redacted? meme here]:
+```
+Input your name to load data from (leave empty to go back):
+
+unaffiliated
+
+No player data for "unaffiliated" found, would you like to make a New plyer with that name? (y/n)
+
+y
+
+Much obliged.
+Welcome unaffiliated, let's create your first adventurer.
+A new adventure rises in the dawn for player's name, what shall the adventurer name be?
+
+n
+
+Then we continue...
+Input your name to load data from (leave empty to go back):
 ```
