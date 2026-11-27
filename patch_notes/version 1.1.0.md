@@ -40,13 +40,14 @@ Following the solutions enemies encountered now have their nuggings installed to
 >>> - Charge attack: the enemy prepares a large scale attack, takes the enemy a turn to charge up, but damages player for (enemy attack * 1.5) damage
 >>>> How a charge plays out: first it bides (that's your forewarning), next turn it still makes a decision move (attack/defend), and only after that the charged attack lands. Plenty of time to brace yourself.
 >>> - Charge attack but you are a healer (-attack):  takes the enemy a turn to charge up, sears * 1.3 of siphon value (siphon value stays the same). charge attacks have a chance to happen, and will prompt with "(enemy name) bides..." or "Enemy name is smiling wickedly"
->>>> odds: 60 normal, 20 charged, 20 defend
+>>>> odds: 60 normal, 20 charged, 20 defend, 65 norm, 35 def when charging
 >> - 80% ~ 45% of HP, choose between attempting to defend and attacking:
 >>> 50/10/40 odds of attacking charging defending; if defending and player physically attacks, enemy has a 15% chance to counter attack
 >>> - counter attack: The enemy strikes the player for attack/-attack value + a portion of defense value int(max(0,min(12,def * 0.45)))
 >> - 45% and less:
 >>> Enemy will start thinking about fleeing, fleeing odds depend on it's speed + luck int(max(0,min(15,spd * 0.44 + lck * 0.44)))%, 30/10/60 attack/charge/defend if failing. Enemy fleeing has 30% to drop some gold (3 ~ 8) or a loot, but won't give exp. nor count towards a defeat x number quest
 >>> - An enemy fleeing still counts as a win, but to be fair it doesn't tick any "per win" passives (sculpture boons/curses, Sleight of stats, etc).
+>>> - Once an enemy commits to a charge, it won't flee until it lands it. So if it's biding, it's staying.
 
 > enemy thought process, but it's groups:
 >> - all members at 100% ~ 80% of HP, the leader (the healthiest member) uses the solo phase 1 odds (60/20/20)
@@ -62,7 +63,7 @@ Following the solutions enemies encountered now have their nuggings installed to
 **Special encounters (mimics, death, guards, thieves, quest enemies...) get the nuggings too, they attack, defend and charge, but never flee. They don't care that you are ugly.** 
 
 > With that, adding some more to enemy def:
->> Enemies choosing to defend, will block; `last patches def% formula + int(def * 0.07 + 1)` physical damage (ineffective vs searing, spell damage, and item damage).
+>> Enemies choosing to defend, will block; `last patches def% formula + int(def * 0.07 + 1)` physical damage (ineffective vs searing, spell damage, and item damage). -def enemies have 0 value, can still defend (might revisit it at 1.1.1)
 
 ## Fixes & misc:
 - Cursed spells (-Magic debuff) now also raise enemies' -stats up to 0, same as enemy -lck curses do to you (for some unknown reason it wasn't made like so since alpha II)

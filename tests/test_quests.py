@@ -194,7 +194,7 @@ def test_a_zero_reward_reads_as_nothing():
 
 def stub_fights(monkeypatch, game, result="victory"):
     fights = []
-    def fake_combat(player_data, enemy_name, group_size):
+    def fake_combat(player_data, enemy_name, group_size, **_):
         fights.append((enemy_name, group_size))
         return result, 30, None
     monkeypatch.setattr("game.pyrpg.start_combat", fake_combat)

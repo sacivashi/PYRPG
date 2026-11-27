@@ -131,7 +131,7 @@ def test_of_survival_rests_heal_45_percent_and_only_successes_count(monkeypatch)
 
 
 def stub_win(monkeypatch, gold=10, exp=10.0):
-    monkeypatch.setattr("game.pyrpg.start_combat", lambda pd, enemy, size: ("victory", pd.hp, None))
+    monkeypatch.setattr("game.pyrpg.start_combat", lambda pd, enemy, size, **_: ("victory", pd.hp, None))
     monkeypatch.setattr(PYRPG, "calculate_gold_reward", lambda self: gold)
     monkeypatch.setattr(PYRPG, "calculate_exp_reward", lambda self, enemy: exp)
     monkeypatch.setattr(PYRPG, "_roll_for_loot", lambda self: None)

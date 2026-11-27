@@ -243,6 +243,51 @@ FLAVOR = {
 }
 
 
+# v1.1: an enemy fleeing the fight. (without a drop, with one) pairs, by how you look:
+# Charisma below 0 is "ugly", FLED_PRETTY_AT or more is "pretty"
+FLED_CHANCE = 35
+FLED_PRETTY_AT = 8
+FLED = {
+    "normal": [
+        ("The {enemy} was too afraid to keep facing you, so it fled.",
+         "The {enemy} was too afraid to keep facing you, so it fled... and with that, it lost {item}."),
+        ("The cowardly {enemy} fled the battle.",
+         "The cowardly {enemy} fled the battle. Luckily, it dropped {item}."),
+        ("Can't believe the {enemy} fled this fight.",
+         "Can't believe the {enemy} fled this fight. At least I can find victory in {item}."),
+        ("The {enemy} fled.",
+         "The {enemy} fled, and dropped {item}."),
+        ("Well, didn't anticipate the {enemy} to just run.",
+         "Well, didn't anticipate the {enemy} to just run. Oh well, let's take the {item} and leave then."),
+    ],
+    "ugly": [
+        ("You were so ugly, the {enemy} couldn't hold it any longer, so it fled.",
+         "You were so ugly, the {enemy} couldn't hold it any longer, so it fled. Just take the {item} and don't make me look at you too, please."),
+        ("No wonder the {enemy} chose to give up, your face is a puke fest...",
+         "No wonder the {enemy} chose to give up, your face is a puke fest... still, there's {item} left though.."),
+        ("Your vile aura made the {enemy} run to its momma.",
+         "Your vile aura made the {enemy} run to its momma. Joy, it dropped {item}."),
+    ],
+    "pretty": [
+        ("Don't blame me, I am unsure why the {enemy} would go away either.",
+         "Don't blame me, I am unsure why the {enemy} would go away either. Oh hey, shiny {item}!"),
+        ("I guess the {enemy} was taken breathless by your handsome self, it decided not to fight any longer..",
+         "I guess the {enemy} was taken breathless by your handsome self, it decided not to fight any longer.. oh well, stuff! ({item})"),
+        ("The {enemy} ran off... so what?! Just sway your hair and be pretty.",
+         "The {enemy} ran off... so what?! Just sway your hair, be pretty, and take the remnants! ({item})"),
+    ],
+}
+
+
+def fled_line(enemy, drop=None, charisma=0):
+    """An enemy-fled line (35%), picked by your Charisma and whether it dropped something; or None"""
+    if _rng.uniform(0, 100) >= FLED_CHANCE:
+        return None
+    mood = "ugly" if charisma < 0 else "pretty" if charisma >= FLED_PRETTY_AT else "normal"
+    plain, dropped = _rng.choice(FLED[mood])
+    return (dropped if drop else plain).format(enemy=enemy, item=drop)
+
+
 def line(moment, **values):
     """Roll the moment's chance: one of its lines with the placeholders filled, or None"""
     chance, lines = FLAVOR[moment]

@@ -115,6 +115,40 @@ class DamageCalculator:
         """Defending: on top of the usual Defense %, block a flat min(10, max(0, def * 0.75))"""
         return min(10, max(0, defence * 0.75))
 
+    # --- v1.1 enemy brains (combat/enemy_brain.py decides, these are the numbers) ---------------
+    CHARGE_MULTIPLIER = 1.5        # a charged attack hits for Attack * 1.5
+    CHARGE_SIPHON_SEAR = 1.3       # -Attack enemies' charge: their usual hit + 1.3x the siphon as searing
+    ENEMY_COUNTER_CHANCE = 15      # % a defending enemy strikes back at a physical hit
+    ENEMY_HEAL_SHARE = 0.12        # of the healed member's max HP
+    FLEE_DROP_CHANCE = 30          # % a fleeing enemy drops something (gold or loot, a coin flip)
+    FLEE_DROP_GOLD = (3, 8)
+
+    @staticmethod
+    def enemy_defend_block(defence):
+        """A defending enemy blocks int(def * 0.07 + 1) from each physical hit, on top of its usual
+        Defense %. -Defense enemies are too reckless to guard: 0."""
+        return 0 if defence < 0 else int(defence * 0.07 + 1)
+
+    @staticmethod
+    def enemy_counter_bonus(defence):
+        """A defending enemy's counter: its usual hit + int(max(0, min(12, def * 0.45)))"""
+        return int(max(0, min(12, defence * 0.45)))
+
+    @staticmethod
+    def enemy_flee_chance(speed, luck):
+        """At 45% HP or less: int(max(0, min(15, spd * 0.44 + lck * 0.44)))% each turn"""
+        return int(max(0, min(15, speed * 0.44 + luck * 0.44)))
+
+    @staticmethod
+    def enemy_heal_chance(luck, speed):
+        """A support member's heal lands min(75, 35 + max(0, lck + spd) * 0.5)% of the time"""
+        return min(75, 35 + max(0, luck + speed) * 0.5)
+
+    @staticmethod
+    def siphon_amount(attack):
+        """What a -Attack enemy siphons per hit: max(5, abs(atk) * 0.46)"""
+        return round(max(5, abs(attack) * 0.46), 1)
+
     @staticmethod
     def apply_luck_modifier(damage, luck_stat):
         """-Luck: min(35, abs(-lck))% miss chance, but hits that land are unavoidable.

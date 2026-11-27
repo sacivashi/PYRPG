@@ -458,9 +458,9 @@ class PYRPG:
             print(f"\nA group of {group_size} {enemy_name}s appears!")
         else:
             print(f"\nA wild {enemy_name} appears!")
-        return self.fight(enemy_name, group_size)
+        return self.fight(enemy_name, group_size, special=enemy_name == DEATH)
 
-    def fight(self, enemy_name, group_size=1, surprise=False, scaling=0, on_victory=None):
+    def fight(self, enemy_name, group_size=1, surprise=False, scaling=0, on_victory=None, special=True):
         """Run one fight and settle it: rewards on a win, death penalties on a loss. Shared by
         random encounters and adventures, so a fight pays out the same wherever it happens.
         `surprise`: every enemy acts first. `scaling`: flat bonus to the enemy's positive stats
@@ -468,10 +468,13 @@ class PYRPG:
         # Auto-save before risky combat
         self.auto_save_player_state()
 
-        extras = {k: v for k, v in (("surprise", surprise), ("scaling", scaling)) if v}
-        result, current_hp, current_mana = start_combat(self.player_data, enemy_name, group_size, **extras)
+        extras = {k: v for k, v in (("surprise", surprise), ("scaling", scaling), ("special", special)) if v}
+        outcome = start_combat(self.player_data, enemy_name, group_size, **extras)
+        result, current_hp, current_mana = outcome
         self.player_data.hp = current_hp
         self.player_data.mana = current_mana
+        # v1.1: enemies that fled give no gold, EXP or loot rolls, and don't count as defeated
+        group_size -= getattr(outcome, "fled", 0)
 
         if result == "victory":
             say(win_moment(current_hp, self.player_data.max_hp))
