@@ -302,10 +302,11 @@ def say(moment, instead=None, **values):
 
     instead: the plain message the line stands in for ("You fail to escape!"). It's printed only when
     no flavor line comes up, so the two never say the same thing twice. Only for moments where every
-    line already says what the plain message does."""
+    line already says what the plain message does. A line standing in prints as a normal message,
+    without the '  » ' a comment gets."""
     text = line(moment, **values)
     if text:
-        print(f"  » {text}")
+        print(text if instead else f"  » {text}")
     elif instead:
         print(instead)
     return text

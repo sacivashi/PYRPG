@@ -78,7 +78,7 @@ def test_rest_ambush_names_the_enemy(monkeypatch, always, capsys):
 def test_a_line_takes_the_plain_messages_place(always, capsys):
     say("flee_fail", instead="You fail to escape!", name="Bob", enemy="Wolf")
     out = capsys.readouterr().out
-    assert "»" in out and "You fail to escape!" not in out
+    assert out.strip() and "»" not in out and "You fail to escape!" not in out
 
 
 def test_the_plain_message_when_no_line_comes_up(never, capsys):
