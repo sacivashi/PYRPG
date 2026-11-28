@@ -202,4 +202,4 @@ honestly, the only save data in here is my own play testing saves, as much as I 
 - Menus are numbered down by columns, rather than parallels.
 - Items with rarity set to -1 cannot be sold.
 - -1 rarity items can never be found in shops or drop.
-- Roles can now have a "create" passive: an item they get at the start of a fight if they don't have one. 
+- Roles can now have a "create" passive: an item they get at the start of a fight if they don't have one.
