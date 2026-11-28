@@ -196,8 +196,10 @@ honestly, the only save data in here is my own play testing saves, as much as I 
 
 ## Misc:
 - Changed "Cut" item learner name to "HM01".
-- Some flavor lines no replace the normal lines (if hit).
+- Some flavor lines now replace the normal lines (if hit).
 - HP/MP bars are separated by thin gray frame.
 - HP/MP bars show after successful rests.
 - Menus are numbered down by columns, rather than parallels.
-- Items with rarity set to -1 cost & sell for 0.
+- Items with rarity set to -1 cannot be sold.
+- -1 rarity items can never be found in shops or drop.
+- Roles can now have an item generation as a passive "create".
