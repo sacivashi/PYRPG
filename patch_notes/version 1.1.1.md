@@ -4,7 +4,6 @@
 | |_) |  \ V /  | |_) | | |_) | | |  _ 
 |  __/    | |   |  _ <  |  __/  | |_| |
 |_|       |_|   |_| \_\ |_|      \____|
-
                            patch v1.1.1
 ```
 
@@ -191,3 +190,14 @@ Which character shall we touch?
 
 ## into the void:
 honestly, the only save data in here is my own play testing saves, as much as I will miss what I did so far, I will void it all, and start a new journey c:. If somehow you got old saves for yourselves I recommend erasing them too, but rejoice in the fact that this save data will now be "players_old.json", added in with "unlocks_old.json" since unlocks are now individual to a player.
+
+## Unlocks:
+- Added one more unique role and item to unlock, very explosive!
+
+## Misc:
+- Changed "Cut" item learner name to "HM01".
+- Some flavor lines no replace the normal lines (if hit).
+- HP/MP bars are separated by thin gray frame.
+- HP/MP bars show after successful rests.
+- Menus are numbered down by columns, rather than parallels.
+- Items with rarity set to -1 cost & sell for 0.
