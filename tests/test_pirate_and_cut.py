@@ -120,11 +120,11 @@ def test_no_coins_without_the_proc(monkeypatch):
 
 # --- Cut ------------------------------------------------------------------------------------
 
-def test_cut_is_a_shop_item_that_teaches_cut():
+def test_hm01_is_a_shop_item_that_teaches_cut():
     from items.items_data import is_item_buyable, is_item_consumable, is_item_droppable, get_item_rarity
-    assert learning_item_spell("Cut") == "Cut"
-    assert is_item_buyable("Cut") and is_item_consumable("Cut") and not is_item_droppable("Cut")
-    assert get_item_rarity("Cut") == 8
+    assert learning_item_spell("HM01") == "Cut"
+    assert is_item_buyable("HM01") and is_item_consumable("HM01") and not is_item_droppable("HM01")
+    assert get_item_rarity("HM01") == 8
 
 
 def test_cut_damage_takes_the_best_of_luck_agility_and_strength():
@@ -140,8 +140,8 @@ def test_cut_sears_through_any_defense(monkeypatch):
     assert combat.enemies[0].hp == hp - 3
 
 
-def test_learning_cut_from_the_item():
+def test_learning_cut_from_hm01():
     game = PYRPG.__new__(PYRPG)
-    game.player_data = pirate(known_spells=[], loot=["Cut"])
-    assert game.use_item_outside_combat("Cut")
+    game.player_data = pirate(known_spells=[], loot=["HM01"])
+    assert game.use_item_outside_combat("HM01")
     assert "Cut" in game.player_data.known_spells and game.player_data.loot == []

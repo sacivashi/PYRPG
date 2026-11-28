@@ -106,7 +106,10 @@ class Combat:
         "thunder master": (18, None),
     }
     NUTS_HEAL = 5
-    COMBAT_USABLE_ITEMS = ["bomb", "timer", "health potion", "mana potion", "nuts", "dice machine", *THUNDER_ITEMS]
+    SMALL_BOMB_MIN = 7             # Small bomb: max(7, level * 1.8) searing to one enemy
+    SMALL_BOMB_PER_LEVEL = 1.8
+    COMBAT_USABLE_ITEMS = ["bomb", "small bomb", "timer", "health potion", "mana potion", "nuts", "dice machine",
+                           *THUNDER_ITEMS]
     BERSERKER_ARMOR = "berserker armor"
 
     def __init__(self, player_data, enemy_name, group_size=1, surprise=False, scaling=0, special=False):
@@ -147,6 +150,7 @@ class Combat:
         self.defending = False  # set by Defend, lasts until the player's next turn
         # What this fight counts toward unlocks (unlocks/unlocks.py), reported by start_combat()
         self.tally = {"block": 0, "attack_heal": 0, "mana_spent": 0, "zeroed": 0}
+        self.bombs_thrown = 0  # Bombs (not Small bombs), counted as "use", "Bomb" for the Bomber unlock
         # Snapshots — both restored after combat ends
         self.original_player_stats = dict(self.player.stats)
         self.original_player_max_hp = self.player.max_hp
@@ -681,6 +685,10 @@ class Combat:
 
     # --- Items ------------------------------------------------------------------------------------
 
+    @classmethod
+    def small_bomb_damage(cls, level):
+        return max(cls.SMALL_BOMB_MIN, level * cls.SMALL_BOMB_PER_LEVEL)
+
     def use_item(self):
         """Use a combat item from loot. Returns 'end_turn', 'repeat_turn', or None (cancelled/invalid)."""
         available = []
@@ -717,8 +725,19 @@ class Combat:
 
         if key == "bomb":
             self.player.loot.remove(item)
+            self.bombs_thrown += 1
             print("You throw a Bomb!")
             self._hit_all(self.BOMB_DAMAGE)
+            return "end_turn"
+
+        if key == "small bomb":
+            target_index = self._choose_target()
+            if target_index is None:
+                return None
+            target = self.enemies[target_index]
+            self.player.loot.remove(item)
+            print(f"You throw a Small bomb at the {target.name}!")
+            self._hit_enemy(target, self.small_bomb_damage(self.player.level), "searing")
             return "end_turn"
 
         if key == "timer":
@@ -1073,6 +1092,18 @@ class Combat:
 
 
 # Helper function to start combat
+# Role passives that hand you an item at the start of every fight you don't already have one for
+ROLE_CRAFTED_ITEMS = {"bomber": "Small bomb"}
+
+
+def craft_role_item(player_data):
+    """The Bomber's passive: no Small bomb in your loot -> put one together before the fight"""
+    item = ROLE_CRAFTED_ITEMS.get(str(player_data.role).lower())
+    if item and item not in player_data.loot:
+        player_data.loot.append(item)
+        print(f"You put together a {item}.")
+
+
 def start_combat(player_data, enemy_name, group_size=1, surprise=False, scaling=0, special=False):
     """Initialize and run a combat encounter. Items used up and item progress (Thunder use counts)
     are written back onto player_data — they're the only combat changes that persist besides
@@ -1080,10 +1111,12 @@ def start_combat(player_data, enemy_name, group_size=1, surprise=False, scaling=
     from unlocks.unlocks import record
     role = player_data.role
     record("encounter", enemy_name, role=role)
+    craft_role_item(player_data)
     combat = Combat(player_data, enemy_name, group_size, surprise, scaling, special)
     result = combat.run_combat()
     for kind, amount in combat.tally.items():
         record(kind, amount=amount, role=role)
+    record("use", "Bomb", amount=combat.bombs_thrown, role=role)
     if result[0] == "victory" and combat.bonus_gold:
         player_data.gold += combat.bonus_gold
         print(f"You pick up the {combat.bonus_gold} coins your shots knocked loose.")

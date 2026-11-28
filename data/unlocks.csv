@@ -18,3 +18,4 @@ timer,item:Timer,encounter,,11,,Encounter the same enemy 11 times
 church_betrayal,quest:church_betrayal,quest,test_of_faith,1,,Complete the test of faith quest
 guard_event,event:Halt!,quest,townfolk_raid,1,,Do a certain quest involving townsfolk
 bomber,class:bomber,use,Bomb,10,,Throw 10 bombs
+small_bomb,item:Small bomb,use,Bomb,10,,Throw 10 bombs

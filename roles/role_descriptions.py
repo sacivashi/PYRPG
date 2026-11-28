@@ -1,6 +1,7 @@
 
 
 class Descriptions:
+	BOMBER_DESC = "Explosive expert, specializes in bombs and area damage. Fragile in direct combat but can turn the tide with well-placed explosives."
 	DRUID_DESC = "Attuned to nature, wield both healing and elemental magic. Versatile but not the strongest in direct combat, thrive with allies and adaptability."
 	DWARF_DESC = "Stout and resilient, excels in close combat and defense. Skilled with axes and hammers, but less agile and slower than other classes."
 	ELF_DESC = "Graceful and long-lived, balances swift blades with a natural gift for magic. Good at many things, master of none."

@@ -349,7 +349,7 @@ def _sell_to_merchant(game):
     stack), unequipping it if the last worn copy goes. Returns (name, count), or None to stop
     selling. Paying for it is the merchant's business."""
     pd = game.player_data
-    stacks = game._stacked_loot()
+    stacks = [(name, count) for name, count in game._stacked_loot() if sell_price(game, name) > 0]
     if not stacks:
         print("You have nothing (left) to sell.")
         return None

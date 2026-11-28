@@ -45,7 +45,7 @@ LEARNING_ITEMS = {
     "scroll of doom": "DOOM",
     "nature's codex": "Nature's gift",
     "blade rush": "Blade rush",
-    "cut": "Cut",
+    "hm01": "Cut",
 }
 
 # Equipment -> spell granted for as long as it's worn (never permanently learned).

@@ -46,9 +46,9 @@ def test_everything_named_in_unlocks_csv_exists():
 
 
 def test_a_fresh_game_has_the_unlockables_locked():
-    assert locked_names("class") == {"knight", "monk", "necromancer", "forsaken", "tank"}
+    assert locked_names("class") == {"knight", "monk", "necromancer", "forsaken", "tank", "bomber"}
     assert locked_names("enemy") == {"cursed human", "cursed priest", "demon", "golem"}
-    assert locked_names("item") == {"necronomicon", "beam staff", "nullifier", "timer"}
+    assert locked_names("item") == {"necronomicon", "beam staff", "nullifier", "timer", "small bomb"}
     assert not is_unlocked("event:Halt!")
     assert is_unlocked("class:mage")            # not named by any row: never locked
 

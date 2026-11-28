@@ -55,7 +55,8 @@ def _unlocked(names):
 
 def get_droppable_items():
     """(name, rarity) pairs for every (unlocked) item eligible to drop as loot — rarity used as drop weight."""
-    return [(name, get_item_rarity(name)) for name in _unlocked(get_item_names()) if is_item_droppable(name)]
+    return [(name, get_item_rarity(name)) for name in _unlocked(get_item_names())
+            if is_item_droppable(name) and has_price(name)]
 
 
 def is_item_consumable(name):
@@ -64,18 +65,27 @@ def is_item_consumable(name):
 
 
 PRICE_PIVOT_RARITY = 65  # fixed reference point — adding a very common item no longer reprices the whole shop
+NO_PRICE = -1  # Rarity -1: a given item (Small bomb), worth nothing — never sold, bought by merchants, or dropped
+
+
+def has_price(name):
+    return get_item_rarity(name) != NO_PRICE
 
 
 def get_item_price(name):
     """Gold cost, derived from Rarity so there's one source of truth: rarer (lower weight) items
-    cost more, floored at 15 so even the most common items aren't free: max(15, int(abs(65 - rarity) * 0.65))."""
+    cost more, floored at 15 so even the most common items aren't free: max(15, int(abs(65 - rarity) * 0.65)).
+    Rarity -1 (NO_PRICE) is worth 0."""
+    if not has_price(name):
+        return 0
     rarity = get_item_rarity(name)
     return max(15, int(abs(PRICE_PIVOT_RARITY - rarity) * 0.65))
 
 
 def get_buyable_items():
     """(name, price) pairs for every (unlocked) item the shop can stock."""
-    return [(name, get_item_price(name)) for name in _unlocked(get_item_names()) if is_item_buyable(name)]
+    return [(name, get_item_price(name)) for name in _unlocked(get_item_names())
+            if is_item_buyable(name) and has_price(name)]
 
 
 def rarity_sample(items, k):
